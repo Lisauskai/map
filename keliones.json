@@ -27,7 +27,8 @@
     "SI",
     "SM",
     "BY",
-    "RU"
+    "RU",
+    "LU"
   ],
   "places": [
     {
@@ -1386,6 +1387,20 @@
       "travelers": [
         "Tomas",
         "Sandra"
+      ],
+      "videos": []
+    },
+    {
+      "id": 61,
+      "title": "Liuksemburgo oro uostas",
+      "country": "Liuksemburgas",
+      "lat": 49.6348,
+      "lng": 6.2163,
+      "date": "2013-04-01",
+      "category": "Autobusu",
+      "description": "Kelionė autobusu po Beneliukso šalis",
+      "travelers": [
+        "Tomas"
       ],
       "videos": []
     }
