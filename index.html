@@ -97,6 +97,10 @@
                             <span class="filter-chip__dot filter-chip__dot--cruise"></span>
                             Kruizas
                         </button>
+                        <button type="button" class="filter-chip" data-category="Keltas">
+                            <span class="filter-chip__dot filter-chip__dot--ferry"></span>
+                            Keltas
+                        </button>
                         <button type="button" class="filter-chip" data-category="Automobiliu">
                             <span class="filter-chip__dot filter-chip__dot--car"></span>
                             Automobiliu
@@ -234,6 +238,10 @@
                         </div>
 
                         <div class="admin-dashboard__toolbar">
+                            <input type="file" id="importHtmlFileInput" accept=".html,.htm" hidden>
+                            <button type="button" id="importHtmlBtn" class="admin-btn admin-btn--secondary" title="Automatiškai nuskaityti miestus, aprašymus ir YouTube nuorodas iš seno HTML failo">
+                                📥 Importuoti iš HTML
+                            </button>
                             <button type="button" id="pickCoordsOnMapBtn" class="admin-btn admin-btn--secondary" title="Laikinai paslėpti langą ir paspausti ant žemėlapio">
                                 📍 Parinkti koordinates žemėlapyje
                             </button>
@@ -320,6 +328,7 @@
                                             <label for="placeCategoryInput">Kategorija</label>
                                             <select id="placeCategoryInput" required>
                                                 <option value="Kruizas">Kruizas</option>
+                                                <option value="Keltas">Keltas</option>
                                                 <option value="Automobiliu">Automobiliu</option>
                                                 <option value="Autobusu">Autobusu</option>
                                                 <option value="Lėktuvu">Lėktuvu</option>
@@ -433,6 +442,7 @@
                                         <select id="adminTableCategoryFilter" class="admin-table-select" aria-label="Filtruoti lentelę pagal kategoriją">
                                             <option value="Visos">Visos kategorijos</option>
                                             <option value="Kruizas">🚢 Kruizas</option>
+                                            <option value="Keltas">⛴️ Keltas</option>
                                             <option value="Automobiliu">🚗 Automobiliu</option>
                                             <option value="Autobusu">🚌 Autobusu</option>
                                             <option value="Lėktuvu">✈️ Lėktuvu</option>

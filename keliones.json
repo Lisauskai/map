@@ -1,361 +1,1288 @@
 {
-  "visitedCountries": [
-    "LT",
-    "LV",
-    "EE",
-    "FI",
-    "PL",
-    "DE",
-    "CZ",
-    "RS",
-    "IT",
-    "MT",
-    "HR",
-    "GR",
-    "FR",
-    "ES",
-    "IL",
-    "EG"
-  ],
-  "places": [
-    {
-      "id": 1,
-      "title": "Šiauliai",
-      "country": "Lietuva",
-      "lat": 55.9349,
-      "lng": 23.3137,
-      "date": "2023-05-14",
-      "category": "Lietuva",
-      "description": "Saulės miestas: Talkšos ežero pakrantė, Geležinė lapė, Frenkelio vila ir Kryžių kalnas.",
-      "travelers": [
-        "Tomas",
-        "Sandra",
-        "Lukas",
-        "Linas"
-      ],
-      "videos": []
-    },
-    {
-      "id": 2,
-      "title": "Anykščiai",
-      "country": "Lietuva",
-      "lat": 55.5256,
-      "lng": 25.1026,
-      "date": "2023-06-18",
-      "category": "Lietuva",
-      "description": "Medžių lajų takas, Puntuko akmuo, Kalitos kalnas ir Šventosios upės slėnio atradimai.",
-      "travelers": [
-        "Tomas",
-        "Sandra",
-        "Lukas",
-        "Linas"
-      ],
-      "videos": []
-    },
-    {
-      "id": 3,
-      "title": "Ventspilis",
-      "country": "Latvija",
-      "lat": 57.3937,
-      "lng": 21.5647,
-      "date": "2026-02-22",
-      "category": "Automobiliu",
-      "description": "Šioje kelionėje mes išbandėme viską:\n⛷️ Aktyviai leidome laiką ir gaudėme adrenaliną Ventspilio slidinėjimo trasoje („Lemberga hūte“).\n🌊 Mėgavomės šiluma ir nusileidimo kalneliais Ventspilio vandens parke („Ūdens piedzīvojumu parks“).\n🔬 Pasinėrėme į mokslo atradimus ir interaktyvias pramogas naujajame VIZIUM mokslo centre.\n🚶‍♂️ Leidomės į ramų pasivaikščiojimą jaukia Ventspilio krantine.\n🏰 O grįždami atgal į Lietuvą, nepraleidome progos aplankyti istorinį ir be galo žavingą Kuldygos (Kuldīga) miestelį!",
-      "travelers": [
-        "Tomas",
-        "Sandra",
-        "Lukas",
-        "Linas"
-      ],
-      "videos": [
-        {
-          "title": "Ventspilis",
-          "url": "https://www.youtube.com/watch?v=2lw_jcTL2ww"
-        }
-      ]
-    },
-    {
-      "id": 4,
-      "title": "Talinas",
-      "country": "Estija",
-      "lat": 59.437,
-      "lng": 24.7536,
-      "date": "2023-08-12",
-      "category": "Automobiliu",
-      "description": "Šiame vloge pamatysite įspūdingą šeimos savaitgalio kelionę po Taliną ir jo apylinkes: nuo stebuklingo „PROTO“ atradimų centro ir nusileidimo į istorinį povandeninį laivą „Lennusadam“ iki kvapą gniaužiančio vaizdo iš 314 metrų televizijos bokšto ir pasivaikščiojimo po senamiestį. Taip pat išgirsite nuoširdų atsiliepimą apie Talino zoologijos sodą bei grožėsitės galinguoju Jegalos kriokliu.",
-      "travelers": [
-        "Tomas",
-        "Sandra",
-        "Lukas",
-        "Linas"
-      ],
-      "videos": [
-        {
-          "title": "Talinas ir Helsinkis | Ilgasis savaitgalis automobiliu",
-          "url": "https://www.youtube.com/watch?v=tisL0y7fcOw"
-        }
-      ]
-    },
-    {
-      "id": 5,
-      "title": "Helsinkis",
-      "country": "Suomija",
-      "lat": 60.1699,
-      "lng": 24.9384,
-      "date": "2023-08-14",
-      "category": "Kruizas",
-      "description": "Šiame vloge leiskitės į kelionę keltu per Baltijos jūrą į Suomijos sostinę Helsinkį, kur aplankėte didžiulį prekybos centrą ant vandens ir Vantos mieste esantį interaktyvų mokslo centrą „Heureka“. Taip pat galėjote pasigrožėti įspūdingais miesto architektūros perlajis – raudonų plytų Uspenskio soboru, sniego baltumo Helsinkio katedra ir unikalia uoloje iškalta Tempeliaukio bažnyčia.",
-      "travelers": [
-        "Tomas",
-        "Sandra",
-        "Lukas",
-        "Linas"
-      ],
-      "videos": [
-        {
-          "title": "Helsinkis",
-          "url": "https://www.youtube.com/watch?v=tisL0y7fcOw",
-          "timestamp": "07:55"
-        }
-      ]
-    },
-    {
-      "id": 6,
-      "title": "Berlynas",
-      "country": "Vokietija",
-      "lat": 52.52,
-      "lng": 13.405,
-      "date": "2023-09-22",
-      "category": "Automobiliu",
-      "description": "Kelionė automobiliu į Vokietijos sostinę: Brandenburgo vartai, Reichstagas ir Berlyno sienos galerija.",
-      "travelers": [
-        "Tomas",
-        "Sandra",
-        "Lukas",
-        "Linas"
-      ],
-      "videos": []
-    },
-    {
-      "id": 7,
-      "title": "Praha",
-      "country": "Čekija",
-      "lat": 50.0755,
-      "lng": 14.4378,
-      "date": "2023-09-25",
-      "category": "Automobiliu",
-      "description": "Šimto bokštų miestas: Karolio tiltas, Prahos pilis, Senamiesčio aikštė ir astronominis laikrodis.",
-      "travelers": [
-        "Tomas",
-        "Sandra",
-        "Lukas",
-        "Linas"
-      ],
-      "videos": []
-    },
-    {
-      "id": 8,
-      "title": "Liberecas (Ještedo bokštas)",
-      "country": "Čekija",
-      "lat": 50.7327,
-      "lng": 14.9847,
-      "date": "2023-09-27",
-      "category": "Automobiliu",
-      "description": "Futuristinis Ještedo televizijos bokštas ir viešbutis kalno viršūnėje su kvapą gniaužiančia panorama.",
-      "travelers": [
-        "Tomas",
-        "Sandra",
-        "Lukas",
-        "Linas"
-      ],
-      "videos": []
-    },
-    {
-      "id": 9,
-      "title": "Belgradas",
-      "country": "Serbija",
-      "lat": 44.8125,
-      "lng": 20.4612,
-      "date": "2023-11-10",
-      "category": "Lėktuvu",
-      "description": "Kalemegdano tvirtovė prie Dunojaus ir Savos santakos, bohemiškasis Skadarlija kvartalas ir Šv. Savos soboras.",
-      "travelers": [
-        "Tomas",
-        "Sandra",
-        "Lukas",
-        "Linas"
-      ],
-      "videos": []
-    },
-    {
-      "id": 10,
-      "title": "Sirakūzai",
-      "country": "Italija",
-      "lat": 37.0755,
-      "lng": 15.2866,
-      "date": "2024-04-15",
-      "category": "Kruizas",
-      "description": "Antikinė Sicilijos dvasia: Ortidžijos sala, katedros aikštė, Arethusa šaltinis ir Neapolio archeologinis parkas.",
-      "travelers": [
-        "Tomas",
-        "Sandra",
-        "Lukas",
-        "Linas"
-      ],
-      "videos": []
-    },
-    {
-      "id": 11,
-      "title": "Valeta",
-      "country": "Malta",
-      "lat": 35.8989,
-      "lng": 14.5146,
-      "date": "2024-04-16",
-      "category": "Kruizas",
-      "description": "Kruizinio laivo sustojimas saulėtoje Maltoje: Didysis uostas, Aukštutiniai Barrakka sodai ir senamiesčio gatvelės.",
-      "travelers": [
-        "Tomas",
-        "Sandra",
-        "Lukas",
-        "Linas"
-      ],
-      "videos": []
-    },
-    {
-      "id": 12,
-      "title": "Splitas",
-      "country": "Kroatija",
-      "lat": 43.5081,
-      "lng": 16.4402,
-      "date": "2024-06-04",
-      "category": "Kruizas",
-      "description": "Adrijos jūros perlas: imperatoriaus Diokletiano rūmai, Riva promenada ir Marjan kalvos apžvalgos aikštelė.",
-      "travelers": [
-        "Tomas",
-        "Sandra",
-        "Lukas",
-        "Linas"
-      ],
-      "videos": []
-    },
-    {
-      "id": 13,
-      "title": "Korfu",
-      "country": "Graikija",
-      "lat": 39.6243,
-      "lng": 19.9217,
-      "date": "2024-06-06",
-      "category": "Kruizas",
-      "description": "Žalioji Jonijos jūros sala: venecijietiškas Kerkyros senamiestis, Senoji tvirtovė ir žydros įlankos.",
-      "travelers": [
-        "Tomas",
-        "Sandra",
-        "Lukas",
-        "Linas"
-      ],
-      "videos": []
-    },
-    {
-      "id": 14,
-      "title": "Triestas",
-      "country": "Italija",
-      "lat": 45.6495,
-      "lng": 13.7768,
-      "date": "2024-06-08",
-      "category": "Kruizas",
-      "description": "Kruizo uostas Adrijos šiaurėje: Piazza Unità d'Italia aikštė, Didysis kanalas ir Miramare pilis.",
-      "travelers": [
-        "Tomas",
-        "Sandra",
-        "Lukas",
-        "Linas"
-      ],
-      "videos": []
-    },
-    {
-      "id": 15,
-      "title": "Milanas",
-      "country": "Italija",
-      "lat": 45.4642,
-      "lng": 9.19,
-      "date": "2024-09-14",
-      "category": "Lėktuvu",
-      "description": "Stiliaus ir architektūros sostinė: didingoji Milano katedra (Duomo), Vittorio Emanuele II galerija ir Navigli kanalai.",
-      "travelers": [
-        "Tomas",
-        "Sandra",
-        "Lukas",
-        "Linas"
-      ],
-      "videos": []
-    },
-    {
-      "id": 16,
-      "title": "Marselis",
-      "country": "Prancūzija",
-      "lat": 43.2965,
-      "lng": 5.3698,
-      "date": "2024-10-20",
-      "category": "Kruizas",
-      "description": "Prancūzijos Rivjeros vartai: Senasis uostas (Vieux-Port), Notre-Dame de la Garde bazilika ir Le Panier kvartalas.",
-      "travelers": [
-        "Tomas",
-        "Sandra",
-        "Lukas",
-        "Linas"
-      ],
-      "videos": []
-    },
-    {
-      "id": 17,
-      "title": "Valensija",
-      "country": "Ispanija",
-      "lat": 39.4699,
-      "lng": -0.3763,
-      "date": "2024-10-22",
-      "category": "Kruizas",
-      "description": "Menų ir mokslo miestelis, Turijos sodai, Valensijos senamiestis ir autentiškos paelijos gimtinė.",
-      "travelers": [
-        "Tomas",
-        "Sandra",
-        "Lukas",
-        "Linas"
-      ],
-      "videos": []
-    },
-    {
-      "id": 18,
-      "title": "Jeruzalė",
-      "country": "Izraelis",
-      "lat": 31.7683,
-      "lng": 35.2137,
-      "date": "2023-03-11",
-      "category": "Lėktuvu",
-      "description": "Tūkstantmetė istorija: Jeruzalės senamiestis, Raudų siena, Alyvų kalnas ir rytietiški turgūs.",
-      "travelers": [
-        "Tomas",
-        "Sandra",
-        "Lukas",
-        "Linas"
-      ],
-      "videos": []
-    },
-    {
-      "id": 19,
-      "title": "Šarm el Šeichas",
-      "country": "Egiptas",
-      "lat": 27.9158,
-      "lng": 34.3299,
-      "date": "2024-02-05",
-      "category": "Lėktuvu",
-      "description": "Raudonosios jūros koraliniai rifai, Naama Bay, Farsha kavinė ant uolos ir Sinajaus pusiasalio saulėlydžiai.",
-      "travelers": [
-        "Tomas",
-        "Sandra",
-        "Lukas",
-        "Linas"
-      ],
-      "videos": []
-    }
-  ]
+    "visitedCountries":  [
+                             "LT",
+                             "LV",
+                             "EE",
+                             "FI",
+                             "SE",
+                             "DK",
+                             "PL",
+                             "SK",
+                             "DE",
+                             "CZ",
+                             "RS",
+                             "IT",
+                             "VA",
+                             "MT",
+                             "HR",
+                             "GR",
+                             "FR",
+                             "ES",
+                             "IL",
+                             "EG"
+                         ],
+    "places":  [
+                   {
+                       "id":  1,
+                       "title":  "Talinas",
+                       "country":  "Estija",
+                       "lat":  59.437,
+                       "lng":  24.7536,
+                       "date":  "2026-10-26",
+                       "category":  "Automobiliu",
+                       "description":  "PROTO atradimų centras, Talino jūrų muziejus „Lennusadam“ ir nusileidimas į tikrą povandeninį laivą, 314 m Talino televizijos bokštas, Kadriorgo rūmų parkas, zoologijos sodas ir senamiestis.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+                                      {
+                                          "title":  "Talinas: PROTO atradimų centras ir jūrų muziejus Lennusadam",
+                                          "url":  "https://www.youtube.com/watch?v=tisL0y7fcOw"
+                                      },
+                                      {
+                                          "title":  "Talino TV bokštas, Kadriorgo parkas ir senamiestis",
+                                          "url":  "https://www.youtube.com/watch?v=tisL0y7fcOw",
+                                          "timestamp":  "13:00"
+                                      }
+                                  ]
+                   },
+                   {
+                       "id":  2,
+                       "title":  "Jegalos krioklys (Jägala)",
+                       "country":  "Estija",
+                       "lat":  59.45,
+                       "lng":  25.1786,
+                       "date":  "2026-10-26",
+                       "category":  "Automobiliu",
+                       "description":  "Estijos Niagara – pats plačiausias natūralus krioklys Estijoje, kurio galinga tamsaus vandens srovė per tūkstantmečius išgraužė gilų kanjoną.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+                                      {
+                                          "title":  "Jegalos krioklys (Estijos Niagara)",
+                                          "url":  "https://www.youtube.com/watch?v=tisL0y7fcOw",
+                                          "timestamp":  "17:22"
+                                      }
+                                  ]
+                   },
+                   {
+                       "id":  3,
+                       "title":  "Helsinkis",
+                       "country":  "Suomija",
+                       "lat":  60.1699,
+                       "lng":  24.9384,
+                       "date":  "2026-10-26",
+                       "category":  "Keltas",
+                       "description":  "Kelionė didžiuliu keltu per Baltijos jūrą į Helsinkį: raudonų plytų Uspenskio soboras, sniego baltumo Helsinkio katedra ir tiesiog kietame granite iškalta Tempeliaukio (Uolos) bažnyčia.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+                                      {
+                                          "title":  "Keltas į Suomiją ir didžioji parduotuvė ant vandens",
+                                          "url":  "https://www.youtube.com/watch?v=tisL0y7fcOw",
+                                          "timestamp":  "07:55"
+                                      },
+                                      {
+                                          "title":  "Helsinkio katedra ir Uspenskio soboras",
+                                          "url":  "https://www.youtube.com/watch?v=tisL0y7fcOw",
+                                          "timestamp":  "08:55"
+                                      }
+                                  ]
+                   },
+                   {
+                       "id":  4,
+                       "title":  "Vanta (Mokslo centras „Heureka“)",
+                       "country":  "Suomija",
+                       "lat":  60.2876,
+                       "lng":  25.044,
+                       "date":  "2026-10-26",
+                       "category":  "Keltas",
+                       "description":  "Interaktyvus Suomijos mokslo centras „Heureka“ Vantos mieste, kur viską privaloma liesti: Mėnulio gravitacijos simuliatorius ir judantys ledynmečio milžinai.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+                                      {
+                                          "title":  "„Heureka“ mokslo centras Suomijoje",
+                                          "url":  "https://www.youtube.com/watch?v=tisL0y7fcOw",
+                                          "timestamp":  "09:12"
+                                      }
+                                  ]
+                   },
+                   {
+                       "id":  5,
+                       "title":  "Tartu",
+                       "country":  "Estija",
+                       "lat":  58.378,
+                       "lng":  26.729,
+                       "date":  "2024-05-18",
+                       "category":  "Automobiliu",
+                       "description":  "Savaitgalio kelionė į Estijos mokslo sostinę Tartu: Tartu universiteto muziejus, interaktyvus AHHAA mokslo centras ir Estijos aviacijos muziejus.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+                                      {
+                                          "title":  "Savaitgalio kelionė į Tartu Estijoje",
+                                          "url":  "https://www.youtube.com/watch?v=4M7GnncBZ_w"
+                                      }
+                                  ]
+                   },
+                   {
+                       "id":  6,
+                       "title":  "Genuja",
+                       "country":  "Italija",
+                       "lat":  44.4056,
+                       "lng":  8.9463,
+                       "date":  "2026-04-03",
+                       "category":  "Kruizas",
+                       "description":  "Senasis Genujos uostas, povandeninis laivas „Nazario Sauro“, Galata jūrų muziejus, Vaikų miestas, didžiausias Italijoje akvariumas, stiklinė „Biosfera“, Šv. Lauryno katedra ir įlaipinimas į „Costa Pacifica“.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+                                      {
+                                          "title":  "Genuja: akvariumas, povandeninis laivas ir senamiestis",
+                                          "url":  "https://www.youtube.com/watch?v=2OGoZGgiStQ"
+                                      },
+                                      {
+                                          "title":  "Lipame į „Costa Pacifica“ laivą! Laivo apžvalga",
+                                          "url":  "https://www.youtube.com/watch?v=2OGoZGgiStQ",
+                                          "timestamp":  "09:01"
+                                      }
+                                  ]
+                   },
+                   {
+                       "id":  7,
+                       "title":  "Marselis",
+                       "country":  "Prancūzija",
+                       "lat":  43.2965,
+                       "lng":  5.3698,
+                       "date":  "2026-04-04",
+                       "category":  "Kruizas",
+                       "description":  "Seniausias Prancūzijos miestas: Senasis uostas (Vieux-Port), ant karinio forto pamatų stovinti „Notre-Dame de la Garde“ bazilika, Marselio katedra ir įspūdingi Longšano rūmai.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+                                      {
+                                          "title":  "Marselis: pavasariška katedra ir Longšano rūmai",
+                                          "url":  "https://www.youtube.com/watch?v=2OGoZGgiStQ",
+                                          "timestamp":  "12:58"
+                                      },
+                                      {
+                                          "title":  "Didžioji kelionė laivu: Marselio uostas ir senamiestis",
+                                          "url":  "https://www.youtube.com/watch?v=Dzx40lPQNEw"
+                                      }
+                                  ]
+                   },
+                   {
+                       "id":  8,
+                       "title":  "Valensija",
+                       "country":  "Ispanija",
+                       "lat":  39.4699,
+                       "lng":  -0.3763,
+                       "date":  "2026-04-05",
+                       "category":  "Kruizas",
+                       "description":  "Serranų vartai, prancūziška vintažinė saldumynų krautuvėlė „La Cure Gourmande“, Valensijos rotušė ir katedra, kurioje saugomas Šventasis Gralis.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+                                      {
+                                          "title":  "Valensija: Katedra, Šventasis Gralis ir Serranų vartai",
+                                          "url":  "https://www.youtube.com/watch?v=2OGoZGgiStQ",
+                                          "timestamp":  "15:15"
+                                      }
+                                  ]
+                   },
+                   {
+                       "id":  9,
+                       "title":  "Roma ir Vatikanas",
+                       "country":  "Italija",
+                       "lat":  41.8902,
+                       "lng":  12.4922,
+                       "date":  "2026-04-06",
+                       "category":  "Kruizas",
+                       "description":  "Didysis penktadienis Romoje: Švč. Mergelės Marijos Didžioji bazilika, Koliziejus, Trevi fontanas, Šv. Ignaco Lojolos bažnyčia su optine kupolo iliuzija ir Vatikanas su Berninio kolonada.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+                                      {
+                                          "title":  "Romos šurmulys: Koliziejaus inžinerija ir fontanai",
+                                          "url":  "https://www.youtube.com/watch?v=2OGoZGgiStQ",
+                                          "timestamp":  "16:58"
+                                      },
+                                      {
+                                          "title":  "Vatikanas ir Šv. Petro aikštė",
+                                          "url":  "https://www.youtube.com/watch?v=2OGoZGgiStQ",
+                                          "timestamp":  "19:44"
+                                      }
+                                  ]
+                   },
+                   {
+                       "id":  10,
+                       "title":  "Komo (Komo ežeras)",
+                       "country":  "Italija",
+                       "lat":  45.8081,
+                       "lng":  9.0852,
+                       "date":  "2026-04-08",
+                       "category":  "Kruizas",
+                       "description":  "Ramybės oazė prie Komo ežero: kėlimasis istoriniu funikulieriumi į Brunate ir Komo katedra, kurios erdvę užpildo 6500 vargonų vamzdžių.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+                                      {
+                                          "title":  "Komo ežeras: istorinis funikulierius ir katedra",
+                                          "url":  "https://www.youtube.com/watch?v=2OGoZGgiStQ",
+                                          "timestamp":  "20:31"
+                                      }
+                                  ]
+                   },
+                   {
+                       "id":  11,
+                       "title":  "Neapolis ir Pompėja",
+                       "country":  "Italija",
+                       "lat":  40.8518,
+                       "lng":  14.2681,
+                       "date":  "2025-11-12",
+                       "category":  "Kruizas",
+                       "description":  "Sustojęs laikas Pompėjoje po Vezuvijaus pelenais bei chaotiškas, bet nuostabus Neapolis: Castel Nuovo pilis, Galleria Umberto I ir Piazza del Plebiscito.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+                                      {
+                                          "title":  "Pompėja ir Neapolis kruizo su Costa metu",
+                                          "url":  "https://www.youtube.com/watch?v=Dzx40lPQNEw"
+                                      }
+                                  ]
+                   },
+                   {
+                       "id":  12,
+                       "title":  "Piza",
+                       "country":  "Italija",
+                       "lat":  43.7228,
+                       "lng":  10.4017,
+                       "date":  "2025-11-14",
+                       "category":  "Kruizas",
+                       "description":  "Stebuklų aikštė (Piazza dei Miracoli), garsusis pasviręs Pizos bokštas ir didžiausia Italijos krikštykla.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+                                      {
+                                          "title":  "Piza: Stebuklų aikštė ir pasviręs bokštas",
+                                          "url":  "https://www.youtube.com/watch?v=Dzx40lPQNEw"
+                                      }
+                                  ]
+                   },
+                   {
+                       "id":  13,
+                       "title":  "Milanas",
+                       "country":  "Italija",
+                       "lat":  45.4642,
+                       "lng":  9.19,
+                       "date":  "2025-11-15",
+                       "category":  "Kruizas",
+                       "description":  "Stiliaus ir architektūros sostinė: didingoji Milano katedra (Duomo), Galleria Vittorio Emanuele II ir Leonardo da Vinčio mokslo bei technikos muziejus su povandeniniu laivu.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+                                      {
+                                          "title":  "Milanas: Duomo katedra ir Leonardo da Vinčio muziejus",
+                                          "url":  "https://www.youtube.com/watch?v=Dzx40lPQNEw"
+                                      }
+                                  ]
+                   },
+                   {
+                       "id":  14,
+                       "title":  "Tel Avivas ir Jafa",
+                       "country":  "Izraelis",
+                       "lat":  32.0853,
+                       "lng":  34.7818,
+                       "date":  "2026-06-14",
+                       "category":  "Lėktuvu",
+                       "description":  "Atostogos karo fone: kontrastingi Tel Avivo kvartalai, Jafos senamiestis, požeminės slėptuvės ir skubus išvykimas autobusu per Eilatą link Egipto sienos.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+                                      {
+                                          "title":  "Tel Avivas: Atostogos karo fone ir pabėgimas namo",
+                                          "url":  "https://www.youtube.com/watch?v=kDnEL0Dql9E"
+                                      }
+                                  ]
+                   },
+                   {
+                       "id":  15,
+                       "title":  "Šarm el Šeichas",
+                       "country":  "Egiptas",
+                       "lat":  27.9158,
+                       "lng":  34.3299,
+                       "date":  "2026-06-16",
+                       "category":  "Lėktuvu",
+                       "description":  "Naktinė kelionė per Sinajaus pusiasalio kalnus iš Eilato į Šarm el Šeichą: Koptų bažnyčia, Senasis turgus, Raudonosios jūros pakrantė ir skrydis namo.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+                                      {
+                                          "title":  "Kelionė per Egiptą ir Šarm el Šeicho kontrastai",
+                                          "url":  "https://www.youtube.com/watch?v=kDnEL0Dql9E"
+                                      }
+                                  ]
+                   },
+                   {
+                       "id":  16,
+                       "title":  "Gdanskas ir Gdynė",
+                       "country":  "Lenkija",
+                       "lat":  54.352,
+                       "lng":  18.6466,
+                       "date":  "2025-08-10",
+                       "category":  "Automobiliu",
+                       "description":  "Antrojo pasaulinio karo muziejus, Europos Solidarumo centras, Hevelianum, Gintaro muziejus, piratų kruizas ir zoologijos sodas Gdanske bei Experyment mokslo centras, akvariumas ir laivai „Dar Pomorza“ bei „Błyskawica“ Gdynėje.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+                                      {
+                                          "title":  "Šeimos nuotykiai Gdanske ir Gdynėje: geriausi muziejai",
+                                          "url":  "https://www.youtube.com/watch?v=J05wRJiTrCU"
+                                      }
+                                  ]
+                   },
+                   {
+                       "id":  17,
+                       "title":  "Pieninų nacionalinis parkas (Červeny Klaštor)",
+                       "country":  "Slovakija",
+                       "lat":  49.3906,
+                       "lng":  20.415,
+                       "date":  "2025-07-15",
+                       "category":  "Automobiliu",
+                       "description":  "14 km plaukimas mediniais plaustais Dunajeco upe su vietiniais guraliais, Trijų Karūnų ir Sokolicos kalnų panoramos bei tradicinė vakaronė „Chata Pieniny“.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+                                      {
+                                          "title":  "Slovakija, Pieninų nacionalinis parkas | Plaustais per Dunajeco upę",
+                                          "url":  "https://www.youtube.com/watch?v=EDL2-X0IWQY"
+                                      }
+                                  ]
+                   },
+                   {
+                       "id":  18,
+                       "title":  "Belianskos urvas (Tatranská Kotlina)",
+                       "country":  "Slovakija",
+                       "lat":  49.2289,
+                       "lng":  20.3119,
+                       "date":  "2025-07-16",
+                       "category":  "Automobiliu",
+                       "description":  "Vienas lankomiausių urvų Slovakijoje su įspūdingais kalcito dariniais ir požeminiais kriokliais: 1370 m apžvalginis maršrutas ir 874 laipteliai.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+                                      {
+                                          "title":  "Belianskos urvas (Belianska jaskyňa), Slovakija",
+                                          "url":  "https://www.youtube.com/watch?v=e50utBjoJKI"
+                                      }
+                                  ]
+                   },
+                   {
+                       "id":  19,
+                       "title":  "Aukštieji Tatrai (Skalnaté Pleso, Hrebienok)",
+                       "country":  "Slovakija",
+                       "lat":  49.1892,
+                       "lng":  20.2342,
+                       "date":  "2025-07-17",
+                       "category":  "Automobiliu",
+                       "description":  "Žygis pėsčiomis Aukštuosiuose Tatruose nuo Skalnaté Pleso (1751 m) iki kalnų trobelės „Zamkovského chata“, Mala Studena slėnio kriokliai ir nusileidimas funikulieriumi iš Hrebienok.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+                                      {
+                                          "title":  "Slovakija, Aukštieji Tatrai: Skalnaté Pleso, Zamkovského, Hrebienok",
+                                          "url":  "https://www.youtube.com/watch?v=9oYXBmTmT2M"
+                                      }
+                                  ]
+                   },
+                   {
+                       "id":  20,
+                       "title":  "Bratislava",
+                       "country":  "Slovakija",
+                       "lat":  48.1486,
+                       "lng":  17.1077,
+                       "date":  "2024-07-20",
+                       "category":  "Automobiliu",
+                       "description":  "Pažintis su Slovakijos sostine Bratislava: pasivaikščiojimas po jaukų senamiestį, Dunojaus pakrantę ir Bratislavos pilies apylinkes.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+                                      {
+                                          "title":  "Bratislava, Slovakija",
+                                          "url":  "https://www.youtube.com/watch?v=lt1ehqjNtys"
+                                      }
+                                  ]
+                   },
+                   {
+                       "id":  21,
+                       "title":  "Dortmundas",
+                       "country":  "Vokietija",
+                       "lat":  51.5136,
+                       "lng":  7.4653,
+                       "date":  "2025-05-10",
+                       "category":  "Lėktuvu",
+                       "description":  "Savaitgalio išvyka į Dortmundą: Alaus gamykla-muziejus, Vokietijos futbolo muziejus, Westfalenpark ir Florianturm TV bokštas, PACE automobilių muziejus bei „Phoenix des Lumières“ šviesų instaliacija.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+                                      {
+                                          "title":  "Dortmundas, Vokietija",
+                                          "url":  "https://www.youtube.com/watch?v=eM8Rk7kEekU"
+                                      }
+                                  ]
+                   },
+                   {
+                       "id":  22,
+                       "title":  "Karlshamnas",
+                       "country":  "Švedija",
+                       "lat":  56.1703,
+                       "lng":  14.8631,
+                       "date":  "2025-04-12",
+                       "category":  "Keltas",
+                       "description":  "Kelionė DFDS keltu „Luna Seaways“ į Karlshamną Švedijoje – 2 naktų mini kruizas Baltijos jūra.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+                                      {
+                                          "title":  "Kelionė keltu į Karlshamną Švedijoje",
+                                          "url":  "https://www.youtube.com/watch?v=TWs07oxyASM"
+                                      }
+                                  ]
+                   },
+                   {
+                       "id":  23,
+                       "title":  "Stokholmas",
+                       "country":  "Švedija",
+                       "lat":  59.3293,
+                       "lng":  18.0686,
+                       "date":  "2024-08-18",
+                       "category":  "Keltas",
+                       "description":  "Nuotykiai Švedijos sostinėje: unikalus „Vasa“ karališkojo laivo muziejus, „Junibacken“ Astridos Lindgren pasakų herojų namai ir Stokholmo technikos muziejus.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+                                      {
+                                          "title":  "Švedija, Stokholmas 2024",
+                                          "url":  "https://www.youtube.com/watch?v=3G-jDRVWUew"
+                                      }
+                                  ]
+                   },
+                   {
+                       "id":  24,
+                       "title":  "Sigulda ir Cėsys",
+                       "country":  "Latvija",
+                       "lat":  57.1537,
+                       "lng":  24.8598,
+                       "date":  "2025-03-22",
+                       "category":  "Automobiliu",
+                       "description":  "Turininga išvyka į kaimyninę Latviją: Cėsių kosmoso pažinimo centras, Sigulda ir Gaujos nacionalinio parko apylinkės.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+                                      {
+                                          "title":  "Latvija: Sigulda ir Cėsys",
+                                          "url":  "https://www.youtube.com/watch?v=L7lAUAuukuU"
+                                      }
+                                  ]
+                   },
+                   {
+                       "id":  25,
+                       "title":  "Ventspilis ir Kuldyga",
+                       "country":  "Latvija",
+                       "lat":  57.3937,
+                       "lng":  21.5647,
+                       "date":  "2026-01-25",
+                       "category":  "Automobiliu",
+                       "description":  "Aktyvus savaitgalis Ventspilyje: naujasis VIZIUM mokslo centras, Ventspilio vandens parkas, „Lemberga hūte“ slidinėjimo trasa, uosto krantinė ir istorinė Kuldyga pakeliui namo.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+                                      {
+                                          "title":  "Pramogų pripildytas Ventspilis: VIZIUM, vandens parkas ir slidinėjimas",
+                                          "url":  "https://www.youtube.com/watch?v=2lw_jcTL2ww"
+                                      },
+                                      {
+                                          "title":  "Pakeliui namo: lankytinos vietos Kuldygoje",
+                                          "url":  "https://www.youtube.com/watch?v=2lw_jcTL2ww",
+                                          "timestamp":  "09:00"
+                                      }
+                                  ]
+                   },
+                   {
+                       "id":  26,
+                       "title":  "Bilundas (LEGO House ir Legolendas)",
+                       "country":  "Danija",
+                       "lat":  55.7358,
+                       "lng":  9.1153,
+                       "date":  "2024-05-12",
+                       "category":  "Lėktuvu",
+                       "description":  "Mažų ir didelių svajonių išsipildymas Danijoje, Bilunde: interaktyvus „LEGO House“ kūrybos namas ir legendinis „Legoland Billund“ pramogų parkas.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+                                      {
+                                          "title":  "LEGO namas (LEGO House) 2024",
+                                          "url":  "https://www.youtube.com/watch?v=0W3F341_xZM"
+                                      },
+                                      {
+                                          "title":  "Legolendas 2024",
+                                          "url":  "https://www.youtube.com/watch?v=9yvzSzQUrRU"
+                                      }
+                                  ]
+                   },
+                   {
+                       "id":  27,
+                       "title":  "Krokuva, Zakopanė ir Energylandia",
+                       "country":  "Lenkija",
+                       "lat":  50.0647,
+                       "lng":  19.945,
+                       "date":  "2024-06-20",
+                       "category":  "Automobiliu",
+                       "description":  "Įspūdinga kelionė per Lenkiją: Tatrų kalnai Zakopanėje, istorinė Krokuva, didžiausias atrakcionų parkas „Energylandia“ ir modernioji Varšuva.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+                                      {
+                                          "title":  "Lenkija: Zakopanė, Krokuva, Energylandia, Varšuva",
+                                          "url":  "https://www.youtube.com/watch?v=zW_2heKUlmM"
+                                      },
+                                      {
+                                          "title":  "Hario Poterio paroda netoli Krokuvos",
+                                          "url":  "https://www.youtube.com/watch?v=uaiAngaRj9o"
+                                      }
+                                  ]
+                   },
+                   {
+                       "id":  28,
+                       "title":  "Suntago vandens parkas (Vrenča)",
+                       "country":  "Lenkija",
+                       "lat":  51.9997,
+                       "lng":  20.4392,
+                       "date":  "2026-07-12",
+                       "category":  "Automobiliu",
+                       "description":  "Didžiausias Europoje dengtas vandens pramogų parkas „Suntago“ (Park of Poland) netoli Varšuvos su tikromis palmėmis iš Floridos bei Kosta Rikos ir įspūdingomis čiuožyklomis.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+                                      {
+                                          "title":  "Ar verta važiuoti į „Suntago“? Pažintinis filmukas",
+                                          "url":  "https://www.youtube.com/watch?v=dz51vJ8b3xo"
+                                      }
+                                  ]
+                   },
+                   {
+                       "id":  29,
+                       "title":  "Hossoland pramogų parkas (Brojcai)",
+                       "country":  "Lenkija",
+                       "lat":  53.9722,
+                       "lng":  15.3885,
+                       "date":  "2025-08-14",
+                       "category":  "Automobiliu",
+                       "description":  "Didžiausias teminis parkas šiaurės Lenkijoje „Hossoland“, įkvėptas Baltijos legendų ir šiaurės kultūrų: 4 amerikietiški kalneliai ir teminės zonos visai šeimai.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+                                      {
+                                          "title":  "Hossoland: naujas Lenkijos atrakcionų parkas visai šeimai!",
+                                          "url":  "https://www.youtube.com/watch?v=-mPqXmFq8bI"
+                                      }
+                                  ]
+                   },
+                   {
+                       "id":  30,
+                       "title":  "Lodzė (Fala Aquapark, Mandoria, Orientarium ZOO)",
+                       "country":  "Lenkija",
+                       "lat":  51.7592,
+                       "lng":  19.456,
+                       "date":  "2025-03-08",
+                       "category":  "Automobiliu",
+                       "description":  "Smagus šeimos savaitgalis Lodzėje: vandens atrakcionų parkas „Fala Aquapark“, didžiausias Lenkijoje uždaras pramogų parkas „Mandoria“ ir modernusis „Orientarium ZOO Łódź“.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+                                      {
+                                          "title":  "Savaitgalis Lodzėje: Fala Aquapark, Orientarium ZOO, Mandoria",
+                                          "url":  "https://www.youtube.com/watch?v=YKxCavYMbAc"
+                                      }
+                                  ]
+                   },
+                   {
+                       "id":  31,
+                       "title":  "Raubonių pramogų parkas",
+                       "country":  "Lietuva",
+                       "lat":  56.1228,
+                       "lng":  24.4714,
+                       "date":  "2026-08-02",
+                       "category":  "Lietuva",
+                       "description":  "Didžiausias Baltijos šalyse Raubonių pramogų parkas: interaktyvus Dinozaurų parkas, „Tarzano takas“ virš zoologijos sodo gyvūnų aptvarų, karuselės ir batutai.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+                                      {
+                                          "title":  "Raubonių pramogų parkas: Dinozaurai, Tarzano takas ir atrakcionai",
+                                          "url":  "https://www.youtube.com/watch?v=zEtaNkGktic"
+                                      },
+                                      {
+                                          "title":  "Tarzano trasa virš zoologijos sodo",
+                                          "url":  "https://www.youtube.com/watch?v=zEtaNkGktic",
+                                          "timestamp":  "05:11"
+                                      }
+                                  ]
+                   },
+                   {
+                       "id":  32,
+                       "title":  "Druskininkai (Druskininkų vandens parkas)",
+                       "country":  "Lietuva",
+                       "lat":  54.0189,
+                       "lng":  23.9725,
+                       "date":  "2025-12-06",
+                       "category":  "Lietuva",
+                       "description":  "Šeimos savaitgalis Druskininkų vandens parke: tropinis +30 °C klimatas su palmėmis, jūros bangų baseinas, sraunioji upė, vaikų erdvė ir greičio nusileidimo kalneliai.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+                                      {
+                                          "title":  "Šeimos savaitgalis Druskininkų akvaparke",
+                                          "url":  "https://www.youtube.com/watch?v=YCYJCxpcFo4"
+                                      }
+                                  ]
+                   },
+                   {
+                       "id":  33,
+                       "title":  "Akmenės ir Karpėnų karjerai",
+                       "country":  "Lietuva",
+                       "lat":  56.3075,
+                       "lng":  22.8669,
+                       "date":  "2026-05-16",
+                       "category":  "Lietuva",
+                       "description":  "Lietuviškasis Marsas ir Didysis kanjonas: Karpėnų klinčių karjeras su 720 tonų žingsniuojančiais ekskavatoriais, Ventos regioninio parko dinozaurų ekspozicija, molio karjeras ir Jurakalnio bokštas.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+                                      {
+                                          "title":  "Karpėnų klinčių karjeras | Žygis kartu su Trenkturas",
+                                          "url":  "https://www.youtube.com/watch?v=cASIxvMcKic"
+                                      },
+                                      {
+                                          "title":  "Ekskursija po Akmenės karjerus: 4 val. nuotykis",
+                                          "url":  "https://www.youtube.com/watch?v=yXP0pl5rd5s"
+                                      }
+                                  ]
+                   },
+                   {
+                       "id":  34,
+                       "title":  "Nida ir Kuršių nerija",
+                       "country":  "Lietuva",
+                       "lat":  55.3033,
+                       "lng":  21.0056,
+                       "date":  "2025-07-28",
+                       "category":  "Lietuva",
+                       "description":  "Kelionė po pasakiškąją Kuršių neriją: Mirusios kopos, aukščiausioji Vecekrugo kopa, Preilos kopos, Avikalnis, kormoranų kolonija ir šventinis savaitgalis Nidoje.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+                                      {
+                                          "title":  "Epas per Kuršių Neriją: Vecekrugo kopa, Preila ir daugiau!",
+                                          "url":  "https://www.youtube.com/watch?v=y7V2OgWE2sI"
+                                      },
+                                      {
+                                          "title":  "Nida 2024",
+                                          "url":  "https://www.youtube.com/watch?v=twVxXWnhIwc"
+                                      }
+                                  ]
+                   },
+                   {
+                       "id":  35,
+                       "title":  "Kaunas (Mokslo sala, VI fortas, Zoologijos sodas, Baseinas)",
+                       "country":  "Lietuva",
+                       "lat":  54.8962,
+                       "lng":  23.9044,
+                       "date":  "2025-04-19",
+                       "category":  "Lietuva",
+                       "description":  "Kauno atradimai visai šeimai: naujasis mokslo ir inovacijų centras „Mokslo sala“, Kauno tvirtovės VI forto karo technikos ekspozicija, Lietuvos zoologijos sodas ir „Žalgirio“ arenos baseinas.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+                                      {
+                                          "title":  "Mokslo sala, Kaunas",
+                                          "url":  "https://www.youtube.com/watch?v=jBRU8xayDBA"
+                                      },
+                                      {
+                                          "title":  "Kauno tvirtovės VI fortas – Karo technikos ekspozicija",
+                                          "url":  "https://www.youtube.com/watch?v=wMrPq4As1VY"
+                                      },
+                                      {
+                                          "title":  "Lietuvos zoologijos sodas",
+                                          "url":  "https://www.youtube.com/watch?v=bcN1MYmJ6uU"
+                                      },
+                                      {
+                                          "title":  "„Žalgirio“ arenos baseinas. Luko nardymas",
+                                          "url":  "https://www.youtube.com/watch?v=BwC7Tv47O7E"
+                                      }
+                                  ]
+                   },
+                   {
+                       "id":  36,
+                       "title":  "Vilnius (Energetikos ir technikos muziejus, LITEXPO)",
+                       "country":  "Lietuva",
+                       "lat":  54.6939,
+                       "lng":  25.2869,
+                       "date":  "2025-03-01",
+                       "category":  "Lietuva",
+                       "description":  "Energetikos ir technikos muziejaus interaktyvi „Virsmo salė“ su Tesla šou Faradėjaus narve bei 25-oji tarptautinė Vilniaus knygų mugė LITEXPO parodų centre.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+                                      {
+                                          "title":  "Energetikos ir technikos muziejus, Virsmo salė, Tesla šou",
+                                          "url":  "https://www.youtube.com/watch?v=LQ0fFWJjduQ"
+                                      },
+                                      {
+                                          "title":  "Vilniaus knygų mugė 2025",
+                                          "url":  "https://www.youtube.com/watch?v=qK9njNc_l40"
+                                      }
+                                  ]
+                   },
+                   {
+                       "id":  37,
+                       "title":  "Mūšos tyrelio pažintinis takas",
+                       "country":  "Lietuva",
+                       "lat":  56.2185,
+                       "lng":  23.257,
+                       "date":  "2025-05-04",
+                       "category":  "Lietuva",
+                       "description":  "Ilgiausias medinis lentų takas per pelkę Lietuvoje: Mūšos tyrelio telmologinis draustinis, vienintelis natūralus Joniškio rajone Miknaičių ežeras ir partizanų stovyklavietė.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+                                      {
+                                          "title":  "Mūšos tyrelio takas: pelkė Lietuvoje, kurioje pajusite gamtos galybę",
+                                          "url":  "https://www.youtube.com/watch?v=LVK0-C2JvNQ"
+                                      }
+                                  ]
+                   },
+                   {
+                       "id":  38,
+                       "title":  "Tytuvėnai ir Šiaulės kalnas (Akmenų rūžos takas)",
+                       "country":  "Lietuva",
+                       "lat":  55.6033,
+                       "lng":  23.1994,
+                       "date":  "2025-05-11",
+                       "category":  "Lietuva",
+                       "description":  "Tytuvėnų regioninis parkas: mistiškas Akmenų rūžos pažintinis takas, 21 m Šiaulės kalno apžvalgos bokštas ir 15 m Tytuvėnų apžvalgos bokštas.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+                                      {
+                                          "title":  "Akmenų rūža, Šiaulės kalnas ir Tytuvėnų apžvalgos bokštai",
+                                          "url":  "https://www.youtube.com/watch?v=3bA2R27bN7M"
+                                      }
+                                  ]
+                   },
+                   {
+                       "id":  39,
+                       "title":  "Kurtuvėnų regioninis parkas",
+                       "country":  "Lietuva",
+                       "lat":  55.8267,
+                       "lng":  23.0475,
+                       "date":  "2025-02-09",
+                       "category":  "Lietuva",
+                       "description":  "Kurtuvėnų regioninio parko pažintiniai takai ir paveldas: Targių ozų ledyniniai kalvagūbriai, Juodlės, Vainagių ir Pageluvio pažintiniai takai, Svilės šaltiniai bei XVIII a. Kurtuvėnų dvaro svirnas.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+                                      {
+                                          "title":  "Targių ozų takas, Kurtuvėnų regioninis parkas",
+                                          "url":  "https://www.youtube.com/watch?v=roFVMdWpDh0"
+                                      },
+                                      {
+                                          "title":  "Juodlės pažintinis takas (žiema 2025)",
+                                          "url":  "https://www.youtube.com/watch?v=bBd6SzJe4Bs"
+                                      },
+                                      {
+                                          "title":  "Juodlės pažintinis takas",
+                                          "url":  "https://www.youtube.com/watch?v=4obVDV2dEGk"
+                                      },
+                                      {
+                                          "title":  "Svilės kraštovaizdžio takas",
+                                          "url":  "https://www.youtube.com/watch?v=YUweSjKZnVo"
+                                      },
+                                      {
+                                          "title":  "Vainagių pažintinis takas",
+                                          "url":  "https://www.youtube.com/watch?v=E30hn1ylTJs"
+                                      },
+                                      {
+                                          "title":  "Pageluvio pažintinis takas",
+                                          "url":  "https://www.youtube.com/watch?v=RaQRQ531Xj0"
+                                      },
+                                      {
+                                          "title":  "Šventė Kurtuvėnų dvaro svirne su Dubysos mokyklos bendruomene",
+                                          "url":  "https://www.youtube.com/watch?v=IYXbrfBFH4Q"
+                                      }
+                                  ]
+                   },
+                   {
+                       "id":  40,
+                       "title":  "Bubiai (Ventos–Dubysos perkasas)",
+                       "country":  "Lietuva",
+                       "lat":  55.8542,
+                       "lng":  23.1361,
+                       "date":  "2025-04-05",
+                       "category":  "Lietuva",
+                       "description":  "2 km Bubių istorinis pažintinis takas: XIX a. Ventos–Dubysos perkaso ir žiemos uosto liekanos, Zubovo ąžuolų alėja, Perkaso pušys, seniausias tiltas ir 5 Bubių tuopos.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+                                      {
+                                          "title":  "Ventos–Dubysos perkasas, Bubių istorinis takas",
+                                          "url":  "https://www.youtube.com/watch?v=jVGKmhN6tJA"
+                                      },
+                                      {
+                                          "title":  "Pirmas sniegas, 2024 Bubiai",
+                                          "url":  "https://www.youtube.com/watch?v=_wLTOVbFpgc"
+                                      }
+                                  ]
+                   },
+                   {
+                       "id":  41,
+                       "title":  "Šiauliai",
+                       "country":  "Lietuva",
+                       "lat":  55.9349,
+                       "lng":  23.3137,
+                       "date":  "2026-05-29",
+                       "category":  "Lietuva",
+                       "description":  "Saulės miestas Šiauliai: berniukų ir jaunuolių choro „Dagilėlis“ pasirodymai Šiaulių katedroje, darželio bei mokyklos šventės, edukacijos ir šeimos laisvalaikis.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+                                      {
+                                          "title":  "Dagilėlio pirmokai festivalyje „Džiaugsmo šventė jau atėjo“",
+                                          "url":  "https://www.youtube.com/watch?v=chMemEvNcf0"
+                                      },
+                                      {
+                                          "title":  "Dagilėlio dainavimo mokykla | Pasirodymas #1",
+                                          "url":  "https://www.youtube.com/watch?v=xYvpsL6qI3g"
+                                      },
+                                      {
+                                          "title":  "Dagilėlio dainavimo mokykla | Pasirodymas #2",
+                                          "url":  "https://www.youtube.com/watch?v=4e_Wh-OXCqY"
+                                      },
+                                      {
+                                          "title":  "Dagilėlio dainavimo mokykla | Pasirodymas #3",
+                                          "url":  "https://www.youtube.com/watch?v=hkR_BmNPbPU"
+                                      },
+                                      {
+                                          "title":  "Dagilėlio dainavimo mokykla | Pasirodymas #4",
+                                          "url":  "https://www.youtube.com/watch?v=ZRexVX7u0VA"
+                                      },
+                                      {
+                                          "title":  "Drugelių grupės išleistuvės",
+                                          "url":  "https://www.youtube.com/watch?v=_HbCBTMtq7A"
+                                      },
+                                      {
+                                          "title":  "Boružiukų edukacija „Stebuklingas augalų kilimas“",
+                                          "url":  "https://www.youtube.com/watch?v=a_nGROIl1xY"
+                                      },
+                                      {
+                                          "title":  "Boružiukų Kalėdų šventė",
+                                          "url":  "https://www.youtube.com/watch?v=tnIm-0paDxc"
+                                      },
+                                      {
+                                          "title":  "Pirmokų Kalėdų laukimas",
+                                          "url":  "https://www.youtube.com/watch?v=U91dsOl22Go"
+                                      },
+                                      {
+                                          "title":  "Boružiukai, eglutės puošimas 2024",
+                                          "url":  "https://www.youtube.com/watch?v=q87BXAFlQE8"
+                                      },
+                                      {
+                                          "title":  "Penktadienio vakaras Šiauliuose",
+                                          "url":  "https://www.youtube.com/watch?v=gYnWVjdjAMc"
+                                      },
+                                      {
+                                          "title":  "Giedrės ir Urtės fotosesija",
+                                          "url":  "https://www.youtube.com/watch?v=zqB9vlgdRuY"
+                                      }
+                                  ]
+                   },
+                   {
+                       "id":  42,
+                       "title":  "Plungė",
+                       "country":  "Lietuva",
+                       "lat":  55.9114,
+                       "lng":  21.8442,
+                       "date":  "2024-09-22",
+                       "category":  "Lietuva",
+                       "description":  "Plungė iš paukščio skrydžio 2024 – Žemaitijos miesto panorama ir Diena be automobilio užfiksuota dronu.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+                                      {
+                                          "title":  "Plungė iš paukščio skrydžio 2024, diena be automobilio",
+                                          "url":  "https://www.youtube.com/watch?v=-R6g4mcsXII"
+                                      }
+                                  ]
+                   },
+                   {
+                       "id":  43,
+                       "title":  "Perlinių danielių parkas",
+                       "country":  "Lietuva",
+                       "lat":  55.5256,
+                       "lng":  25.1026,
+                       "date":  "2025-06-15",
+                       "category":  "Lietuva",
+                       "description":  "Trumpa išvyka į gamtą pasigrožėti perlinių danielių parko gyventojais ir susipažinti su šiais grakščiais gyvūnais iš arti.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+                                      {
+                                          "title":  "Perlinių danielių parkas",
+                                          "url":  "https://www.youtube.com/watch?v=Hx_FbGS14Wk"
+                                      }
+                                  ]
+                   },
+                   {
+                       "id":  44,
+                       "title":  "Berlynas",
+                       "country":  "Vokietija",
+                       "lat":  52.52,
+                       "lng":  13.405,
+                       "date":  "2023-09-22",
+                       "category":  "Automobiliu",
+                       "description":  "Kelionė automobiliu į Vokietijos sostinę: Brandenburgo vartai, Reichstagas ir Berlyno sienos galerija.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+
+                                  ]
+                   },
+                   {
+                       "id":  45,
+                       "title":  "Praha",
+                       "country":  "Čekija",
+                       "lat":  50.0755,
+                       "lng":  14.4378,
+                       "date":  "2023-09-25",
+                       "category":  "Automobiliu",
+                       "description":  "Šimto bokštų miestas: Karolio tiltas, Prahos pilis, Senamiesčio aikštė ir astronominis laikrodis.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+
+                                  ]
+                   },
+                   {
+                       "id":  46,
+                       "title":  "Liberecas (Ještedo bokštas)",
+                       "country":  "Čekija",
+                       "lat":  50.7327,
+                       "lng":  14.9847,
+                       "date":  "2023-09-27",
+                       "category":  "Automobiliu",
+                       "description":  "Futuristinis Ještedo televizijos bokštas ir viešbutis kalno viršūnėje su kvapą gniaužiančia panorama.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+
+                                  ]
+                   },
+                   {
+                       "id":  47,
+                       "title":  "Belgradas",
+                       "country":  "Serbija",
+                       "lat":  44.8125,
+                       "lng":  20.4612,
+                       "date":  "2023-11-10",
+                       "category":  "Lėktuvu",
+                       "description":  "Kalemegdano tvirtovė prie Dunojaus ir Savos santakos, bohemiškasis Skadarlija kvartalas ir Šv. Savos soboras.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+
+                                  ]
+                   },
+                   {
+                       "id":  48,
+                       "title":  "Sirakūzai",
+                       "country":  "Italija",
+                       "lat":  37.0755,
+                       "lng":  15.2866,
+                       "date":  "2024-04-15",
+                       "category":  "Kruizas",
+                       "description":  "Antikinė Sicilijos dvasia: Ortidžijos sala, katedros aikštė, Arethusa šaltinis ir Neapolio archeologinis parkas.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+
+                                  ]
+                   },
+                   {
+                       "id":  49,
+                       "title":  "Valeta",
+                       "country":  "Malta",
+                       "lat":  35.8989,
+                       "lng":  14.5146,
+                       "date":  "2024-04-16",
+                       "category":  "Kruizas",
+                       "description":  "Kruizinio laivo sustojimas saulėtoje Maltoje: Didysis uostas, Aukštutiniai Barrakka sodai ir senamiesčio gatvelės.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+
+                                  ]
+                   },
+                   {
+                       "id":  50,
+                       "title":  "Splitas",
+                       "country":  "Kroatija",
+                       "lat":  43.5081,
+                       "lng":  16.4402,
+                       "date":  "2024-06-04",
+                       "category":  "Kruizas",
+                       "description":  "Adrijos jūros perlas: imperatoriaus Diokletiano rūmai, Riva promenada ir Marjan kalvos apžvalgos aikštelė.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+
+                                  ]
+                   },
+                   {
+                       "id":  51,
+                       "title":  "Korfu",
+                       "country":  "Graikija",
+                       "lat":  39.6243,
+                       "lng":  19.9217,
+                       "date":  "2024-06-06",
+                       "category":  "Kruizas",
+                       "description":  "Žalioji Jonijos jūros sala: venecijietiškas Kerkyros senamiestis, Senoji tvirtovė ir žydros įlankos.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+
+                                  ]
+                   },
+                   {
+                       "id":  52,
+                       "title":  "Triestas",
+                       "country":  "Italija",
+                       "lat":  45.6495,
+                       "lng":  13.7768,
+                       "date":  "2024-06-08",
+                       "category":  "Kruizas",
+                       "description":  "Kruizo uostas Adrijos šiaurėje: Piazza Unità d\u0027Italia aikštė, Didysis kanalas ir Miramare pilis.",
+                       "travelers":  [
+                                         "Tomas",
+                                         "Sandra",
+                                         "Lukas",
+                                         "Linas"
+                                     ],
+                       "videos":  [
+
+                                  ]
+                   }
+               ]
 }

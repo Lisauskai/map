@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lisauskų kelionės - Atraskite pasaulį kartu su mumis</title>
+    <meta name="description" content="Lisauskų šeimos kelionės: kruizai, išvykos automobiliu po Europą, pramogų parkai ir Lietuvos pažintiniai takai. Praktiniai patarimai ir įspūdžiai.">
+    <!-- Jūsų JPG piktogramos (favicon) nuoroda -->
+    <link rel="icon" type="image/jpeg" href="favicon.jpg">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0b0b0e;
+            --text-color: #f5f5f5;
+            --accent-color: #e50914; 
+            --card-bg: #16161a;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Pagrindinis puslapis */
+        #main-view {
+            transition: opacity 0.3s ease;
+        }
+
+        .hero {
+            position: relative;
+            height: 60vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: url('https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(to bottom, rgba(11,11,14,0.3) 0%, rgba(11,11,14,1) 100%);
+        }
+
+        /* Pagrindinis prenumeratos mygtukas dešiniajame kampe */
+        .global-subscribe-btn {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            background-color: var(--accent-color);
+            color: white;
+            padding: 10px 20px;
+            font-size: 0.95rem;
+            text-decoration: none;
+            font-weight: 700;
+            border-radius: 30px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 100;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(229, 9, 20, 0.4);
+        }
+
+        .global-subscribe-btn:hover {
+            transform: scale(1.05);
+            background-color: #ff0f1a;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            padding: 0 20px;
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .hero-content p {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            color: #d1d1d1;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .tabs-container {
+            max-width: 1200px;
+            margin: -30px auto 30px auto;
+            position: relative;
+            z-index: 10;
+            padding: 0 20px;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            background: rgba(22, 22, 26, 0.9);
+            padding: 15px;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+            border: 1px solid #333;
+        }
+
+        .tab-btn {
+            background-color: transparent;
+            color: var(--text-color);
+            border: 2px solid transparent;
+            padding: 10px 20px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            border-radius: 30px;
+            transition: all 0.3s;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .tab-btn:hover { background-color: rgba(255, 255, 255, 0.05); }
+        .tab-btn.active {
+            background-color: var(--accent-color);
+            color: white;
+            box-shadow: 0 4px 15px rgba(229, 9, 20, 0.4);
+        }
+
+        .tab-content { display: none; animation: fadeIn 0.5s ease-out; }
+        .tab-content.active { display: block; }
+
+        .section {
+            padding: 2rem 20px 5rem 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #222;
+            cursor: pointer;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent-color);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .video-thumbnail {
+            position: relative;
+            padding-bottom: 56.25%;
+            background-color: #000;
+        }
+        
+        .video-thumbnail img {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover;
+        }
+
+        .play-icon {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px; height: 50px;
+            background: rgba(229, 9, 20, 0.8);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.8;
+            transition: all 0.3s;
+        }
+
+        .card:hover .play-icon {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        .play-icon::after {
+            content: '';
+            border-style: solid;
+            border-width: 10px 0 10px 16px;
+            border-color: transparent transparent transparent white;
+            margin-left: 4px;
+        }
+
+        .card-body { padding: 1.5rem; }
+        .card-body h3 {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        .badge {
+            display: inline-block;
+            background-color: #333;
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        /* Detalusis video puslapis (Overlay) */
+        #video-view {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--bg-color);
+            z-index: 1000;
+            overflow-y: auto;
+            animation: slideUp 0.4s ease-out forwards;
+        }
+
+        .video-header {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-back {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Montserrat', sans-serif;
+            text-transform: uppercase;
+        }
+        
+        .btn-back:hover { color: var(--accent-color); }
+
+        .video-player-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .video-iframe-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            border-radius: 12px;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .video-iframe-wrapper iframe {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            border: none;
+        }
+
+        .video-details {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 0 20px;
+            padding-bottom: 50px;
+        }
+
+        .video-details h1 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        .video-meta {
+            display: flex;
+            gap: 15px;
+            color: #aaa;
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 15px;
+        }
+
+        .video-description {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: #ddd;
+            white-space: pre-line;
+        }
+
+        .share-buttons {
+            margin-top: 30px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .share-btn {
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+            display: inline-block;
+            transition: opacity 0.3s;
+        }
+        
+        .share-btn:hover { opacity: 0.8; }
+
+        .share-fb { background-color: #1877F2; }
+        .share-wa { background-color: #25D366; }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .hero-content h1 { font-size: 2rem; }
+            .tabs { flex-direction: column; border-radius: 15px; }
+            .tab-btn { width: 100%; }
+            .video-details h1 { font-size: 1.5rem; }
+            .global-subscribe-btn {
+                top: 15px;
+                right: 15px;
+                padding: 8px 15px;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- PAGRINDINIS VAIZDAS -->
+    <div id="main-view">
+        <div class="hero">
+            <a href="https://www.youtube.com/@tomaslisauskas?sub_confirmation=1" target="_blank" class="global-subscribe-btn">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                    <path d="M21.582,6.186c-0.23-0.86-0.908-1.538-1.768-1.768C18.254,4,12,4,12,4S5.746,4,4.186,4.418 c-0.86,0.23-1.538,0.908-1.768,1.768C2,7.746,2,12,2,12s0,4.254,0.418,5.814c0.23,0.86,0.908,1.538,1.768,1.768 C5.746,20,12,20,12,20s6.254,0,7.814-0.418c0.86-0.23,1.538-0.908,1.768-1.768C22,16.254,22,12,22,12S22,7.746,21.582,6.186z M10,15V9l5.2,3L10,15z"></path>
+                </svg>
+                Prenumeruoti
+            </a>
+            
+            <div class="hero-content">
+                <h1>Lisauskų kelionės</h1>
+                <p>Nuo kalnų viršūnių iki vandenynų - atraskite pasaulį su mumis!</p>
+            </div>
+        </div>
+
+        <div class="tabs-container">
+            <div class="tabs">
+                <button class="tab-btn active" onclick="openTab(event, 'didziosios-keliones')">Didžiosios Kelionės</button>
+                <button class="tab-btn" onclick="openTab(event, 'isvykos-pramogos')">Išvykos ir Pramogos</button>
+                <button class="tab-btn" onclick="openTab(event, 'pazintiniai-takai')">Pažintiniai Takai</button>
+                <button class="tab-btn" onclick="openTab(event, 'dagilelis')">Dagilėlis</button>
+                <button class="tab-btn" onclick="openTab(event, 'uzklasine-veikla')">Mokykla ir Veikla</button>
+            </div>
+        </div>
+
+        <div class="section">
+            <div id="didziosios-keliones" class="tab-content active">
+                <div class="grid" id="grid-keliones"></div>
+            </div>
+            <div id="isvykos-pramogos" class="tab-content">
+                <div class="grid" id="grid-pramogos"></div>
+            </div>
+            <div id="pazintiniai-takai" class="tab-content">
+                <div class="grid" id="grid-takai"></div>
+            </div>
+            <div id="dagilelis" class="tab-content">
+                <div class="grid" id="grid-dagilelis"></div>
+            </div>
+            <div id="uzklasine-veikla" class="tab-content">
+                <div class="grid" id="grid-veikla"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DETALUSIS VIDEO VAIZDAS (Atskiras puslapiukas) -->
+    <div id="video-view">
+        <div class="video-header">
+            <button class="btn-back" onclick="closeVideo()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                Grįžti į sąrašą
+            </button>
+            <a href="https://www.youtube.com/@tomaslisauskas?sub_confirmation=1" target="_blank" style="color: var(--accent-color); text-decoration:none; font-weight:bold;">Prenumeruoti kanalą</a>
+        </div>
+
+        <div class="video-player-container">
+            <div class="video-iframe-wrapper" id="video-iframe-container">
+                <!-- Iframe bus įkeltas per JS -->
+            </div>
+        </div>
+
+        <div class="video-details">
+            <span class="badge" id="video-badge">Kategorija</span>
+            <h1 id="video-title">Video pavadinimas</h1>
+            
+            <div class="video-meta">
+                <span id="video-date">Paskelbta: ...</span>
+                <span id="video-views">Peržiūros: ...</span>
+            </div>
+
+            <div class="video-description" id="video-desc-text">
+                Aprašymas kraunamas...
+            </div>
+
+            <div class="share-buttons">
+                <a href="#" id="share-fb" target="_blank" class="share-btn share-fb">Dalintis Facebook</a>
+                <a href="#" id="share-wa" target="_blank" class="share-btn share-wa">Dalintis WhatsApp</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab'ų perjungimas
+        function openTab(evt, tabId) {
+            var tabcontents = document.getElementsByClassName("tab-content");
+            for (var i = 0; i < tabcontents.length; i++) tabcontents[i].classList.remove("active");
+            
+            var tablinks = document.getElementsByClassName("tab-btn");
+            for (var i = 0; i < tablinks.length; i++) tablinks[i].classList.remove("active");
+            
+            document.getElementById(tabId).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        // Masyvas su visais video ir aprašymais
+        const videoData = [
+            // --- DIDŽIOSIOS KELIONĖS (15 video) ---
+            { 
+                title: "Talinas ir Helsinkis | Ilgasis savaitgalis automobiliu", 
+                id: "tisL0y7fcOw", category: "keliones", badge: "Estija / Suomija", views: "Naujas", date: "2026-10-26",
+                description: `Sveiki prisijungę prie naujo „Lisauskų kelionės“ vlogo! Šį ilgąjį savaitgalį sėdome į automobilį ir per Latviją bei Estiją leidomės į vieną intensyviausių ir įdomiausių mūsų šeimos nuotykių. Šiame vaizdo įraše pamatysite viską – nuo interaktyvių mokslo stebuklų ir nusileidimo į povandeninį laivą iki atvirų mūsų atsiliepimų apie vietas, kurios šiek tiek nuvylė.\n\nJei planuojate kelionę su šeima į Estiją ar Suomiją, čia rasite tobulą maršruto idėją!\n\n🎬 Šiame vaizdo įraše pamatysite:\n\n⚓ Talino atradimai ir povandeninis laivas\nKelionę pradėjome nuo absoliučiai nerealaus „PROTO“ atradimų centro, kur virtuali realybė susijungia su XIX amžiaus išradimais – Linas ir Lukas čia turėjo ką veikti! Vėliau nėrėme į Talino jūrų muziejų („Lennusadam“). Apžiūrėjome uosto krantinę, įspūdingus istorinius laivus ir, svarbiausia, patys nusileidome į tikrų tikriausią istorinį povandeninį laivą!\n\n🚢 Keltas į Suomiją ir apsipirkimas Baltijos jūroje\nĮ Helsinkį plaukėme didžiuliu laivu, kuriame aplankėme patį didžiausią prekybos centrą ant vandens – net 2800 kv. m ploto erdvę, išsidėsčiusią per kelis denius.\n\n🧬 Mokslo stebuklai ir Helsinkio kontrastai\nSuomijoje mūsų laukė Vantos mieste esantis interaktyvus mokslo centras „Heureka“, kur viską privaloma liesti! Išbandėme Mėnulio gravitacijos simuliatorių, susidūrėme su judančiais ledynmečio milžinais. Po mokslo atradimų pasivaikščiojome po Helsinkį: aplankėme raudonų plytų Uspenskio soborą, sniego baltumo Helsinkio katedrą ir unikalią, tiesiog kietame granite iškaltą Tempeliaukio (Uolos) bažnyčią.\n\n🗼 Talinas iš paukščio skrydžio ir senamiesčio perlai\nGrįžę į Estiją, su Sandra ir vaikais kilome į aukščiausią šalies pastatą – 314 metrų Talino televizijos bokštą. Stiklinės grindys 170 metrų aukštyje tikrai reikalauja drąsos! Taip pat pasivaikščiojome po istorinį senamiestį: apžiūrėjome Laisvės aikštėje šviečiantį stiklinį Laisvės kryžių, seniausią miesto kino teatrą „Sõprus“, didingą Aleksandro Nevskio soborą, Šv. Mikalojaus (Niguliste) bažnyčią bei pasakiško grožio barokinį Kadriorgo rūmų parką.\n\n🦒 Talino zoologijos sodo realybė (Atviras atsiliepimas)\nDalijamės visiškai nuoširdžiu vertinimu apie Talino zoologijos sodą. Kodėl 89 hektarų plote nuėję dešimt kilometrų jautėmės lyg klaidžiotume tuščiame sovietiniame miške? Gyvūnų mažai, atstumai milžiniški, o įdomiausias matytas dalykas – pastato plyšyje perintis laukinis juodasis strazdas!\n\n🌊 Kelionės finalas: Estijos Niagara\nMaršrutą vainikavome įspūdingu Jegalos kriokliu (Jägala juga). Tai pats plačiausias natūralus krioklys Estijoje, kurio galinga tamsaus vandens srovė per tūkstantmečius išgraužė gilų kanjoną. Tobulas akcentas kelionės pabaigai!\n\n👇 Pasidalinkite komentaruose:\nKuris iš šių objektų jums atrodo įdomiausias? Ar jums teko lankytis Talino zoologijos sode ir kokie jūsų įspūdžiai? Laukiame jūsų komentarų!\n\n🔔 Nepamirškite paspausti „Patinka“ ir prenumeruoti kanalo, kad nepraleistumėte kitų mūsų šeimos kelionių!\n\n⏳ Vaizdo įrašo temos (Timestamps):\n00:00 PROTO atradimų centras\n02:35 Kai Art Center\n03:03 Pakrantės ekspozicija\n03:57 SUUR TOLL ledlaužis\n05:18 VALVAS karinis laivas\n05:41 Talino jūrų muziejus LENNUSADAM ir povandeninis laivas\n07:55 Keltas į Suomiją ir didžioji parduotuvė ant vandens\n08:55 Helsinkis\n09:12 „Heureka“ mokslo centras\n11:50 Helsinkio katedra ir Uspenskio soboras\n12:30 Grįžimas į Taliną, Keltas\n13:00 Talino TV bokštas\n13:55 Kadriorgo parkas ir kiti akcentai\n14:20 Talino zoologijos sodas\n16:24 Talino senamiestis ir Laisvės kryžius\n17:22 Jegalos krioklys (Estijos Niagara)\n19:29 Kelionės pabaiga ir atsisveikinimas`
+            },
+            { 
+                title: "Pavasario Kruizas su „Costa Pacifica“: Nuo Genujos iki Romos ir Komo Ežero!", 
+                id: "2OGoZGgiStQ", category: "keliones", badge: "Kruizas", views: "273", date: "Prieš 3 mėn.",
+                description: `Sveiki prisijungę prie naujo „Lisauskų kelionės“ nuotykio! 🎬 \n\nŠį kartą pavasarį leidžiamės į ilgai lauktą kruizą Viduržemio jūra su įspūdinguoju laivu „Costa Pacifica“. Tačiau mūsų kelionė prasidėjo dar prieš įlipant į laivą – kelias dienas praleidome Genujoje.\n\nGenujoje aplankėme senąjį uostą, kurį modernizavo architektas Renzo Piano. Ten pamatėme netikrą piratų laivą „Neptūnas“ ir stiklinę „Biosferą“ su atogrąžų mikroklimatu. Mes su Sandra ir vaikais džiaugėmės didžiausiu Italijoje akvariumu, kur stebėjome jūrų karves (lamantinus), bei interaktyviu Vaikų miestu („La Città dei Bambini e dei Ragazzi“), kuriame netrūko optinių iliuzijų ir vandens fizikos eksperimentų. Taip pat nusileidome į tikro povandeninio laivo „Nazario Sauro“ vidų ir apžiūrėjome Šv. Lauryno katedrą su nesprogusiu Antrojo pasaulinio karo sviediniu.\n\nPagrindinis kelionės akcentas – kruizas su „Costa Pacifica“. Tai oficialus „Muzikos laivas“, kuriam specialų garso takelį sukūrė kompozitorius Mauro Pagani. Laive yra 14 keleivinių liftų, iš kurių 4 panoraminiai kyla pagrindiniame atriume, papuoštame šviečiančiomis muzikinėmis natomis. Mėgavomės elegantiškomis vakarienėmis „New York, New York“ restorane.\n\nMūsų stotelės:\nMarselis: Sugrįžome čia po pusės metų. Prieš tai katedra buvo pasipuošusi Kalėdoms, o dabar pamatėme jos pavasarišką veidą. Kadangi atvykome antradienį, „MUCEM“ muziejus ir jo pėsčiųjų tiltai nedirbo. Taip pat aplankėme ant karinio forto pamatų stovinčią „Notre-Dame de la Garde“ baziliką ir įspūdingus Longšano rūmus, pastatytus gėlam vandeniui atšvęsti.\n\nValensija: Apžiūrėjome Serranų vartus, buvusį kilmingųjų kalėjimą, ir užsukome į prancūzišką vintažinę saldumynų krautuvėlę „La Cure Gourmande“. Nustebino Valensijos rotušės istorija ir katedra, kurioje saugomas Šventasis Gralis.\n\nRoma ir Vatikanas: Atvykome per patį Didžiojo penktadienio šurmulį ir Velykų laukimą prie Švč. Mergelės Marijos Didžiosios bazilikos. Tyrinėjome Koliziejų ir jo 15 minučių evakuacijos sistemą, Trevi fontaną, Šv. Ignaco Lojolos bažnyčią su optine kupolo iliuzija bei Vatikaną, kur pamatėme „Nežinomų angelų“ skulptūrą ir pasislėpusias Berninio kolonados eiles.\n\nKomo miestas: Ramybės oazė kelionės pabaigai! Kėlėmės istoriniu funikulieriumi ir aplankėme Komo katedrą, kurios erdvę užpildo 6500 vargonų vamzdžių.\n\nGriebkite užkandžius ir keliaujam kartu! Nepamirškite paspausti „Patinka“ ir prenumeruoti kanalo, kad nepraleistumėte kitų mūsų šeimos nuotykių!\n\n⏳ Vaizdo įrašo temos (Timestamps):\n00:00 – Intro: Kelionė prasideda Genujoje!\n01:00 – Povandeninis laivas „Nazario Sauro“: tikra karinė istorija\n02:07 Galata jūrų muziejus: galeros ir emigracijos istorijos\n03:29 – Vaikų miestas: eksperimentai ir optinės apgaulės\n04:40 – Genujos akvariumas: lamantinai ir jūrų pasaulio paslaptys\n06:57 - Biosfera“: atogrąžų džiunglės ant vandens\n07:20 - Pasivaikščiojimas po Genują: Šv. Lauryno katedra ir prabangioji Via Garibaldi\n09:01 – Pagrindinis akcentas: lipame į „Costa Pacifica“ laivą! ir laivo apžvalga\n12:58 – Marselis: pavasariška katedra, ir Longšano rūmai\n15:15 – Valensija: Katedra, Šventasis Gralis ir įspūdingi Serranų vartai\n16:58 – Romos šurmulys: Didysis penktadienis, Koliziejaus inžinerija ir fontanai\n19:44 - Vatikanas\n20 :31– Komo ežeras: istorinis funikulierius`
+            },
+            { 
+                title: "Didžioji kelionė laivu: Marselis, Neapolis, Piza ir Milanas per vieną atostogų savaitę!", 
+                id: "Dzx40lPQNEw", category: "keliones", badge: "Kruizas", views: "412", date: "Prieš 8 mėn.",
+                description: `Sveiki atvykę į Lisauskų keliones! 👋 Šį kartą kviečiame jus į ypatingą nuotykį – leidomės į kruizą su „Costa“ laivu po gražiausius Viduržemio jūros uostus! 🛳️🌊 \n\nŠiame vaizdo įraše pamatysite ne tik gyvenimą didžiuliame laive, bet ir mūsų sustojimus Prancūzijoje bei Italijoje. Aplankėme viską: nuo seniausių miestų ir ugnikalnių iki mokslo muziejų ir pasvirusių bokštų.\n\n🎥 Šiame vaizdo įraše pamatysite: \n📍 Gyvenimas laive (Costa Cruises) Kaip atrodo atostogos ant vandens? 🌊 Mūsų namai savaitei – „Costa“ kruizinis laivas. \n📍 PRANCŪZIJA: Marselis (Marseille) 🇫🇷 Pirmasis sustojimas – seniausias Prancūzijos miestas! Vaikštome uoste, ieškome Grafą Montekristą menančios If pilies ir mėgaujamės Pietų Prancūzijos dvasia. \n📍 ITALIJA: Pompėja ir Neapolis 🇮🇹 Sustojęs laikas Pompėjoje: senovinės gatvės, Oktavijaus Kvarčio namas ir paslaptys po Vezuvijaus pelenais. Vėliau – chaotiškas, bet nuostabus Neapolis: Castel Nuovo pilis, Galleria Umberto I, Piazza del Plebiscito!\n📍 PIZA: Stebuklų aikštė Ar žinojote, kad Pizos bokštas nėra vienintelis pasviręs pastatas mieste? Pasakojame daybę įdomiausių faktų apie Piazza dei Miracoli ir didžiausią Italijos krikštyklą. \n📍 MILANAS: Mada ir Da Vinči Kelionės finišas madų sostinėje. Grožimės didingąja Milano katedra (Duomo), sukame sėkmės ratus Galleria Vittorio Emanuele II ir neriame į mokslą Leonardo da Vinčio muziejuje (pamatysite povandeninį laivą ir garsųjį tanką!).\n\n⏳ Video turinys:\nĮžanga: Pradedame kruizą su Costa!\nPrancūzija: Marselio uostas ir senamiestis\nItalija: Pompėjos griuvėsiai ir romėnų paslaptys\nNeapolis: Pilys, picos ir legendos\nPiza: Kodėl tas bokštas vis dar stovi?\nMilanas: Duomo katedra ir balandžiai aikštėje\nLeonardo da Vinčio muziejus: Išradimai, pakeitę pasaulį\nIšvados: Ar verta keliauti kruizu?\n\n🔔 Nepamirškite prenumeruoti „Lisauskų kelionės“ kanalo, jei norite daugiau kelionių idėjų ir patarimų! Spauskite „Patinka“, jei mylite Italiją ir Prancūziją! ❤️`
+            },
+            { 
+                title: "Tel Avivas Karo pradžia prieš Iraną ir pabėgimas namo | Atostogos Karo Fone", 
+                id: "kDnEL0Dql9E", category: "keliones", badge: "Nuotykis", views: "157", date: "Prieš 4 mėn.",
+                description: `Nuo Viduržemio jūros iki slėptuvių: Atostogos Karo Fone\n\nTai turėjo būti įprastos atostogos, bet tapo neįtikėtinu išgyvenimo išbandymu, kur atostogų idilė subyrėjo per kelias minutes. Štai kaip atrodė mūsų kelionė Izraelyje ir Egipte prasidėjus tiesioginiam karo veiksmų eskalavimui.\n\n✈️ PROLOGAS IR 1 DIENA: LENKTYNĖS SU SIRENOMIS IR PUSRYČIAIS\nViskas prasidėjo keistu lėktuvo manevru – prieš pat nusileidimą Tel Avive pilotai staiga apsuko dar vieną ratą. Nors pirma diena atrodė rami, tyrinėjant kontrastingus arabų ir žydų kvartalus, viskas pasikeitė kitą rytą. 06:30 išvykome link Negyvosios jūros (žemiausio sausumos taško, -430 m). Važiuojant Vakarų krantu staiga ėmė kaukti visų telefonų pavojaus sistemos. Vairuotojas staigiai apsuko mikroautobusą. Grįžtant matėme, kaip masiškai telkiasi Izraelio kariuomenė, o šalyje viskas stoja.\n\nKadangi maisto neturėjome (tik pakelį sausainių), prasidėjo absurdiškos lenktynės su laiku – spėti į viešbutį iki 10:00 val. pusryčiams. Ir mes spėjome 09:50! Vos pavalgius pasigirdo tikrosios sirenos. URM registracija ir pagalbos aplikacija užsienyje neveikė.\n\nPer kelias valandas pakeitėme 10–15 slėptuvių. GPS buvo taip trikdomas, kad vienu metu rodė, jog esame Omano oro uoste, tad tekdavo tiesiog bėgti paskui vietinius. Slėptuvės stebino: nuo paprastų sandėliukų iki įspūdingų 4 aukštų požeminių tunelių ir įstaigų kompleksų. Vienur vietiniai ginčijosi dėl atvirų durų „dėl gaivaus oro“ – vakare sužinojome, kad kažkas dėl tokios klaidos žuvo nuo sprogimo bangos.\n\n🚀 2 DIENA: IŠTUŠTĖJĘS MIESTAS IR SPRENDIMAS BĖGTI\nRyte, po eilinio aliarmo, supratome: laikas namo. Iš ambasados per visą parą nesulaukėme jokios informacijos, bet mūsų agentūra „Baltic Clipper“ per realiai 23 minutes rado paskutinius bilietus skrydžiui iš Egipto. Iškart nusipirkome autobuso bilietus sienos link ir visus formalumus susitvarkėme per kelias valandas. Miestas buvo tuščias, Jafos senamiestyje buvome vieninteliai turistai, o ant kalvos žurnalistai su liemenėmis laukė kadrų.\n\nTą dieną Tel Avive 200 kg raketa rėžėsi vos 4 km nuo mūsų. Vakare atėjo žinios, kad Jeruzalėje 500 kg raketa pataikė tiesiai į sinagogos slėptuvę – įgriuvo jos stogas, žuvo 7 žmonės.\n\n🚕 3 DIENA: 6-AS AUKŠTAS IR NAKTINIS TAKSI RALIS\nRyte slėptuvėje sutikome siurrealistinį vaizdą – apie 20 merginų kariškių stovėjo su pižamomis ir automatais. Atvykus į Tel Avivo autobusų stotį, mūsų aikštelė buvo atvirame 6-ame aukšte. Kaukė sirenos, slėptuvių ten nebuvo, teko tiesiog glaustis prie betoninių kolonų – tuomet jautėmės nesaugiausiai per visą kelionę.\n\nPasiekę Eilatą (lydimi ginkluotų kariškių), sutikome amerikiečių porą, kuriems krentančios raketos atrodė kaip „pramoga“ pro viešbučio langą. Mums tai atrodė keista, ypač žinant, kad visai netoli nuolaužos pražudė į slėptuvę nespėjusią 11-metę. Izraelio sieną kirtome sklandžiai, bet Egipte prasidėjo chaosas.\n\nPasienietis už „nemokamą“ vizą pareikalavo 50 dolerių, kurių neturėjome. Išgelbėjo pasienio salėje besisukiojantis vietinis juodosios rinkos valiutos keitėjas. Išėjus lauk, mus pasivijo angliškai nekalbantis jaunuolis. Už 50 € sutarėme, kad mus nuveš beveik 250 km. Nuėjus prie mašinos į tamsų kampą, jis kelis kartus mus tiesiog paliko vienus mašinoje. Galiausiai, po 3 valandų kelionės per tamsius kalnus (kur kariškių užkardos tikrino ne dokumentus, o turisto mokesčio kvitus), pasiekėme prabangų 5* viešbutį Šarm aš Šeiche.\n\n🌴 4 DIENA IR EPILOGAS: KURORTO KONTRASTAI IR KRATA\nEgipte vietiniu darbininkų mikriuku už 3 € nuvykome į centrą (nors vėliau sužinojome, kad vietiniams tai kainuoja centus). Pasitiko kontrastai: ginkluota Koptų bažnyčios apsauga ir šokiruojanti turgų higiena su kambario temperatūroje kabančiomis jaučio kojomis. Raudonosios jūros rifas pasirodė esąs visiškai miręs – tai tebuvo plika akmens plokštė į kurią daužėsi bangos, tad plaukti buvo neįmanoma. Lyg streso būtų maža, vakare man dar ir sukilo temperatūra!\n\nPaskutinę dieną viešbutis už 5 km kelionę į oro uostą paprašė 25$. Išėję pėsčiomis, susistabdėme vietinį taksi už 2 €. Oro uoste egiptietiška apsauga dar spėjo iškratyti kuprinę – veiksmo kamera ant lazdos jiems skeneryje pasirodė kaip ginklas. Taip baigėsi mūsų atostogos, kurios tik dėl geros sėkmės truko vos diena ilgiau nei planuota!`
+            },
+            { 
+                title: "Šeimos Nuotykiai Gdanske ir Gdynėje: Geriausi Muziejai ir Pramogos Blogam Orui!", 
+                id: "J05wRJiTrCU", category: "keliones", badge: "Lenkija", views: "1.7 tūkst.", date: "Prieš 11 mėn.",
+                description: `Sveiki atvykę į mūsų šeimos kelionės nuotykius! 🌧️ \n\nŠįkart keliavome į kerinčius Lenkijos pajūrio miestus – Gdanską (Gdańsk) ir Gdynę (Gdynia). Nors dangus mus nelepino, mes puikiai išnaudojome kiekvieną minutę pasinerdami į gausybę įdomiausių muziejų ir atrakcijų, kurios idealiai tinka šeimoms su vaikais ir visiems istorijos bei mokslo mylėtojams! \n\nJei planuojate kelionę į Gdanską ar Gdynę ir ieškote idėjų, ką veikti esant blogam orui, šis vaizdo įrašas – kaip tik jums! Atraskite Gdanską ir Gdynę lietuviškai! \n\nPer šį nepamirštamą nuotykį aplankėme šias vietas, kurias rekomenduojame kiekvienam keliautojui: \n\n⚓ GDANSKAS (GDAŃSK) – Istorija ir Jūra:\n- Antrojo pasaulinio karo muziejus (Museum of the Second World War) – gilus, bet privalomas įspūdis.\n- Europos Solidarumo centras (European Solidarity Centre) – šiuolaifinės Lenkijos istorijos pažinimas.\n- Hevelianum – mokslinis, interaktyvus centras visai šeimai!\n- Nacionalinis jūrų muziejus (National Maritime Museum) ir jo filialai: Kranas (The Crane) bei Laivas-muziejus "Sołdek".\n- Gintaro muziejus (Muzeum Bursztynu) – Baltijos aukso istorija.\n- Miesto širdis: Gdańsko muziejus - Rotušė (Main Town Hall) ir istoriškasis Uphageno namas.\n- Smagi pramoga: Gdańsko Piratų kruizas (Gdansk Pirate Cruise).\n- Istorinė atmintis: Pomnik Obrońców Wybrzeża - Westerplatte.\n- Gdańsko Zoologijos sodas (Gdański Ogród Zoologiczny).\n\n🌊 GDYNĖ (GDYNIA) – Mokslo ir Jūrų Galia:\n- Mokslo centras „Experyment“ (Experyment Science Centre) – interaktyvios edukacijos oazė.\n- Gdynės akvariumas (Akwarium Gdyńskie MIR) – povandeninio pasaulio stebuklai.\n- Jūrų karo muziejus (Muzeum Marynarki Wojennej).\n- Įspūdingi laivai-muziejai: Mokomasis burlaivis "Dar Pomorza" ir karo laivas ORP "Błyskawica".\n\nJei jums patiko šis vaizdo įrašas ir mūsų patarimai, spauskite PATINKA ir PRENUMERUOKITE mūsų kanalą! Iki kitų nuotykių!`
+            },
+            { 
+                title: "Slovakija, Pieninų nacionalinis parkas | Plaustais per Dunajeco upę|Vakaronė pagal vietos tradicijas", 
+                id: "EDL2-X0IWQY", category: "keliones", badge: "Slovakija", views: "479", date: "Prieš 1 m.",
+                description: `🎥 Atraskite Pieninų nacionalinį parką | Plaustais per Dunajeco upę | Legendos, kalnai ir kvapą gniaužiantys vaizdai 🌿🏞️ \n\n🌄 Leiskitės su mumis į nepamirštamą kelionę po vieną iš gražiausių Lenkijos gamtos perlų – Pieninų nacionalinį parką! Šis vaizdo įrašas – tai ne tik ekskursija po įspūdingus kalnus, bet ir pažintis su senosiomis guralių legendomis, istorija bei unikalia gamta. \n\n✔️ Pradėsime nuo žavingo Červeny Klaštor miestelio – nedidelio, bet nepaprastai autentiško kampelio Slovakijos–Lenkijos pasienyje.\n✔️ Leisimės į 14 km ilgio kelionę plaustais Dunajeco upe, lydimi vietinių guralių – ne tik vairininkų, bet ir talentingų pasakotojų.\n✔️ Pasigrožėsime neįtikėtinais uolų dariniais, miškais, kalnų šlaitais, kurie primena scenas iš pasakos.\n✔️ Išgirsime senąsias legendas apie užkeiktus vienuolius, Trijų Karūnų kalną bei „Uošvės burną“ – mistišką uolos formą, primenančią žmogaus profilį.\n✔️ Pamatysime Trijų Karūnų (Trzy Korony) viršūnę – simbolinę parko širdį, iš kurios atsiveria kvapą gniaužianti panorama.\n\n🌿 Kodėl verta keliauti į Pieninų nacionalinį parką?\n🔹 Tai viena iš geriausių vietų aktyviam ir ramiam poilsiui Europoje.\n🔹 Parkas išsiskiria autentiška guralų kultūra, kuri vis dar gyva ir perduodama iš kartos į kartą.\n🔹 Dunajeco upės plaustai – unikali pramoga, kurios nerasite niekur kitur.\n🔹 Įspūdingi kraštovaizdžiai: Sokolica uola, Červeny Klaštoro vienuolynas, miškai, ežerai, kalnų gėlės.\n🔹 Tinka tiek šeimoms, tiek poroms, tiek solo keliautojams, norintiems pabėgti nuo miesto šurmulio.\n\n📍 Praktinė informacija keliautojams:\n🗓️ Geriausias metas kelionei: gegužė–rugsėjis\n🛶 Plaustų kelionė: ~14 km, trunka apie 2–3 val.\n👥 Plauste telpa apie 15 žmonių\n🧭 Rekomenduojama turėti: patogią avalynę, apsaugą nuo saulės, fotoaparatą ar telefoną su gera kamera\n🗣️ Galimos gido kalbos: lenkų, slovakų, anglų, kai kur – ir lietuvių!\n\n🌙 Vakaro vainikavimas: gurališka atmosfera „Chata Pieniny Hotel & Reštaurácia“ 🏔️🔥🎶 \nPo dienos kupinos įspūdžių, kalnų legendų ir plaustų kelionės Dunajeco upe, mūsų kelionę vainikavo jauki ir nepakartojama vakarienė „Chata Pieniny“ restorane ir viešbutyje – vietoje, kur tradicijos susilieja su svetingumu. \n\n🪵 Ši medinė kalnų užeiga, įsikūrusi kalnų papėdėje, tiesiog alsuoja autentiška guralų dvasia: Šiltas interjeras su židiniais, medžio drožiniais ir tradiciniais audiniais; Vietiniai padavėjai vilki tautinius guralių kostiumus, o jų šypsenos – tokios pat tikros, kaip ir visa aplinka; Gyvai skambanti tradicinė kalnų muzika, kuri kviečia ne tik klausytis, bet ir šokti! Ir žinoma – stiklinė vietinės slyvų ar vyšnių trauktinės, kaip padėka už gerą dieną. \n📌 Rezervacija rekomenduojama iš anksto – vieta populiari tiek tarp keliautojų, tiek tarp vietinių!\n\n🎥 Šis vakaras buvo tobulas mūsų nuotykio užbaigimas – šiltas, jaukus ir kupinas tikrosios kalnų kultūros. Nepamirštama Pieninų diena baigėsi širdyse liekančiu vakaru – tikra legenda ne tik pasakojimuose, bet ir jausmuose.\n\n🔔 Nepamirškite prenumeruoti mūsų kanalą, jei norite daugiau tokių kelionių vaizdo įrašų po autentiškas ir mažiau žinomas Europos vietas! 👍 Jei patiko – spauskite „Patinka“ ir pasidalinkite su draugais.`
+            },
+            { title: "Belianskos urvas Slovakia, Belianska jaskyňa", id: "e50utBjoJKI", category: "keliones", badge: "Slovakija", views: "494", date: "Prieš 1 m.", description: `Belianskos urvas yra vienas lankomiausių prieinamų urvų Slovakijoje. Be keistų uolienų formų, jis žinomas dėl gausaus kalcito aglomerato užpildo. Nors susidomėjimas urvo gamtos stebuklais išlieka jau 125 metus, jo susidarymo dėsniai dar nėra iki galo išaiškinti.\n\nApžvalginio maršruto ilgis yra 1370 m, aukščio skirtumas – 125 m, o maršrute yra 874 laipteliai. Buvimas oloje trunka apie 70 minučių. Temperatūra oloje svyruoja nuo 5 iki 6,3 °C.\n\nOla buvo atrasta XVIII amžiaus pradžioje, nors manoma, kad ją naudojo priešistoriniai žmonės. Oficialiai jis atidarytas 1884 m., o elektra apšviestas – 1896 m. Oloje rastos 7 šikšnosparnių rūšys. Dominuojanti rūšis yra paprastasis šikšnosparnis (Myotis myotis). Retesnės rūšys yra barzduotasis šikšnosparnis (Myotis mystacinus), Brandto šikšnosparnis (Myotis brandtii) ir blakstienatinis šikšnosparnis (Myotis emarginatus).\n\nBelianskos ola yra Tatranska Kotlina kalvose ir yra prieinama ištisus metus.` },
+            { title: "Slovakija, Aukštieji Tatrai, Skalnate Pleso, Zamokovskecho, Hrebienok", id: "9oYXBmTmT2M", category: "keliones", badge: "Slovakija", views: "1.5 tūkst.", date: "Prieš 1 m.", description: `Savaitgalio kelionė į Slovakiją, Aukštuosius Tatrus. Aukštuosiuose Tatruose pėsčiųjų takų po kalnus yra gausybė, o bendras jų ilgis sudaro net 660 km.\n\nŽygis pėsčiomis nuo Skalnate Pleso (1751 m) iki kalnų trobelės – užeigos „Zamokovskecho“ (1470 m), garsėjančios kvapnia kalnų žolelių arbata. Skalnate pleso - tai kalnų ežeras, aplink kurį ir driekiasi pažintinis takas po kalnus. Takas draugiškas tiek slovakams, tiek angliškai kalbantiems turistams, nes būtent tomis kalbomis pateikiama informacija informaciniuose stenduose.\n\nTęsiame žygį Mala Studena slėniu, kur šniokščia daugybė vienas už kitą gražesnių krioklių. Užburiantis didžiųjų krioklių grožis. Iš Hrebienok (1216 m.) funikulieriumi nusileidžiame į Stary Smokovec kurortą.` },
+            { title: "Dortmundas, Vokietija", id: "eM8Rk7kEekU", category: "keliones", badge: "Vokietija", views: "71", date: "Prieš 1 m.", description: `Savaitgalio išvyką į Dortmundą. \nAplankėme: \n- Alaus gamyklą-muziejų\n- Vokietijos futbolo muziejų\n- Westfalenpark parką, kuriame yra Florianturm (TV bokštas)\n- Meno ir kultūros istorijos muziejų\n- PACE automobilių muziejų\n- Phoenix des Lumières šviesų instaliaciją\n...ir dar daug daugiau. Puikiai praleistas laikas Vokietijoje!` },
+            { title: "Kelionė keltu į Karlshamną Švedijoje", id: "TWs07oxyASM", category: "keliones", badge: "Keltas", views: "365", date: "Prieš 1 m.", description: `Kelionė keltu į Karlshamną Švedijoje su DFDS keltu LUNA. Puikus 2 naktų mini kruizas, leidęs atsipalaiduoti ir pasimėgauti kelione Baltijos jūra.` },
+            { title: "Lavija Sigulda Cesis", id: "L7lAUAuukuU", category: "keliones", badge: "Latvija", views: "169", date: "Prieš 1 m.", description: `Latvija, Cesio kosmoso pažinimo centras, Sigulda ir jos apylinkės. Trumpa, bet labai turininga išvyka į kaimyninę Latviją, kur radome daugybę įdomių atradimų tiek vaikams, tiek suaugusiems.` },
+            { title: "Švedija, Stoholmas 2024", id: "3G-jDRVWUew", category: "keliones", badge: "Švedija", views: "119", date: "Prieš 1 m.", description: `Mūsų nuotykiai Švedijoje 2024 metais! Aplankėme:\n- Įspūdingą ir unikalų Vasa muziejų\n- Junibacken knygų herojų namus-muziejų (kur atgimsta Astridos Lindgren pasakos)\n- Stokholmo technikos muziejų.\nTobula kryptis keliaujantiems su vaikais!` },
+            { title: "Bratislava, Slovakia", id: "lt1ehqjNtys", category: "keliones", badge: "Slovakija", views: "58", date: "Prieš 2 m.", description: `Trumpa pažintis su Slovakijos sostine – Bratislava. Pasivaikščiojimas po jaukų senamiestį, Dunojaus pakrantę ir miesto pilies apylinkes. Nuostabus miestas trumpam sustojimui arba savaitgalio kelionei!` },
+            { title: "Lenkija: Zakopanė, Krokuva, Energylandija, Varšuva.", id: "zW_2heKUlmM", category: "keliones", badge: "Lenkija", views: "3.8 tūkst.", date: "Prieš 2 m.", description: `Įspūdinga kelionė per Lenkiją! Pasigrožėjome kalnais Zakopanėje, tyrinėjome istorinę Krokuvą, gaudėme adrenaliną didžiausiame "Energylandia" pramogų parke ir kelionę baigėme modernioje Varšuvoje. Tobulas atostogų maršrutas automobiliu!` },
+            { title: "Savaitgalio kelionė į Tartu Estijoje.", id: "4M7GnncBZ_w", category: "keliones", badge: "Estija", views: "174", date: "Prieš 2 m.", description: `Savaitgalio kelionė į Estijos mokslo sostinę - Tartu. Aplankėme Tartu universiteto muziejų, interaktyvų Ahhaa mokslo centrą, kuris paliko didžiulį įspūdį vaikams, ir Estijos aviacijos muziejų. Rekomenduojame visiems, ieškantiems edukacinių pramogų!` },
+            { title: "LEGO namas 2024", id: "0W3F341_xZM", category: "keliones", badge: "Danija", views: "137", date: "Prieš 2 m.", description: `Mūsų svajonės išpildymas - LEGO namas (Lego House) Danijoje, Bilunde 2024 gegužę. Įspūdingiausi statiniai, interaktyvios žaidimų zonos ir kūrybos laisvė. Būtina pamatyti kiekvienam Lego fanui!` },
+            { title: "Legolendas 2024", id: "9yvzSzQUrRU", category: "keliones", badge: "Danija", views: "244", date: "Prieš 2 m.", description: `Mažų ir didelių svajonių išsipildymas Danijos Legolende! Neįtikėtinos iš Lego kaladėlių pastatytos figūros, miestų miniatiūros, atrakcionai ir pramogos visai šeimai. Viena geriausių mūsų kelionių!` },
+
+            // --- IŠVYKOS IR PRAMOGOS (18 video) ---
+            { title: "RAUBONIŲ PRAMOGŲ PARKAS: Dinozaurai, Tarzano takas ir Atrakcionai! 🎢🦖", id: "zEtaNkGktic", category: "pramogos", badge: "Pramogos", views: "775", date: "Prieš 2 mėn.", description: `Sveiki atvykę į naują „Lisauskų kelionės“ nuotykį! 🚐 \n\nŠį kartą nusprendėme aplankyti didžiausią Baltijos šalyse – Raubonių pramogų parką. Įsitikinome patys – čia veiklos ir emocijų užtenka visai dienai ir visiems šeimos nariams! \n\nŠiame vaizdo įraše pamatysite: \n🦖 Interaktyvų Dinozaurų parką ir riaumojančius drakonus miško apsuptyje. \n🧗‍♂️ Mūsų išbandytą „Tarzano taką“ – laipiojome medžiuose ir leidomės lynais tiesiai virš zoologijos sodo gyvūnų aptvarų! \n🎢 Karuseles, milžiniškus batutus ir linksmybes atrakcionų zonoje, puikiai tinkančioje ir mažiesiems. \n🐾 Ir, žinoma, parko gyventojus – nuo mielų surikatų iki smalsių ožiukų. \n\nJei ieškote idėjų, kur turiningai praleisti savaitgalį su šeima Lietuvoje, šis vaizdo įrašas padės apsispręsti! \n\n🎬 Vaizdo įrašo turinys (Timestamps): \n0:00 - Atvykstame į Raubonių pramogų parką! \n0:08 - Žaidimų automatai \n0:56 - Šou nameliai \n1:13 - Dinozaurų parkas \n1:55 - Atrakcionų parkas \n3:13 - Mini golfas \n3:33 - Likę gyvūbai \n3:52 - BATUTAI \n4:44 - Lazeriai \n5:11 - Tarzano trasa \n\n👇 Mums labai svarbi jūsų nuomonė! Ar jau teko lankytis Raubonių parke? Kokia pramoga jums ar jūsų vaikams paliko didžiausią įspūdį? Pasidalinkite komentaruose! 👍 Jei patiko vaizdo įrašas, nepamirškite paspausti „Patinka“ ir PRENUMERUOTI kanalo, kad nepraleistumėte naujų mūsų kelionių!` },
+            { title: "Ar verta važiuoti į „Suntago“? Pažintinis filmukas per kelias minutes! 🌊", id: "dz51vJ8b3xo", category: "pramogos", badge: "Akvaparkas", views: "736", date: "Prieš 2 mėn.", description: `Sveiki prisijungę prie „Lisauskų kelionės“! 🚗✈️ \n\nŠį kartą dalinamės labai trumpu, bet informatyviu žvilgsniu į didžiausią Europoje dengtą vandens pramogų parką – „Suntago“ (Park of Poland), įsikūrusį visai netoli Varšuvos! 🌴💦 Nors filmukas trumpas, jame stengėmės perteikti tą ypatingą atogrąžų atmosferą ir parodyti pagrindinius parko akcentus. \n\nŠiame pažintiniame video išvysite: \n✨ Tikras palmes iš Floridos ir Kosta Rikos! \n🎢 Įspūdingas čiuožyklas ir milžiniškas erdves. \n🥥 Vasarą, kuri čia tęsiasi ištisus metus. \n\nJei planuojate kelionę į Lenkiją ar ieškote idėjų smagiam šeimos savaitgaliui – tikimės, kad šis greitas apžvalginis video padės susidaryti įspūdį ir nuspręsti, ar verta čia užsukti! \n\n👇 Klausimas jums: Ar jau buvote „Suntago“ parke? Kokie jūsų įspūdžiai? Pasidalinkite komentaruose! 👍 Patiko vaizdo įrašas? Spauskite „Patinka“ (Like)! 🔔 Norite keliauti kartu su mumis? Nepamirškite PRENUMERUOTI (Subscribe) kanalo „Lisauskų kelionės“ ir paspausti varpelio, kad nepraleistumėte kitų mūsų nuotykių! Iki kito karto! 👋` },
+            { title: "Pramogų Pripildytas Ventspilis: Slidinėjimas, Vandens Parkas ir VIZIUM! | Savaitgalio Kelionė", id: "2lw_jcTL2ww", category: "pramogos", badge: "Latvija", views: "534", date: "Prieš 7 mėn.", description: `Ar planuojate savaitgalio kelionę į Latviją ir ieškote idėjų, ką pamatyti? Šiame „Lisauskų kelionės“ vlog'e dalinamės savo įspūdžiais iš nepamirštamo ir aktyvaus savaitgalio Ventspilyje! 🇱🇻 \n\nPamatysite geriausias Ventspilio lankytinas vietas ir pramogas, kurios puikiai tiks tiek šeimoms, tiek aktyvaus poilsio mėgėjams. Šioje kelionėje mes išbandėme viską: \n⛷️ Aktyviai leidome laiką ir gaudėme adrenaliną Ventspilio slidinėjimo trasoje („Lemberga hūte“). \n🌊 Mėgavomės šiluma ir nusileidimo kalneliais Ventspilio vandens parke („Ūdens piedzīvojumu parks“). \n🔬 Pasinėrėme į mokslo atradimus ir interaktyvias pramogas naujajame VIZIUM mokslo centre. \n🚶‍♂ Leidomės į ramų pasivaikščiojimą jaukia Ventspilio krantine. \n🏰 O grįždami atgal į Lietuvą, nepraleidome progos aplankyti istorinį ir be galo žavingą Kuldygos (Kuldīga) miestelį! \n\nJei ieškote idėjos savaitgalio kelionei – Ventspilis yra tobula kryptis! Pažiūrėkite vaizdo įrašą iki galo ir pasemkite idėjų savo kitoms atostogoms. \n\n📌 Nepamirškite: Jei patiko šis vaizdo įrašas, paspauskite PATINKA (Like) 👍, pasidalinkite juo su draugais ir PRENUMERUOKITE (Subscribe) „Lisauskų kelionės“ kanalą, kad kartu keliautume dar daugiau! 🔔 Kokia jūsų mėgstamiausia vieta Ventspilyje? Parašykite komentaruose! 👇 \n\n⏱️ Vaizdo įrašo turinys (Laiko žymos): \n0:00 - Intro \n0:30 - VIZIUM mokslo centras – išbandome interaktyvias ekspozicijas! \n4:08 - Šildomės: Ventspilio vandens parkas (Ūdens piedzīvojumu parks) \n6:26 - Žiemos pramogos: Ventspilio slidinėjimo trasa (Lemberga hūte) \n7:40- Pasivaikščiojimas gražiąja Ventspilio krantine \n9:00 - Pakeliui namo: Lankytinos vietos Kuldygoje \n10:04 – Pabaiga` },
+            { title: "Šeimos savaitgalis Druskininkų akvaparke: Ar verta važiuoti su vaikais?", id: "YCYJCxpcFo4", category: "pramogos", badge: "Akvaparkas", views: "1.1 tūkst.", date: "Prieš 8 mėn.", description: `Sveiki atvykę į „Lisauskų kelionės“ kanalą! 👋 \nŠiame vaizdo įraše dalijamės mūsų šeimos įspūdžiais iš Druskininkų vandens parko (Aqua park). Šįkart nusprendėme praleisti pirčių zoną ir visą laiką skyrėme tik vandens pramogų erdvei, kurioje veiklos netrūksta nei dideliems, nei mažiems! 💦 \n\n🎥 Šiame įraše pamatysite: \n🌴 Tropinį klimatą: Kaip atrodo parko erdvė su palmėmis ir +30°C šiluma žiemą ar vasarą. \n🌊 Didįjį baseiną: Jūros bangų baseinas, sraunioji upė ir masažiniai kriokliai. \n👶 Vaikų erdvę: Speciali zona mažiesiems su „beždžionių tiltais“, smėliu, negiliu mineraliniu vandeniu ir saugiomis čiuožyklomis. \n🚀 Adrenalino zona: Įvairaus greičio nusileidimo kalneliai (tiek drąsiausiems, tiek ramesniems pasičiuožinėjimams). \n🛁 Poilsį: Sūkurinės vonios atsipalaidavimui po aktyvių pramogų. \n\nJei planuojate kelionę į Druskininkus su vaikais ir galvojate, ar užteks veiklos tik vandens zonoje – šis video kaip tik jums! 👍 Nepamirškite paspausti PATINKA ir PRENUMERUOTI mūsų kanalą, kad nepraleistumėte kitų mūsų šeimos nuotykių!` },
+            { title: "Hario Poterio paroda: Ką pamatyti ir ar verta vykti? 🧙‍♂️", id: "uaiAngaRj9o", category: "pramogos", badge: "Paroda", views: "174", date: "Prieš 8 mėn.", description: `Sveiki atvykę į magiškiausią „Lisauskų kelionės“ nuotykį! ✨ \nŠiame video mes visi kartu neriam į burtininkų pasaulį ir lankomės įspūdingame Hario Poterio muziejuje / parodoje! 🧙‍♂️🦉 Ar kada svajojote gauti laišką iš Hogvartso? Mes savo svajonę išpildėme! \n\nŠi vieta – tai ne šiaip muziejus, o tikra kelionė per visus 8 filmus, kurioje galima ne tik pamatyti originalius kostiumus bei rekvizitus, bet ir patiems išbandyti burtus. \n\n🎥 Šiame video pamatysite: \n🧙‍♂️ Paskirstymo ceremoniją: Kuriam koledžui priklausome mes? Grifų Gūžta ar Klastūnynas? \n🌱 Herbologijos pamoką: Ar pavyko išrauti rėkiančias Mandragoras? \n🧪 Eliksyrų klasę: Kokie paslaptingi buteliukai stovi Sneipo lentynose? \n🐍 Paslapčių kambarį: Ar išdrįsime prabilti šnipštūniškai ir atverti legendines duris? \n🏏 Kvidičą ir skraidymą: Kaip sekėsi valdyti šluotas ir gaudyti Aukso šmaukštą? \n🏰 Hogvartso paslaptis: Nuo Hagrido lūšnelės iki Didžiosios salės. \n\nTai tobula vieta ne tik užkietėjusiems Hario Poterio fanams, bet ir šeimoms su vaikais. Parodysime, kokios interaktyvios pramogos laukia mažųjų burtininkų – nuo kovos burtų lazdelėmis iki susidūrimo su savo baimėmis (Kaukais)! \nJei jums patinka Hario Poterio filmai („Harry Potter“) ar „Fantastiniai gyvūnai“, šis video kaip tik jums! Nepamirškite parašyti komentaruose – koks yra JŪSŲ mėgstamiausias Hario Poterio personažas? 👇 \n🔔 Prenumeruokite „Lisauskų kelionės“ kanalą, kad nepraleistumėte kitų mūsų šeimos nuotykių ir kelionių idėjų!` },
+            { title: "Ekskursija po Akmenės karjerus: 4 val. nuotykis su dinozaurais ir kosminiais peizažais!", id: "yXP0pl5rd5s", category: "pramogos", badge: "Ekskursija", views: "255", date: "Prieš 1 m.", description: `Lisauskų kelionės“ kviečia jus į nepaprastą ekskursiją po Akmenės kraštą, kur susiduria pramonė ir stulbinanti gamta! Šiame vaizdo įraše parodysime, kaip per 4 valandas ir 7 km pėsčiomis galima patirti nepamirštamų įspūdžių, aplankant šias unikalias vietas:\n\n- Ventos regioninio parko lankytojų centras: Kelionę pradėsime nuo įspūdingos dinozaurų ekspozicijos, kur prisiliesite prie milijonus metų menančios istorijos. Čia rasite Juros periodo fosilijų, tokių kaip amonitai, ir sužinosite apie geologinę Ventos upės slėnio praeitį. \n- Klinčių karjeras: Pasijuskite lyg Mėnulyje vaikščiodami po baltas klinčių kalvas, suformuotas iš klodų, susidariusių prieš 270–250 milijonų metų. Pamatysite išlikusią kasybos techniką ir kerinčio grožio dirbtinius ežerėlius. \n- Molio karjeras: Leiskitės į kelionę po „lietuviškąjį Marsą“! Čia stebėsite ryškiaspalvių molio skardžių ir mėlynų ežerų peizažus. Sužinosite, kaip kasamas molis ir kodėl ši vieta tokia svarbi cemento gamybai. \n- Jurakalnio apžvalgos bokštas: Užkopkite į 15 metrų aukščio bokštą ir pasigrožėkite Ventos upės slėnio, Jurakalnio atodangos bei Papilės piliakalnių panorama.\n\nŠi kelionė puikiai tinka tiems, kurie ieško naujų potyrių, mėgsta aktyvų laisvalaikį ir nori pamatyti, kaip žmogaus rankos gali sukurti kraštovaizdį, nebūdingą Lietuvai. Daugiau informacijos apie ekskursijas rasite www.karjerais.lt` },
+            { title: "Hossoland : Naujas Lenkijos atrakcionų parkas visai šeimai! Ar verta aplankyti? 🎢👨‍👩‍👧‍👦", id: "-mPqXmFq8bI", category: "pramogos", badge: "Pramogos", views: "1.8 tūkst.", date: "Prieš 1 m.", description: `Sveiki, Lisauskų kelionės bičiuliai! Šį kartą leidomės į naują nuotykių kupiną išvyką, aplankydami ką tik atidarytą Hossolando atrakcionų parką Lenkijoje! Tai didžiausias teminis parkas šiaurės Lenkijoje, įkvėptas Baltijos legendų ir šiaurės kultūrų. \n\nMūsų šeima išbandė 4 amerikietiškus kalnelius ir daugybę kitų atrakcionų, nuo ramių karuselių mažiesiems iki didesnio greičio pramogų! Hossolandas ypač tinkamas šeimoms su mažais vaikais, nes dauguma atrakcionų yra pasiekiami jau nuo 5 metų amžiaus! \n\nAr Hossolandas iš tiesų yra vertas dėmesio? Ar tai naujasis Lenkijos Energylandia konkurentas? Ką veikti su vaikais? \n\nVaizdo įraše rasite: \n- Detali Hossolando apžvalga: Pirmieji įspūdžiai, atrakcionai, teminės zonos (Undinėlių Miestas, Baltambrijos Karalystė, Vikingų Žemė, Drakonų Kasyklų Slėnis). \n- Parkas vaikams: Kodėl Hossolandas idealus šeimoms su mažesniais vaikais? Apžvelgiame, kurie atrakcionai tinka patiems mažiausiems.\n- Atmosfera parke: Palyginus su kitais populiariais parkais, Hossolande dar nėra tiek daug žmonių kaip Energylandia, tad viskas yra daug laisviau, eilės prie atrakcionų – trumpesnės.\n- Praktinė informacija: Ar pakanka vienos dienos apeiti parką? Mūsų nuomone – tikrai taip! \n- Mūsų atsiliepimai: Kas patiko labiausiai, o ką būtų galima patobulinti?\n\nJei planuojate šeimos kelionę į Lenkiją, atostogas prie Baltijos jūros arba ieškote, kur praleisti atostogas su vaikais Lenkijoje, šis vaizdo įrašas jums bus labai naudingas!` },
+            { title: "Epas per Kuršių Neriją: Vecekrugo Kopa, Preila ir Daugiau! ☀️", id: "y7V2OgWE2sI", category: "pramogos", badge: "Pajūris", views: "254", date: "Prieš 1 m.", description: `Sveiki atvykę į naują "Lisauskų kelionės" nuotykį! Šį kartą leidžiamės į nepamirštamą kelionę po pasakiškąją Kuršių neriją. Pasiruoškite išvysti kvapą gniaužiančius vaizdus ir atrasti unikalias vietas, kurios privers jus įsimylėti šį Lietuvos kampelį. \n\nŠiame vaizdo įraše aplankysime: \n- Negyvąjį slėnį (Mirusias kopas): Paslaptinga ir unikali vieta, kurioje pajusite gamtos didybę ir trapumą. \n- Baltijos jūrą: Mėgausimės gaiviu jūros vėju, ošiančiomis bangomis ir nuostabiais paplūdimiais. \n- Pasienio ruožą: Iš arčiau susipažinsime su Lietuvos ir Rusijos siena, esančia šioje unikaliame pusiasalyje. \n- Vecekrugo kopą: Užkopsime į aukščiausią Kuršių nerijos kopą ir pasigrožėsime panoraminiais vaizdais. \n- Preilos kopas: Pasivaikščiosime po smėlio kalvas ir pajusime ramybę, kurią suteikia gamta. \n- Akimirkas iš avikalnio: Pasidalinsime įdomiais kadrais iš paukščio skrydžio. \n- Kormoranų koloniją: Stebėsime šiuos įspūdingus paukščius jų natūralioje aplinkoje. \n\nPrisijunkite prie mūsų ir patirkite Kuršių nerijos magiją!` },
+            { title: "Perlinių danielių parkas", id: "Hx_FbGS14Wk", category: "pramogos", badge: "Gamta", views: "358", date: "Prieš 1 m.", description: `Trumpa išvyka pasigrožėti perlinių danielių parko gyventojais. Puiki proga pabūti gamtoje ir susipažinti su šiais grakščiais gyvūnais iš arti.` },
+            { title: "„Žalgirio” arenos baseinas. Luko nardymas", id: "BwC7Tv47O7E", category: "pramogos", badge: "Sportas", views: "356", date: "Prieš 1 m.", description: `„Žalgirio“ arenos baseinas – didžiausias ir moderniausias baseinų ir pirčių kompleksas regione, įsikūręs pačioje Kauno širdyje, Nemuno saloje, greta „Žalgirio“ arenos. Tai – lyg jos tęsinys, kuriame išlaikoma industrinės architektūros koncepcija.\n\nBaseinas savo duris lankytojams atvėrė tik 2022 m. rugsėjį, tačiau jį jau spėjo pamilti profesionalūs sportininkai, vietiniai gyventojai bei miesto svečiai. Lankytojų laukia net 11 skirtingų pirčių, 50-ies metrų Olimpinis baseinas, erdvus spa su baseinais, masažinėmis srovėmis, vaikų pramogų zona, restoranu, vandens barais bei vidaus ir lauko sūkurinėmis voniomis, su nuostabiu vaizdu į Nemuno salos gamtą.` },
+            { title: "Lietuvos zoologijos sodas", id: "bcN1MYmJ6uU", category: "pramogos", badge: "Išvyka", views: "211", date: "Prieš 1 m.", description: `Lietuvos zoologijos sodas pirmą kartą duris atvėrė 1938 m. liepos 1 d. Jį įkūrė žymus gamtininkas prof. Tadas Ivanauskas (1882-1970). Įkūrus zoologijos sodą, svarbiausias profesoriaus siekis buvo šviesti lankytojus apie gamtosaugą ir nykstančių laukinių gyvūnų rūšių išsaugojimą.\n\nLietuvos zoologijos sodas įsikūręs viename iš didžiausių Ąžuolynų Europoje. Kauno miesto gyventojai bei svečiai, apsilankę Lietuvos zoologijos sode, gali pamatyti per 2000 gyvūnų atstovaujančių virš 200 rūšių iš viso pasaulio – nuo smulkiausio vabzdžio iki aukščiausios žirafos. Jų tarpe yra ir nykstančių rūšių, kurioms viena iš pagrindinių grėsmių – buveinių nykimas ir naikinimas.` },
+            { title: "Savaitgalis Lodzėje | Ką aplankyti su vaikais | Fala Aquapark | Orientarium ZOO Łódź | Mandoria Park", id: "YKxCavYMbAc", category: "pramogos", badge: "Lenkija", views: "1.3 tūkst.", date: "Prieš 1 m.", description: `Smagiam vaikų savaitgaliui būtinai reikia ir smagių promogų! Lenkija visada džiugina pramogomis. Šį kartą svečiuodamiesi Lodzėje, trečiame didžiausiame Lenkijos mieste, aplankėme vandens atrakcionų parką "Fala Aquapark". Pramogavome, supomės ir leidomės kalneliais didžiausiaiame Lenkijoje po stogu esančiame atrakcionų parke "The Mandoria Amusement Park". Na ir žinoma, nuostabus gyvosios gamtos pažinimas "Orientarium ZOO Łódź". Vaikams labai patiko - savaitgalio kelionė užskaityta! \n\n🏄‍♀️ "Vandens parkas " Fala Aquapark" Lodzėje yra vienas didžiausių vandens parkų Lenkijoje. Tai ištisus metus veikiantis objektas, kuriame yra baseinai ir čiuožyklos vyresniems vaikams, mažyliams pritaikytos zonos. \n🎢 Uždaras atrakcionų parkas "The Mandoria Amusement Park" - tai pramogos skirtos visai šeimai. \n🐘 Gyvosios gamtos kampelis „Orientarium ZOO“ Lodzėje yra moderniausias kompleksas. Didžiausias Europoje indiškas dramblys, rekordinio dydžio krokodilas krokodilas, labai nykstantys Sumatros orangutanai ir povandeninis tunelis, iš kurio galima grožėtis virš galvos plaukiančiais rykliais ir rajomis.` },
+            { title: "Vilniaus knygų mugė 2025", id: "qK9njNc_l40", category: "pramogos", badge: "Renginys", views: "105", date: "Prieš 1 m.", description: `Vilniaus knygų mugė – didžiausia knygų mugė Baltijos šalyse, vienas ryškiausių kultūros įvykių Lietuvoje. Šis skaitymą populiarinantis ir jį švenčiantis renginys kasmet į susitikimus su rašytojais, knygų pristatymus, diskusijas, koncertus, parodas, kūrybinius užsiėmimus ir kitas kultūrines veiklas sukviečia lankytojus iš visos Lietuvos. \n\nMugėje kasmet dalyvauja apie 300 leidyklų ir kitų kultūros organizacijų iš Lietuvos ir užsienio šalių. Vasario 27 – kovo 2 d. Lietuvos parodų ir kongresų centre LITEXPO įvyko dvidešimt penktoji tarptautinė Vilniaus knygų mugė, pasitikusi lankytojus su tema „Kukutis“.` },
+            { title: "Energetikos ir technikos muziejus, Virsmo salė, Tesla šou", id: "LQ0fFWJjduQ", category: "pramogos", badge: "Muziejus", views: "783", date: "Prieš 1 m.", description: `Energetikos ir technikos muziejus – šeimoms draugiška įdomaus laisvalaikio erdvė, kur po vienu stogu telpa unikalus industrinis paveldas, interaktyvus mokslo pažinimas ir kultūros renginiai. \n\nVirsmo salė – interaktyvi Energetikos ir technikos muziejaus ekspozicija apie žmogaus santykį su energija. Jos centre, Faradėjaus narve, įrengtos dvi didžiausios Tesla ritės Baltijos regione, o salės pašonėje lankytojams atverti istoriniai pirmosios viešosios Vilniaus miesto elektrinės kamino pamatai. Tesla šou metu susipažinsite su garsaus serbų išradėjo, inžinieriaus Nikola Teslos pasiekimais ir įdomiausiais biografijos faktais – nors turėjo 300 patentų, tai neišgelbėjo fiziko nuo skurdo. Muziejaus gidas-edukatorius pademonstruos vieną mažąją ir dvi didžiąsias Teslas, sugros žaibais ir pasiūlys eksponatą-instrumentą išbandyti lankytojams.` },
+            { title: "KAUNO TVIRTOVĖS VI FORTAS, Vytauto Didžiojo karo muziejaus Karo technikos ekspozicija", id: "wMrPq4As1VY", category: "pramogos", badge: "Muziejus", views: "11 tūkst.", date: "Prieš 1 m.", description: `Šeštasis fortas – Kauno tvirtovės dalis rytinėje miesto dalyje, Gričiupyje, esanti Nemuno dešiniojo slėnio šlaito viršutinėje terasoje. Fortas yra penkiakampės simetrinės struktūros, orientuotas į šiaurės rytus. Per du pasaulinius karus fortas beveik nenukentėjo. \n\nTarpukariu veikė kaip karo kalėjimas, kuriame kalėjo ir 1926 m. gruodžio 27 d., Antano Smetonos nurodymu, apkaltinus perversmo rengimu, netoliese sušaudyti vadinamieji „keturi komunarai“. Antrojo pasaulinio karo metais šiame forte nužudyta apie 35 tūkst. karo belaisvių. Vėliau čia pradėtas formuoti kryžių kalnelis tūkstančiams aukų atminti. Į šį fortą iš sostinės perkelta ir miestiečių bei Kauno svečių iškart pamėgta Vytauto Didžiojo karo muziejaus Karo technikos ekspozicija.` },
+            { title: "Mokslo sala, Kaunas", id: "jBRU8xayDBA", category: "pramogos", badge: "Muziejus", views: "3 tūkst.", date: "Prieš 1 m.", description: `Mokslo sala - tai pirmas mokslo ir inovacijų populiarinimo centras Lietuvoje. Tai vienintelis toks muziejus visoje Lietuvoje, kviečiantis pasinerti į interaktyvų mokslo atradimų pasaulį.` },
+            { title: "Nida 2024", id: "twVxXWnhIwc", category: "pramogos", badge: "Pajūris", views: "71", date: "Prieš 1 m.", description: `Švenčiame mamos gimtadienį nuostabiojoje Nidoje! Saulė, jūra, kopos ir patys geriausi šeimos įspūdžiai iš 2024 metų kelionės į pasakiškąjį Lietuvos pajūrį.` },
+            { title: "Plungė iš paukščio skrydžio 2024, diena be automobilio", id: "-R6g4mcsXII", category: "pramogos", badge: "Dronas", views: "257", date: "Prieš 2 m.", description: `Plungė iš paukščio skrydžio 2024, diena be automobilio. Gražūs Žemaitijos miesto vaizdai užfiksuoti dronu.` },
+
+            // --- PAŽINTINIAI TAKAI (10 video) ---
+            { title: "Karpėnų klinčių karjeras | Žygis kartu su Trenkturas", id: "cASIxvMcKic", category: "takai", badge: "Žygis", views: "360", date: "Prieš 4 mėn.", description: `Sveiki, keliautojai! 🌍 Šį kartą „Lisauskų kelionės“ leidžiasi į turbūt neįprasčiausią vietą Lietuvoje – Karpėnų klinčių karjerą! \n\nAr galite patikėti, kad visai čia pat, Akmenės rajone, turime savo Didįjį kanjoną ir net Marso paviršių primenančius vaizdus? Šiame vaizdo įraše kartu su mumis pasivaikščiosite po buvusį 250 milijonų metų senumo Permo jūros dugną, pamatysite smaragdinius ežerėlius ir iš arti apžiūrėsite milžiniškus, net 720 tonų sveriančius žingsniuojančius ekskavatorius! Tai buvo nepamirštamas žygis, todėl kviečiame keliauti kartu su mumis per ekranus! 🚶‍♂️🚜 \n\n👇 BŪTINAI PARAŠYKITE KOMENTARUOSE: Ar jau esate buvę Karpėnų karjere? Koks Lietuvos kampelis jums paliko didžiausią įspūdį? \n🔔 Nepamirškite PRENUMERUOTI kanalo ir paspausti VARPELĮ, kad nepraleistumėte naujų „Lisauskų kelionių“ nuotykių!` },
+            { title: "Mūšos Tyrelio Takas: Pelkė Lietuvoje, Kurioje Pajusite Gamtos Galybę", id: "LVK0-C2JvNQ", category: "takai", badge: "Pelkė", views: "725", date: "Prieš 1 m.", description: `Ar ieškote įspūdingų vietų Lietuvoje, kur galima pasinerti į unikalią gamtą? O gal domina paslaptingos pelkės ir retas augalų bei gyvūnų pasaulis? Leiskitės į virtualią kelionę po Mūšos tyrelio pažintinį taką – ilgiausią medinį taką, nutiestą per pelkę Lietuvoje! \n\nŠiame video atskleisime 15 svarbiausių faktų apie Mūšos tyrelio pelkę ir jos unikalų taką. Sužinosite, kodėl medžiai čia turi negilias šaknis, kas yra Miknaičių ežeras (vienas iš nedaugelio natūralių ežerų Joniškio rajone!) ir kokios retos gyvūnų bei augalų rūšys slepiasi šiame telmologiniame draustinyje. Mūšos tyrelis – tai ne tik gamtos stebuklas, bet ir istorijos liudininkas: čia buvo Antrojo pasaulinio karo Lietuvos partizanų Genio rinktinės stovyklavietės vieta.\n\nKo tikėtis šiame video:\n- Mūšos tyrelio pažintinis takas: Visas jo grožis ir ypatumai.\n- Pelkės paslaptys: Kaip formuojasi ir kuo ypatinga aukštapelkės ir tarpinės pelkės ekosistema.\n- Miknaičių ežeras: Vienintelis natūralus ežeras Joniškio rajone, kurį pamatysite take.\n- Istorinis paveldas: Partizanų stovyklavietė pelkės gilumoje.` },
+            { title: "Akmenų Rūža, Šiaulės Kalnas ir Tytuvėnų Apžvalgos Bokštai", id: "3bA2R27bN7M", category: "takai", badge: "Apžvalgos bokštas", views: "187", date: "Prieš 1 m.", description: `Leiskitės į nepamirštamą kelionę po Tytuvėnų regioninį parką! Šiame vaizdo įraše mes tyrinėjame ne tik unikalų Akmenų rūžos pažintinį taką, bet ir du įspūdingus apžvalgos bokštus: Šiaulės kalno ir Tytuvėnų. Pasiruoškite kvapą gniaužiantiems vaizdams, ramybei ir įspūdžiams! \n\nVaizdo įraše rasite: \n- Akmenų rūžos pažintinis takas: Mėgaukitės miško, unikalių ledyno suformuotų akmenų sankaupų ir meno instaliacijų kadrais. Atraskite tako ramybę ir pasinerkite į gamtos bei meno harmoniją. \n- Šiaulės kalno apžvalgos bokštas: Aukštis: 21 metro aukščio bokštas, pastatytas ant kalvos, kuri prideda dar 9 metrus aukščio. Panorama: Nuo bokšto atsiveria banguotas Tytuvėnų regioninio parko kraštovaizdis, matosi Radviliškio ir Šiaulių miestai. \n- Tytuvėnų apžvalgos bokštas: Aukštis: 15 metrų aukščio bokštas ant Kokmaniškės (Majako) kalno. Panorama: Atsiveria vaizdai į Pašakarnio tvenkinį, dvaro parką, Gomertos kraštovaizdžio draustinį, Šiluvos koplyčią ir bažnyčią. \n\nŠis vaizdo įrašas – puikus pasirinkimas tiems, kurie nori patirti gamtos grožį, meno harmoniją ir kvapą gniaužiančias panoramas. Tikimės, kad jis įkvėps jus aplankyti šias nuostabias vietas!` },
+            { title: "TARGIŲ OZŲ TAKAS, Kurtuvėnų regioninis parkas", id: "roFVMdWpDh0", category: "takai", badge: "Žygis", views: "118", date: "Prieš 1 m.", description: `Visas pėsčiųjų pažintinio tako ilgis – 5,8 km. Bet takas yra aštuonšakės formos, todėl galima sutrumpinti kelionę. Takas vingiuoja Targių geomorfologinio draustinio ozais. Ozai – tai gamtinės kilmės siauros ir ilgos kalvos, kurios lyg labirintas įsirangiusios tarp pelkių. Čia auga Karalmiškio sengirės dalis, yra „Natura 2000“ buveinė – pušynai ant ozų. Keliaujant galima pailsėti prie Vėžežerio ir Šonos ežerų.\n\nTargių ozai driekiasi iš šiaurės rytų į pietvakarius pietinėje Kurtuvėnų regioninio parko dalyje. Šiuos ledyninės kilmės kalvagūbrius sudaro sluoksniuotas smėlis bei žvyras. Jų ilgis - nuo 300 metrų iki 2 kilometrų, santykinis aukštis - iki 11 metrų. Ozų juostos, vaizdingai vadinamos Karobkalniais, Ožknugariais arba Milžinų keliais, susiformavo prieš 16-15 tūkstančių metų tirpstančio ledyno plyšiuose iš tekančio vandens sąnašų.` },
+            { title: "Ventos-Dubysos perkasas, Bubių istorinis takas", id: "jVGKmhN6tJA", category: "takai", badge: "Istorija", views: "181", date: "Prieš 1 m.", description: `2 km ilgio pažintinis takas tinkamas keliauti pėsčiomis, dviračiu. Keliaujant taku aplankysite paminklą Lietuvos pokario partizanams, Bubių gegužinių vietą, šimtametes Perkaso pušis, Zubovo ąžuolų alėją, Ventos – Dubysos perkaso ir uosto liekanas, senąjį tiltą per Dubysos upę, seniausias Lietuvoje 5 Bubių tuopas, Bubių II dvaro sodybą, apvedamojo kanalo liekanas, I ir II pasaulinių karų karių kapus. \n\nVentos-Dubysos perkasas (dar vadintas Žemaičių kanalu) buvo statomas 1825–1831 m. Tai buvo didžiausias techninis projektas visoje XIX a. Rusijos Imperijoje. Sudėtingą vandens susisiekimo įrenginį sudarė Ventos bei Dubysos upių vagos, jungiamasis ir apeinamasis kanalai, 29 užtvankos, 41 akmeninis šliuzas, 4 vandens rezervuarai, žiemos uostas ir net lynkelis, kad prireikus, laivai galėtų plaukti prieš srovę.` },
+            { title: "Juodlės pažintinis takas. Kurtuvėnų regioninis parkas. Žiema 2025", id: "bBd6SzJe4Bs", category: "takai", badge: "Žiema", views: "61", date: "Prieš 1 m.", description: `Žiemos pasivaikščiojimas Juodlės pažintiniu taku Kurtuvėnų regioniniame parke. Sniegu pasipuošusi gamta, apsnigti miško takeliai ir visiška žiemos ramybė. Priešistorinių kraštovaizdžių grožis, atsiskleidžiantis po balta žiemos skraiste.` },
+            { title: "Svilės kraštovaizdžio takas", id: "YUweSjKZnVo", category: "takai", badge: "Žygis", views: "57", date: "Prieš 1 m.", description: `Kurtuvėnų regioninio parko teritorijoje įsteigtas Svilės kraštovaizdžio draustinis ir jame paženklintas to paties pavadinimo takas. Jis prasideda prie Svilės šaltinių, vienų didžiausių ir vandeningiausių šaltinių Lietuvoje. Per Svilės vardu pavadintą mišką maršrutas veda link Kryžiukais vadinamų kryžkelėje pastatytų kryžių. Žmonės šią vietą vadina šventa. Miškais apsukęs ratą maršrutas grįžta atgal prie Svilės šaltinių.` },
+            { title: "Vainagių pažintinis takas", id: "E30hn1ylTJs", category: "takai", badge: "Žygis", views: "107", date: "Prieš 1 m.", description: `Vainagių pažintinis takas, Kurtuvėnų regioninis parkas. 2024 gruodžio pabaiga. Nuostabus žygis po gražius žiemos Lietuvos miškus ir visiškas atsipalaidavimas gamtos apsuptyje.` },
+            { title: "Pageluvio pažintinis takas. Kurtuvėnų regioninis parkas", id: "RaQRQ531Xj0", category: "takai", badge: "Žygis", views: "104", date: "Prieš 1 m.", description: `Kurtuvėnai 2024-10-20. Trumpasis Pageluvio pažintinis takas. Ilgis apie 5 km. Puikus maršrutas aktyviam poilsiui Kurtuvėnų regioniniame parke rudens spalvų fone.` },
+            { title: "Juodlės pažintinis takas. Kurtuvėnų regioninis parkas", id: "4obVDV2dEGk", category: "takai", badge: "Žygis", views: "181", date: "Prieš 1 m.", description: `Juodlės pažintinis takas. Kurtuvėnų regioninis parkas. Viena iš gražiausių trasų pasivaikščioti. Tako ilgis tik 5 kilometrai, bet čia atrasite neįkainojamą ramybę ir gamtos harmoniją.` },
+
+            // --- DAGILĖLIS (5 video) ---
+            { title: "Dagilėlio pirmokai Jaunučių chorų festivalyje „Džiaugsmo šventė jau atėjo“", id: "chMemEvNcf0", category: "dagilelis", badge: "Dagilėlis", views: "209", date: "Prieš 1 m.", description: `„Dagilėlio“ 1-os klasės berniukų choras dalyvavo Jaunučių chorų festivalyje „Džiaugsmo šventė jau atėjo“ 🌼 Šiaulių šv. Apaštalų Petro ir Pauliaus katedroje. Nuostabūs pasirodymai ir skambūs vaikų balsai, užpildę visą katedros erdvę.` },
+            { title: "Dagilėlio dainavimo mokykla | Pasirodymas #1", id: "xYvpsL6qI3g", category: "dagilelis", badge: "Dagilėlis", views: "Archyvas", date: "Koncertas", autoTitle: true, description: `Šiaulių berniukų ir jaunuolių choro „Dagilėlis“ dainavimo mokyklos akimirkos ir nuostabus muzikinis pasirodymas.` },
+            { title: "Dagilėlio dainavimo mokykla | Pasirodymas #2", id: "4e_Wh-OXCqY", category: "dagilelis", badge: "Dagilėlis", views: "Archyvas", date: "Koncertas", autoTitle: true, description: `Šiaulių berniukų ir jaunuolių choro „Dagilėlis“ dainavimo mokyklos akimirkos ir nuostabus muzikinis pasirodymas.` },
+            { title: "Dagilėlio dainavimo mokykla | Pasirodymas #3", id: "hkR_BmNPbPU", category: "dagilelis", badge: "Dagilėlis", views: "Archyvas", date: "Koncertas", autoTitle: true, description: `Šiaulių berniukų ir jaunuolių choro „Dagilėlis“ dainavimo mokyklos akimirkos ir nuostabus muzikinis pasirodymas.` },
+            { title: "Dagilėlio dainavimo mokykla | Pasirodymas #4", id: "ZRexVX7u0VA", category: "dagilelis", badge: "Dagilėlis", views: "Archyvas", date: "Koncertas", autoTitle: true, description: `Šiaulių berniukų ir jaunuolių choro „Dagilėlis“ dainavimo mokyklos akimirkos ir nuostabus muzikinis pasirodymas.` },
+
+            // --- MOKYKLA IR UŽKLASINĖ VEIKLA (9 video) ---
+            { title: "Drugelių grupės išleistuvės", id: "_HbCBTMtq7A", category: "veikla", badge: "Išleistuvės", views: "239", date: "Prieš 4 mėn.", description: `Drugelių grupės išleistuvės 2026-05-29. Nuoširdžiausios akimirkos, šypsenos, dainos ir jautrus atsisveikinimas su darželiu prieš pradedant naują gyvenimo etapą mokykloje.` },
+            { title: "Šventė Kurtuvėnų dvaro svirne su Dubysos mokyklos bendruomene 🎶", id: "IYXbrfBFH4Q", category: "veikla", badge: "Šventė", views: "721", date: "Prieš 1 m.", description: `Sveiki atvykę į nepamirštamą šventę, kuri vyko Kurtuvėnų dvaro sodyboje, Šiaulių rajone! Šiame vaizdo įraše įamžintos nuostabios akimirkos, praleistos unikalioje aplinkoje – autentiškame XVIII a. pabaigos mediniame dvaro svirne, kuris yra vienas seniausių ir didžiausių Lietuvoje.\n\nRenginyje dalyvavo Dubysos aukštupio mokyklos bendruomenė – mokiniai, mokytojai ir tėvai. Ši mokykla yra puikus pavyzdys, kaip šiuolaikinis ugdymas dera su turtinga regiono istorija ir gamta. Šventės metu mėgavomės muzika, šokiais, o svarbiausia – nuoširdžiu bendravimu, sujungusiu bendruomenę istoriniame ir kultūriniame objekte.\n\nNuo pat 1996 m. Kurtuvėnų svirnas tapo svarbiu kultūros centru, kuriame vyksta įvairūs renginiai. Nepraleiskite progos pasidalinti šiuo vaizdo įrašu ir parodyti, kaip svarbu puoselėti mūsų paveldą ir bendrystę!` },
+            { title: "Boružiukų edukacija \"Stebuklingas augalų kilimas\"", id: "a_nGROIl1xY", category: "veikla", badge: "Edukacija", views: "113", date: "Prieš 1 m.", description: `Su vaikučiais sukūrėme stebuklingą augalų kilimą. Pradžioje susipažinome su naudojamais augalais, žolelėmis. Visus edukacijai skirtus augalus kruopščiai surinko, skynė ir klasifikavo Linukas. Supažindinome ir grupės vaikus su augalais. Uostėme kaip jie kvepia. Lavinome taktilinius pojūčius. Sugalvojome po norą, todėl kilimas tapo stebuklingu. Buvo smagus ir naudingas užsiėmimas, nes visi sužinojome kažką naujo!` },
+            { title: "Boružiukų Kalėdų šventė", id: "tnIm-0paDxc", category: "veikla", badge: "Šventė", views: "282", date: "Prieš 1 m.", description: `Boružiukų Kalėdų šventė 2024-12. Gražus kalėdinis koncertas ir šventinė nuotaika vaikų rate. Mažieji atlikėjai pasipuošę ir pasiruošę pasitikti didžiąsias metų šventes.` },
+            { title: "Pirmokų Kalėdų laukimas", id: "U91dsOl22Go", category: "veikla", badge: "Šventė", views: "194", date: "Prieš 1 m.", description: `Meduolių dekoravimas ir Kalėdinis koncertas. Kalėdų laukimo akimirkos Dubysos aukštupio mokykloje, 1B klasėje. Vaikų klegesys, kūryba ir šventinis džiugesys.` },
+            { title: "Bruožiukai, eglutės puošimas 2024", id: "q87BXAFlQE8", category: "veikla", badge: "Šventė", views: "198", date: "Prieš 1 m.", description: `Boružiukų grupės eglutės puošimas ir įžiebimas. 2024 metų gražiausios švenčių laukimo akimirkos, vainikuotos vaikų šypsenų.` },
+            { title: "Pirmas sniegas, 2024 Bubiai", id: "_wLTOVbFpgc", category: "veikla", badge: "Gyvenimas", views: "46", date: "Prieš 1 m.", description: `Vaikams daug laimės, pirmas sniegas Bubiuose. Išsilaikė net kelias dienas. 2024-11-24 žiemos pradžia. Smagiausios žiemos pramogos tiesiog kieme!` },
+            { title: "Penktadienio vakaras", id: "gYnWVjdjAMc", category: "veikla", badge: "Gyvenimas", views: "106", date: "Prieš 1 m.", description: `Šiauliai, Akropolis. Smagus penktadienio vakaras po darbų ir mokslų. Trumpos akimirkos iš pramogų ir atsipalaidavimo laiko kartu su šeima.` },
+            { title: "Giedrės ir Urtės fotosesija", id: "zqB9vlgdRuY", category: "veikla", badge: "Fotosesija", views: "36", date: "Prieš 1 m.", description: `Giedrės ir Urtės fotosesija gražios gamtos apsuptyje. Šiltos, jaukios akimirkos, kurios išliks atmintyje ilgam. Gyvenimo grožis paprastume.` }
+        ];
+
+        // Kortelių generavimas
+        document.addEventListener("DOMContentLoaded", () => {
+            const containers = {
+                'keliones': document.getElementById('grid-keliones'),
+                'pramogos': document.getElementById('grid-pramogos'),
+                'takai': document.getElementById('grid-takai'),
+                'dagilelis': document.getElementById('grid-dagilelis'),
+                'veikla': document.getElementById('grid-veikla')
+            };
+
+            videoData.forEach((video) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.onclick = () => openVideo(video.id);
+                
+                const thumbUrl = `https://img.youtube.com/vi/${video.id}/maxresdefault.jpg`;
+                const fallbackThumbUrl = `https://img.youtube.com/vi/${video.id}/hqdefault.jpg`;
+
+                card.innerHTML = `
+                    <div class="video-thumbnail">
+                        <img loading="lazy" src="${thumbUrl}" onerror="this.onerror=null; this.src='${fallbackThumbUrl}';" onload="if(this.naturalWidth===120) this.src='${fallbackThumbUrl}';" alt="${video.title.replace(/"/g, '&quot;')}">
+                        <div class="play-icon"></div>
+                    </div>
+                    <div class="card-body">
+                        <span class="badge">${video.badge}</span>
+                        <h3 id="title-${video.id}">${video.title}</h3>
+                    </div>
+                `;
+
+                if (containers[video.category]) {
+                    containers[video.category].appendChild(card);
+                }
+
+                // Automatiškai ištraukiame tikrąjį pavadinimą iš YouTube oEmbed (ypač naudinga neviešiems video)
+                if (video.autoTitle) {
+                    fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${video.id}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data && data.title) {
+                                video.title = data.title;
+                                const titleEl = document.getElementById(`title-${video.id}`);
+                                if (titleEl) titleEl.innerText = data.title;
+                            }
+                        })
+                        .catch(() => {});
+                }
+            });
+
+            checkHash();
+        });
+
+        // Detalusis vaizdas ir SEO
+        function openVideo(id) {
+            const video = videoData.find(v => v.id === id);
+            if (!video) return;
+
+            window.location.hash = id;
+
+            document.getElementById('video-title').innerText = video.title;
+            document.getElementById('video-badge').innerText = video.badge;
+            document.getElementById('video-date').innerText = "Paskelbta: " + video.date;
+            document.getElementById('video-views').innerText = "Peržiūros: " + video.views;
+            
+            // Užkrauname aprašymą ir paverčiame HTML newline'ais
+            document.getElementById('video-desc-text').innerHTML = video.description.replace(/\n/g, "<br>");
+            
+            const iframeContainer = document.getElementById('video-iframe-container');
+            iframeContainer.innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+
+            const pageUrl = encodeURIComponent(window.location.href);
+            const titleUrl = encodeURIComponent(video.title);
+            document.getElementById('share-fb').href = `https://www.facebook.com/sharer/sharer.php?u=${pageUrl}`;
+            document.getElementById('share-wa').href = `https://api.whatsapp.com/send?text=${titleUrl} %0A%0A ${pageUrl}`;
+
+            document.getElementById('main-view').style.display = 'none';
+            const videoView = document.getElementById('video-view');
+            videoView.style.display = 'block';
+            window.scrollTo(0, 0);
+
+            injectSEO(video);
+        }
+
+        function closeVideo() {
+            document.getElementById('video-iframe-container').innerHTML = '';
+            document.getElementById('video-view').style.display = 'none';
+            document.getElementById('main-view').style.display = 'block';
+            history.pushState('', document.title, window.location.pathname);
+        }
+
+        function checkHash() {
+            const hash = window.location.hash.substring(1);
+            if (hash) {
+                openVideo(hash);
+            }
+        }
+
+        window.addEventListener('popstate', function() {
+            const hash = window.location.hash.substring(1);
+            if (hash) {
+                openVideo(hash);
+            } else {
+                closeVideo();
+            }
+        });
+
+        // Generuojame Schema.org duomenis Google robotams (SEO)
+        function injectSEO(video) {
+            let oldScript = document.getElementById('dynamic-seo');
+            if (oldScript) oldScript.remove();
+
+            let script = document.createElement('script');
+            script.id = 'dynamic-seo';
+            script.type = 'application/ld+json';
+            script.text = JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "VideoObject",
+                "name": video.title,
+                "description": video.description,
+                "thumbnailUrl": `https://img.youtube.com/vi/${video.id}/maxresdefault.jpg`,
+                "uploadDate": "2024-01-01", 
+                "embedUrl": `https://www.youtube.com/embed/${video.id}`,
+                "publisher": {
+                    "@type": "Organization",
+                    "name": "Lisauskų kelionės"
+                }
+            });
+            document.head.appendChild(script);
+        }
+    </script>
+</body>
+</html>
