@@ -27,7 +27,8 @@
       "date": "2023-05-14",
       "category": "Lietuva",
       "description": "Saulės miestas: Talkšos ežero pakrantė, Geležinė lapė, Frenkelio vila ir Kryžių kalnas.",
-      "youtubeUrl": "https://www.youtube.com/@Lisauskukeliones"
+      "travelers": ["Tomas", "Sandra", "Lukas", "Linas"],
+      "videos": []
     },
     {
       "id": 2,
@@ -38,7 +39,8 @@
       "date": "2023-06-18",
       "category": "Lietuva",
       "description": "Medžių lajų takas, Puntuko akmuo, Kalitos kalnas ir Šventosios upės slėnio atradimai.",
-      "youtubeUrl": "https://www.youtube.com/@Lisauskukeliones"
+      "travelers": ["Tomas", "Sandra", "Lukas", "Linas"],
+      "videos": []
     },
     {
       "id": 3,
@@ -49,7 +51,8 @@
       "date": "2023-07-08",
       "category": "Automobiliu",
       "description": "Šeimos kelionė į Latvijos pajūrį: Mėlynosios vėliavos paplūdimys, uosto molas ir karvučių paradas.",
-      "youtubeUrl": "https://www.youtube.com/@Lisauskukeliones"
+      "travelers": ["Tomas", "Sandra", "Lukas", "Linas"],
+      "videos": []
     },
     {
       "id": 4,
@@ -60,7 +63,8 @@
       "date": "2023-08-12",
       "category": "Automobiliu",
       "description": "Viduramžių dvasia alsuojantis Talino senamiestis, Tompea kalva, Telliskivi ir jūros muziejus.",
-      "youtubeUrl": "https://www.youtube.com/@Lisauskukeliones"
+      "travelers": ["Tomas", "Sandra", "Lukas", "Linas"],
+      "videos": []
     },
     {
       "id": 5,
@@ -71,7 +75,8 @@
       "date": "2023-08-14",
       "category": "Kruizas",
       "description": "Keltu per Suomijos įlanką į Helsinkį: Senato aikštė, Uolų bažnyčia ir Suomenlinna tvirtovė.",
-      "youtubeUrl": "https://www.youtube.com/@Lisauskukeliones"
+      "travelers": ["Tomas", "Sandra", "Lukas", "Linas"],
+      "videos": []
     },
     {
       "id": 6,
@@ -82,7 +87,8 @@
       "date": "2023-09-22",
       "category": "Automobiliu",
       "description": "Kelionė automobiliu į Vokietijos sostinę: Brandenburgo vartai, Reichstagas ir Berlyno sienos galerija.",
-      "youtubeUrl": "https://www.youtube.com/@Lisauskukeliones"
+      "travelers": ["Tomas", "Sandra", "Lukas", "Linas"],
+      "videos": []
     },
     {
       "id": 7,
@@ -93,7 +99,8 @@
       "date": "2023-09-25",
       "category": "Automobiliu",
       "description": "Šimto bokštų miestas: Karolio tiltas, Prahos pilis, Senamiesčio aikštė ir astronominis laikrodis.",
-      "youtubeUrl": "https://www.youtube.com/@Lisauskukeliones"
+      "travelers": ["Tomas", "Sandra", "Lukas", "Linas"],
+      "videos": []
     },
     {
       "id": 8,
@@ -104,7 +111,8 @@
       "date": "2023-09-27",
       "category": "Automobiliu",
       "description": "Futuristinis Ještedo televizijos bokštas ir viešbutis kalno viršūnėje su kvapą gniaužiančia panorama.",
-      "youtubeUrl": "https://www.youtube.com/@Lisauskukeliones"
+      "travelers": ["Tomas", "Sandra", "Lukas", "Linas"],
+      "videos": []
     },
     {
       "id": 9,
@@ -115,7 +123,8 @@
       "date": "2023-11-10",
       "category": "Lėktuvu",
       "description": "Kalemegdano tvirtovė prie Dunojaus ir Savos santakos, bohemiškasis Skadarlija kvartalas ir Šv. Savos soboras.",
-      "youtubeUrl": "https://www.youtube.com/@Lisauskukeliones"
+      "travelers": ["Tomas", "Sandra", "Lukas", "Linas"],
+      "videos": []
     },
     {
       "id": 10,
@@ -126,7 +135,8 @@
       "date": "2024-04-15",
       "category": "Kruizas",
       "description": "Antikinė Sicilijos dvasia: Ortidžijos sala, katedros aikštė, Arethusa šaltinis ir Neapolio archeologinis parkas.",
-      "youtubeUrl": "https://www.youtube.com/@Lisauskukeliones"
+      "travelers": ["Tomas", "Sandra", "Lukas", "Linas"],
+      "videos": []
     },
     {
       "id": 11,
@@ -137,7 +147,8 @@
       "date": "2024-04-16",
       "category": "Kruizas",
       "description": "Kruizinio laivo sustojimas saulėtoje Maltoje: Didysis uostas, Aukštutiniai Barrakka sodai ir senamiesčio gatvelės.",
-      "youtubeUrl": "https://www.youtube.com/@Lisauskukeliones"
+      "travelers": ["Tomas", "Sandra", "Lukas", "Linas"],
+      "videos": []
     },
     {
       "id": 12,
@@ -148,7 +159,8 @@
       "date": "2024-06-04",
       "category": "Kruizas",
       "description": "Adrijos jūros perlas: imperatoriaus Diokletiano rūmai, Riva promenada ir Marjan kalvos apžvalgos aikštelė.",
-      "youtubeUrl": "https://www.youtube.com/@Lisauskukeliones"
+      "travelers": ["Tomas", "Sandra", "Lukas", "Linas"],
+      "videos": []
     },
     {
       "id": 13,
@@ -159,7 +171,8 @@
       "date": "2024-06-06",
       "category": "Kruizas",
       "description": "Žalioji Jonijos jūros sala: venecijietiškas Kerkyros senamiestis, Senoji tvirtovė ir žydros įlankos.",
-      "youtubeUrl": "https://www.youtube.com/@Lisauskukeliones"
+      "travelers": ["Tomas", "Sandra", "Lukas", "Linas"],
+      "videos": []
     },
     {
       "id": 14,
@@ -170,7 +183,8 @@
       "date": "2024-06-08",
       "category": "Kruizas",
       "description": "Kruizo uostas Adrijos šiaurėje: Piazza Unità d'Italia aikštė, Didysis kanalas ir Miramare pilis.",
-      "youtubeUrl": "https://www.youtube.com/@Lisauskukeliones"
+      "travelers": ["Tomas", "Sandra", "Lukas", "Linas"],
+      "videos": []
     },
     {
       "id": 15,
@@ -181,7 +195,8 @@
       "date": "2024-09-14",
       "category": "Lėktuvu",
       "description": "Stiliaus ir architektūros sostinė: didingoji Milano katedra (Duomo), Vittorio Emanuele II galerija ir Navigli kanalai.",
-      "youtubeUrl": "https://www.youtube.com/@Lisauskukeliones"
+      "travelers": ["Tomas", "Sandra", "Lukas", "Linas"],
+      "videos": []
     },
     {
       "id": 16,
@@ -192,7 +207,8 @@
       "date": "2024-10-20",
       "category": "Kruizas",
       "description": "Prancūzijos Rivjeros vartai: Senasis uostas (Vieux-Port), Notre-Dame de la Garde bazilika ir Le Panier kvartalas.",
-      "youtubeUrl": "https://www.youtube.com/@Lisauskukeliones"
+      "travelers": ["Tomas", "Sandra", "Lukas", "Linas"],
+      "videos": []
     },
     {
       "id": 17,
@@ -203,7 +219,8 @@
       "date": "2024-10-22",
       "category": "Kruizas",
       "description": "Menų ir mokslo miestelis, Turijos sodai, Valensijos senamiestis ir autentiškos paelijos gimtinė.",
-      "youtubeUrl": "https://www.youtube.com/@Lisauskukeliones"
+      "travelers": ["Tomas", "Sandra", "Lukas", "Linas"],
+      "videos": []
     },
     {
       "id": 18,
@@ -214,7 +231,8 @@
       "date": "2023-03-11",
       "category": "Lėktuvu",
       "description": "Tūkstantmetė istorija: Jeruzalės senamiestis, Raudų siena, Alyvų kalnas ir rytietiški turgūs.",
-      "youtubeUrl": "https://www.youtube.com/@Lisauskukeliones"
+      "travelers": ["Tomas", "Sandra", "Lukas", "Linas"],
+      "videos": []
     },
     {
       "id": 19,
@@ -225,7 +243,8 @@
       "date": "2024-02-05",
       "category": "Lėktuvu",
       "description": "Raudonosios jūros koraliniai rifai, Naama Bay, Farsha kavinė ant uolos ir Sinajaus pusiasalio saulėlydžiai.",
-      "youtubeUrl": "https://www.youtube.com/@Lisauskukeliones"
+      "travelers": ["Tomas", "Sandra", "Lukas", "Linas"],
+      "videos": []
     }
   ]
 }

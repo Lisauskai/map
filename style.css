@@ -342,6 +342,56 @@ body {
     background-color: var(--cat-lt);
 }
 
+.controls-divider {
+    width: 1px;
+    height: 22px;
+    background-color: var(--border-subtle);
+}
+
+/* Filtravimas pagal šeimos narį (Tomas / Sandra / Lukas / Linas) */
+.traveler-filters {
+    display: flex;
+    align-items: center;
+    gap: 0.32rem;
+    flex-wrap: wrap;
+}
+
+.traveler-filters__label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-right: 0.15rem;
+}
+
+.traveler-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.36rem 0.68rem;
+    background-color: rgba(30, 41, 59, 0.65);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-pill);
+    color: var(--text-secondary);
+    font-family: inherit;
+    font-size: 0.76rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    white-space: nowrap;
+}
+
+.traveler-chip:hover {
+    background-color: rgba(51, 65, 85, 0.75);
+    color: var(--text-primary);
+    border-color: rgba(56, 189, 248, 0.35);
+}
+
+.traveler-chip.is-active {
+    background-color: rgba(56, 189, 248, 0.2);
+    color: #38bdf8;
+    border-color: #38bdf8;
+    box-shadow: 0 2px 8px rgba(56, 189, 248, 0.18);
+}
+
 /* ==========================================================================
    Žemėlapio sritis (visas likęs ekranas po juosta)
    ========================================================================== */
@@ -357,6 +407,11 @@ body {
     height: 100%;
     z-index: 1;
     background-color: #e2e8f0;
+}
+
+/* Švelnus pastelinis filtras OpenStreetMap plytelėms (neveikia smeigtukų ir šalių poligonų) */
+#map .leaflet-tile-pane {
+    filter: saturate(0.68) contrast(0.94) brightness(1.04);
 }
 
 /* Tuščios paieškos pranešimas */
@@ -593,6 +648,26 @@ body {
     color: #38bdf8;
 }
 
+.popup-card__travelers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.32rem;
+    margin-top: 0.55rem;
+}
+
+.popup-card__traveler-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.16rem 0.52rem;
+    border-radius: var(--radius-pill);
+    background: rgba(56, 189, 248, 0.14);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    color: #e0f2fe;
+    font-size: 0.69rem;
+    font-weight: 600;
+}
+
 .popup-card__body {
     padding: 0.85rem 1.15rem 1.1rem;
 }
@@ -602,6 +677,16 @@ body {
     line-height: 1.55;
     color: #cbd5e1;
     margin-bottom: 0.95rem;
+}
+
+.popup-card__desc:last-child {
+    margin-bottom: 0;
+}
+
+.popup-card__videos {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
 .popup-card__yt-btn {
@@ -823,6 +908,67 @@ body {
     gap: 0.28rem;
 }
 
+.admin-field__label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.admin-add-video-btn {
+    padding: 0.18rem 0.5rem;
+    border-radius: 6px;
+    border: 1px solid rgba(56, 189, 248, 0.45);
+    background: rgba(56, 189, 248, 0.14);
+    color: #38bdf8;
+    font-family: inherit;
+    font-size: 0.7rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.admin-add-video-btn:hover {
+    background: rgba(56, 189, 248, 0.28);
+}
+
+.admin-videos-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+
+.admin-videos-empty {
+    font-size: 0.73rem;
+    color: var(--text-muted);
+    font-style: italic;
+    padding: 0.25rem 0;
+}
+
+.admin-video-row {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr auto;
+    gap: 0.35rem;
+    align-items: center;
+}
+
+.admin-video-row__remove {
+    width: 26px;
+    height: 28px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 0.72rem;
+}
+
+.admin-video-row__remove:hover {
+    background: rgba(244, 63, 94, 0.22);
+    border-color: rgba(244, 63, 94, 0.5);
+    color: #fb7185;
+}
+
 .admin-field label {
     font-size: 0.73rem;
     font-weight: 600;
@@ -1037,6 +1183,41 @@ body {
     color: #fb7185;
 }
 
+/* Šeimos narių varnelės (checkboxes) admin formoje */
+.admin-travelers-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.45rem;
+}
+
+.admin-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.42rem 0.6rem;
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: var(--radius-sm);
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-primary) !important;
+    cursor: pointer;
+    user-select: none;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.admin-checkbox-label:hover {
+    border-color: rgba(56, 189, 248, 0.45);
+}
+
+.admin-checkbox-label input[type="checkbox"] {
+    width: 15px;
+    height: 15px;
+    accent-color: #38bdf8;
+    cursor: pointer;
+    margin: 0;
+}
+
 /* Laikinas paspaudimo žymeklis žemėlapyje admin režime */
 .admin-pick-pin {
     width: 22px;
@@ -1078,7 +1259,8 @@ body {
         justify-content: space-between;
     }
 
-    .brand-divider {
+    .brand-divider,
+    .controls-divider {
         display: none;
     }
 
@@ -1102,14 +1284,16 @@ body {
         width: 100%;
     }
 
-    .category-filters {
+    .category-filters,
+    .traveler-filters {
         overflow-x: auto;
         flex-wrap: nowrap;
         padding-bottom: 2px;
         scrollbar-width: none;
     }
 
-    .category-filters::-webkit-scrollbar {
+    .category-filters::-webkit-scrollbar,
+    .traveler-filters::-webkit-scrollbar {
         display: none;
     }
 }

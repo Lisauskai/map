@@ -1,6 +1,6 @@
 /**
  * map.lisauskai.lt – „Lisauskų kelionės“ interaktyvus kelionių žemėlapis
- * Grynas Vanilla JS + Leaflet.js (CartoDB Voyager sluoksnis) + keliones.json + Pasaulio šalių GeoJSON + Admin režimas
+ * Grynas Vanilla JS + Leaflet.js + keliones.json + Pasaulio šalių GeoJSON + Admin režimas
  */
 
 // Vieši patikimi pasaulio šalių GeoJSON šaltiniai iš raw.githubusercontent.com (atitinka CSP taisykles)
@@ -8,6 +8,9 @@ const WORLD_GEOJSON_URLS = [
     'https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_50m_admin_0_countries.geojson',
     'https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson'
 ];
+
+// Standartinis šeimos narių sąrašas
+const DEFAULT_TRAVELERS = ['Tomas', 'Sandra', 'Lukas', 'Linas'];
 
 // Lietuviški šalių pavadinimai pagal ISO-2 kodą (iškylantiems tooltip langams)
 const COUNTRY_NAMES_LT = {
@@ -65,7 +68,8 @@ const FALLBACK_DATA = {
             date: '2023-05-14',
             category: 'Lietuva',
             description: 'Saulės miestas: Talkšos ežero pakrantė, Geležinė lapė, Frenkelio vila ir Kryžių kalnas.',
-            youtubeUrl: 'https://www.youtube.com/@Lisauskukeliones'
+            travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
+            videos: []
         },
         {
             id: 2,
@@ -76,7 +80,8 @@ const FALLBACK_DATA = {
             date: '2023-06-18',
             category: 'Lietuva',
             description: 'Medžių lajų takas, Puntuko akmuo, Kalitos kalnas ir Šventosios upės slėnio atradimai.',
-            youtubeUrl: 'https://www.youtube.com/@Lisauskukeliones'
+            travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
+            videos: []
         },
         {
             id: 3,
@@ -87,7 +92,8 @@ const FALLBACK_DATA = {
             date: '2023-07-08',
             category: 'Automobiliu',
             description: 'Šeimos kelionė į Latvijos pajūrį: Mėlynosios vėliavos paplūdimys, uosto molas ir karvučių paradas.',
-            youtubeUrl: 'https://www.youtube.com/@Lisauskukeliones'
+            travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
+            videos: []
         },
         {
             id: 4,
@@ -98,7 +104,8 @@ const FALLBACK_DATA = {
             date: '2023-08-12',
             category: 'Automobiliu',
             description: 'Viduramžių dvasia alsuojantis Talino senamiestis, Tompea kalva, Telliskivi ir jūros muziejus.',
-            youtubeUrl: 'https://www.youtube.com/@Lisauskukeliones'
+            travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
+            videos: []
         },
         {
             id: 5,
@@ -109,7 +116,8 @@ const FALLBACK_DATA = {
             date: '2023-08-14',
             category: 'Kruizas',
             description: 'Keltu per Suomijos įlanką į Helsinkį: Senato aikštė, Uolų bažnyčia ir Suomenlinna tvirtovė.',
-            youtubeUrl: 'https://www.youtube.com/@Lisauskukeliones'
+            travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
+            videos: []
         },
         {
             id: 6,
@@ -120,7 +128,8 @@ const FALLBACK_DATA = {
             date: '2023-09-22',
             category: 'Automobiliu',
             description: 'Kelionė automobiliu į Vokietijos sostinę: Brandenburgo vartai, Reichstagas ir Berlyno sienos galerija.',
-            youtubeUrl: 'https://www.youtube.com/@Lisauskukeliones'
+            travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
+            videos: []
         },
         {
             id: 7,
@@ -131,7 +140,8 @@ const FALLBACK_DATA = {
             date: '2023-09-25',
             category: 'Automobiliu',
             description: 'Šimto bokštų miestas: Karolio tiltas, Prahos pilis, Senamiesčio aikštė ir astronominis laikrodis.',
-            youtubeUrl: 'https://www.youtube.com/@Lisauskukeliones'
+            travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
+            videos: []
         },
         {
             id: 8,
@@ -142,7 +152,8 @@ const FALLBACK_DATA = {
             date: '2023-09-27',
             category: 'Automobiliu',
             description: 'Futuristinis Ještedo televizijos bokštas ir viešbutis kalno viršūnėje su kvapą gniaužiančia panorama.',
-            youtubeUrl: 'https://www.youtube.com/@Lisauskukeliones'
+            travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
+            videos: []
         },
         {
             id: 9,
@@ -153,7 +164,8 @@ const FALLBACK_DATA = {
             date: '2023-11-10',
             category: 'Lėktuvu',
             description: 'Kalemegdano tvirtovė prie Dunojaus ir Savos santakos, bohemiškasis Skadarlija kvartalas ir Šv. Savos soboras.',
-            youtubeUrl: 'https://www.youtube.com/@Lisauskukeliones'
+            travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
+            videos: []
         },
         {
             id: 10,
@@ -164,7 +176,8 @@ const FALLBACK_DATA = {
             date: '2024-04-15',
             category: 'Kruizas',
             description: 'Antikinė Sicilijos dvasia: Ortidžijos sala, katedros aikštė, Arethusa šaltinis ir Neapolio archeologinis parkas.',
-            youtubeUrl: 'https://www.youtube.com/@Lisauskukeliones'
+            travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
+            videos: []
         },
         {
             id: 11,
@@ -175,7 +188,8 @@ const FALLBACK_DATA = {
             date: '2024-04-16',
             category: 'Kruizas',
             description: 'Kruizinio laivo sustojimas saulėtoje Maltoje: Didysis uostas, Aukštutiniai Barrakka sodai ir senamiesčio gatvelės.',
-            youtubeUrl: 'https://www.youtube.com/@Lisauskukeliones'
+            travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
+            videos: []
         },
         {
             id: 12,
@@ -186,7 +200,8 @@ const FALLBACK_DATA = {
             date: '2024-06-04',
             category: 'Kruizas',
             description: 'Adrijos jūros perlas: imperatoriaus Diokletiano rūmai, Riva promenada ir Marjan kalvos apžvalgos aikštelė.',
-            youtubeUrl: 'https://www.youtube.com/@Lisauskukeliones'
+            travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
+            videos: []
         },
         {
             id: 13,
@@ -197,7 +212,8 @@ const FALLBACK_DATA = {
             date: '2024-06-06',
             category: 'Kruizas',
             description: 'Žalioji Jonijos jūros sala: venecijietiškas Kerkyros senamiestis, Senoji tvirtovė ir žydros įlankos.',
-            youtubeUrl: 'https://www.youtube.com/@Lisauskukeliones'
+            travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
+            videos: []
         },
         {
             id: 14,
@@ -208,7 +224,8 @@ const FALLBACK_DATA = {
             date: '2024-06-08',
             category: 'Kruizas',
             description: "Kruizo uostas Adrijos šiaurėje: Piazza Unità d'Italia aikštė, Didysis kanalas ir Miramare pilis.",
-            youtubeUrl: 'https://www.youtube.com/@Lisauskukeliones'
+            travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
+            videos: []
         },
         {
             id: 15,
@@ -219,7 +236,8 @@ const FALLBACK_DATA = {
             date: '2024-09-14',
             category: 'Lėktuvu',
             description: 'Stiliaus ir architektūros sostinė: didingoji Milano katedra (Duomo), Vittorio Emanuele II galerija ir Navigli kanalai.',
-            youtubeUrl: 'https://www.youtube.com/@Lisauskukeliones'
+            travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
+            videos: []
         },
         {
             id: 16,
@@ -230,7 +248,8 @@ const FALLBACK_DATA = {
             date: '2024-10-20',
             category: 'Kruizas',
             description: 'Prancūzijos Rivjeros vartai: Senasis uostas (Vieux-Port), Notre-Dame de la Garde bazilika ir Le Panier kvartalas.',
-            youtubeUrl: 'https://www.youtube.com/@Lisauskukeliones'
+            travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
+            videos: []
         },
         {
             id: 17,
@@ -241,7 +260,8 @@ const FALLBACK_DATA = {
             date: '2024-10-22',
             category: 'Kruizas',
             description: 'Menų ir mokslo miestelis, Turijos sodai, Valensijos senamiestis ir autentiškos paelijos gimtinė.',
-            youtubeUrl: 'https://www.youtube.com/@Lisauskukeliones'
+            travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
+            videos: []
         },
         {
             id: 18,
@@ -252,7 +272,8 @@ const FALLBACK_DATA = {
             date: '2023-03-11',
             category: 'Lėktuvu',
             description: 'Tūkstantmetė istorija: Jeruzalės senamiestis, Raudų siena, Alyvų kalnas ir rytietiški turgūs.',
-            youtubeUrl: 'https://www.youtube.com/@Lisauskukeliones'
+            travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
+            videos: []
         },
         {
             id: 19,
@@ -263,7 +284,8 @@ const FALLBACK_DATA = {
             date: '2024-02-05',
             category: 'Lėktuvu',
             description: 'Raudonosios jūros koraliniai rifai, Naama Bay, Farsha kavinė ant uolos ir Sinajaus pusiasalio saulėlydžiai.',
-            youtubeUrl: 'https://www.youtube.com/@Lisauskukeliones'
+            travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
+            videos: []
         }
     ]
 };
@@ -297,6 +319,7 @@ const state = {
     visitedCountries: [],
     places: [],
     activeCategory: 'Visos',
+    activeTraveler: 'Visi',
     searchQuery: '',
     isAdminOpen: false,
     editingPlaceId: null,
@@ -310,6 +333,7 @@ const statVlogsEl = document.getElementById('statVlogs');
 const searchInputEl = document.getElementById('searchInput');
 const clearSearchBtnEl = document.getElementById('clearSearchBtn');
 const categoryFiltersEl = document.getElementById('categoryFilters');
+const travelerFiltersEl = document.getElementById('travelerFilters');
 const emptyStateEl = document.getElementById('emptyState');
 const resetFiltersBtnEl = document.getElementById('resetFiltersBtn');
 const resetMapBtnEl = document.getElementById('resetMapBtn');
@@ -332,7 +356,9 @@ const placeCountryInputEl = document.getElementById('placeCountryInput');
 const placeDateInputEl = document.getElementById('placeDateInput');
 const placeCategoryInputEl = document.getElementById('placeCategoryInput');
 const placeDescInputEl = document.getElementById('placeDescInput');
-const placeYoutubeInputEl = document.getElementById('placeYoutubeInput');
+const adminTravelersCheckboxesEl = document.getElementById('adminTravelersCheckboxes');
+const addVideoRowBtnEl = document.getElementById('addVideoRowBtn');
+const adminVideosContainerEl = document.getElementById('adminVideosContainer');
 const savePlaceBtnEl = document.getElementById('savePlaceBtn');
 const cancelEditBtnEl = document.getElementById('cancelEditBtn');
 
@@ -356,12 +382,11 @@ L.control.zoom({
     position: 'bottomright'
 }).addTo(map);
 
-// Nemokamas „CartoDB Voyager“ sluoksnis
-L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+// 100% nemokamas švarus OpenStreetMap sluoksnis be jokio API rakto (su pasteliniu CSS filtru style.css faile)
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener noreferrer">CARTO</a>',
-    subdomains: 'abcd',
-    maxZoom: 20
+        '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors',
+    maxZoom: 19
 }).addTo(map);
 
 // Sluoksniai: pasaulio šalys (apačioje), vietovių smeigtukai (viršuje) ir laikinas admin paspaudimo žymeklis
@@ -388,6 +413,56 @@ function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text ?? '';
     return div.innerHTML;
+}
+
+/**
+ * Patikrina ir grąžina saugų išorinį http/https URL (arba tuščią eilutę, jei netinkamas)
+ */
+function getValidHttpUrl(rawUrl) {
+    if (!rawUrl || typeof rawUrl !== 'string') return '';
+    try {
+        const parsed = new URL(rawUrl.trim());
+        if (parsed.protocol === 'https:' || parsed.protocol === 'http:') {
+            return parsed.href;
+        }
+    } catch {
+        // Neteisingas URL formatas
+    }
+    return '';
+}
+
+/**
+ * Grąžina vietos keliautojų (šeimos narių) sąrašą
+ */
+function getPlaceTravelers(place) {
+    if (!place || !Array.isArray(place.travelers)) {
+        return [...DEFAULT_TRAVELERS];
+    }
+    return place.travelers
+        .map((name) => String(name || '').trim())
+        .filter(Boolean);
+}
+
+/**
+ * Grąžina tikrus, patikrintus vietos YouTube video objektus iš „videos“ masyvo: [{ title, url }]
+ */
+function getValidVideos(place) {
+    if (!place || !Array.isArray(place.videos)) {
+        return [];
+    }
+
+    const result = [];
+    for (const item of place.videos) {
+        if (!item || typeof item !== 'object') continue;
+        const validUrl = getValidHttpUrl(item.url);
+        if (!validUrl) continue;
+
+        result.push({
+            title: String(item.title || '').trim(),
+            url: validUrl
+        });
+    }
+    return result;
 }
 
 /**
@@ -457,6 +532,133 @@ function getCountryBaseStyle(isVisited) {
 }
 
 /**
+ * Patikrina, ar taškas (lng, lat) patenka į poligono žiedą (Ray-casting algoritmas)
+ */
+function isPointInRing(lng, lat, ring) {
+    let inside = false;
+    for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+        const xi = ring[i][0];
+        const yi = ring[i][1];
+        const xj = ring[j][0];
+        const yj = ring[j][1];
+
+        const intersect =
+            yi > lat !== yj > lat &&
+            lng < ((xj - xi) * (lat - yi)) / (yj - yi || 1e-12) + xi;
+        if (intersect) {
+            inside = !inside;
+        }
+    }
+    return inside;
+}
+
+/**
+ * Patikrina, ar poligono dalyje (arba prie pat jos kranto) yra bent vienas realus kelionės smeigtukas iš „places“
+ */
+function hasPlaceInPolygon(polygonCoords, places) {
+    const outerRing = polygonCoords && polygonCoords[0];
+    if (!Array.isArray(outerRing) || outerRing.length === 0) return false;
+
+    let minLng = Infinity;
+    let maxLng = -Infinity;
+    let minLat = Infinity;
+    let maxLat = -Infinity;
+
+    for (const pt of outerRing) {
+        const lng = pt[0];
+        const lat = pt[1];
+        if (lng < minLng) minLng = lng;
+        if (lng > maxLng) maxLng = lng;
+        if (lat < minLat) minLat = lat;
+        if (lat > maxLat) maxLat = lat;
+    }
+
+    // Maža paklaida pakrantės miestams / saloms (0.18 laipsnio)
+    const coastalMargin = 0.18;
+
+    return places.some((place) => {
+        const lat = Number(place.lat);
+        const lng = Number(place.lng);
+        if (Number.isNaN(lat) || Number.isNaN(lng)) return false;
+
+        const inBoundingBox =
+            lng >= minLng - coastalMargin &&
+            lng <= maxLng + coastalMargin &&
+            lat >= minLat - coastalMargin &&
+            lat <= maxLat + coastalMargin;
+
+        if (!inBoundingBox) return false;
+        return isPointInRing(lng, lat, outerRing) || inBoundingBox;
+    });
+}
+
+/**
+ * Nusprendžia, ar piešti MultiPolygon šalies poligono dalį:
+ * išfiltruoja užjūrio teritorijas už Europos/Viduržemio jūros ribų (ilguma < -11 arba platuma < 25),
+ * nebent tame poligone yra realus kelionės smeigtukas iš „places“ sąrašo.
+ */
+function shouldKeepPolygonPart(polygonCoords, places) {
+    const outerRing = polygonCoords && polygonCoords[0];
+    if (!Array.isArray(outerRing) || outerRing.length === 0) return false;
+
+    const isOutsideEuropeMedBounds = outerRing.some((pt) => {
+        const lng = pt[0];
+        const lat = pt[1];
+        return lng < -11 || lat < 25;
+    });
+
+    if (!isOutsideEuropeMedBounds) {
+        return true;
+    }
+
+    // Jei poligonas yra už Europos/Viduržemio jūros ribų, piešiame tik jei jame yra kelionės smeigtukas
+    return hasPlaceInPolygon(polygonCoords, places);
+}
+
+/**
+ * Paruošia GeoJSON duomenis išfiltruojant neaplankytas užjūrio teritorijas iš MultiPolygon šalių
+ */
+function prepareFilteredGeoJson(rawGeoJson, places) {
+    if (!rawGeoJson || !Array.isArray(rawGeoJson.features)) {
+        return rawGeoJson;
+    }
+
+    const filteredFeatures = rawGeoJson.features
+        .map((feature) => {
+            const geom = feature && feature.geometry;
+            if (!geom || geom.type !== 'MultiPolygon' || !Array.isArray(geom.coordinates)) {
+                return feature;
+            }
+
+            const keptPolygons = geom.coordinates.filter((polyCoords) =>
+                shouldKeepPolygonPart(polyCoords, places)
+            );
+
+            if (keptPolygons.length === 0) {
+                return null;
+            }
+
+            if (keptPolygons.length === geom.coordinates.length) {
+                return feature;
+            }
+
+            return {
+                ...feature,
+                geometry: {
+                    ...geom,
+                    coordinates: keptPolygons
+                }
+            };
+        })
+        .filter(Boolean);
+
+    return {
+        ...rawGeoJson,
+        features: filteredFeatures
+    };
+}
+
+/**
  * Atvaizduoja pasaulio šalių GeoJSON sluoksnį pagal esamą visitedCountries masyvą
  */
 function renderCountriesLayer() {
@@ -470,7 +672,9 @@ function renderCountriesLayer() {
         map.removeLayer(countriesGeoJsonLayer);
     }
 
-    countriesGeoJsonLayer = L.geoJSON(state.cachedWorldGeoJson, {
+    const processedGeoJson = prepareFilteredGeoJson(state.cachedWorldGeoJson, state.places);
+
+    countriesGeoJsonLayer = L.geoJSON(processedGeoJson, {
         style: (feature) => {
             const iso2 = getCountryIso2(feature);
             const isVisited = visitedSet.has(iso2);
@@ -565,31 +769,85 @@ function createCategoryIcon(category) {
 }
 
 /**
- * Patikrina, kad išorinė nuoroda naudotų tik saugų http/https protokolą
+ * Sukuria keliautojų (šeimos narių) ženkliukų (badges) HTML vietos kortelei
  */
-function sanitizeExternalUrl(rawUrl) {
-    try {
-        const parsed = new URL(String(rawUrl || ''), window.location.origin);
-        if (parsed.protocol === 'https:' || parsed.protocol === 'http:') {
-            return parsed.href;
-        }
-    } catch {
-        // Neteisingas URL formatas
+function createTravelersBadgesHtml(place) {
+    const travelers = getPlaceTravelers(place);
+    if (travelers.length === 0) {
+        return '';
     }
-    return 'https://www.youtube.com/@Lisauskukeliones';
+
+    const badges = travelers
+        .map(
+            (name) => `
+            <span class="popup-card__traveler-badge">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <span>${escapeHtml(name)}</span>
+            </span>
+        `
+        )
+        .join('');
+
+    return `<div class="popup-card__travelers">${badges}</div>`;
+}
+
+/**
+ * Sukuria YouTube mygtuko (arba kelių mygtukų) HTML pagal „videos“ masyvą:
+ * - Jei „videos“ tuščias: nerodo nieko.
+ * - Jei 1 video: rodo mygtuką „Žiūrėti vlogą YouTube“.
+ * - Jei keli video: rodo kelis atskirus mygtukus su jų pavadinimais.
+ */
+function createVideosButtonsHtml(place) {
+    const validVideos = getValidVideos(place);
+    if (validVideos.length === 0) {
+        return '';
+    }
+
+    const ytIconSvg = `
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+        </svg>
+    `;
+
+    if (validVideos.length === 1) {
+        const singleVideo = validVideos[0];
+        return `
+            <div class="popup-card__videos">
+                <a href="${escapeHtml(singleVideo.url)}" target="_blank" rel="noopener noreferrer" class="popup-card__yt-btn">
+                    ${ytIconSvg}
+                    <span>Žiūrėti vlogą YouTube</span>
+                </a>
+            </div>
+        `;
+    }
+
+    const buttonsHtml = validVideos
+        .map((video, idx) => {
+            const label = video.title || `Žiūrėti vlogą #${idx + 1}`;
+            return `
+                <a href="${escapeHtml(video.url)}" target="_blank" rel="noopener noreferrer" class="popup-card__yt-btn">
+                    ${ytIconSvg}
+                    <span>${escapeHtml(label)}</span>
+                </a>
+            `;
+        })
+        .join('');
+
+    return `<div class="popup-card__videos">${buttonsHtml}</div>`;
 }
 
 /**
  * Sukuria stilingą iššokančią kortelę (Popup) su vietos pavadinimu, kelionės data,
- * trumpu aprašymu ir ryškiu mygtuku „Žiūrėti vlogą YouTube“
+ * šeimos narių ženkliukais (badges), trumpu aprašymu ir dinaminiais YouTube vlogų mygtukais
  */
 function createPopupHtml(place) {
     const meta = CATEGORY_META[place.category] || {
         badgeClass: 'popup-card__category--plane',
         emoji: '📍'
     };
-
-    const safeYoutubeUrl = escapeHtml(sanitizeExternalUrl(place.youtubeUrl));
 
     const dateHtml = place.date
         ? `<div class="popup-card__date">
@@ -603,6 +861,9 @@ function createPopupHtml(place) {
            </div>`
         : '';
 
+    const travelersHtml = createTravelersBadgesHtml(place);
+    const videosHtml = createVideosButtonsHtml(place);
+
     return `
         <div class="popup-card">
             <div class="popup-card__header">
@@ -612,26 +873,25 @@ function createPopupHtml(place) {
                 </div>
                 <h3 class="popup-card__title">${escapeHtml(place.title)}</h3>
                 ${dateHtml}
+                ${travelersHtml}
             </div>
             <div class="popup-card__body">
                 <p class="popup-card__desc">${escapeHtml(place.description)}</p>
-                <a href="${safeYoutubeUrl}" target="_blank" rel="noopener noreferrer" class="popup-card__yt-btn">
-                    <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                    </svg>
-                    <span>Žiūrėti vlogą YouTube</span>
-                </a>
+                ${videosHtml}
             </div>
         </div>
     `;
 }
 
 /**
- * Automatiškai atnaujina viršutinius statistikos skaitiklius (Šalys | Vietos | Vlogai)
+ * Automatiškai atnaujina viršutinius statistikos skaitiklius (Šalys | Vietos | Vlogai).
+ * „Vlogai“ skaičiuojamas pagal realiai įvestų YouTube nuorodų skaičių „videos“ masyvuose.
  */
 function updateStats(filteredPlaces) {
     const isUnfiltered =
-        state.activeCategory === 'Visos' && state.searchQuery.trim() === '';
+        state.activeCategory === 'Visos' &&
+        state.activeTraveler === 'Visi' &&
+        state.searchQuery.trim() === '';
 
     const countriesCount =
         isUnfiltered && state.visitedCountries.length > 0
@@ -639,7 +899,10 @@ function updateStats(filteredPlaces) {
             : new Set(filteredPlaces.map((item) => item.country)).size;
 
     const totalPlaces = filteredPlaces.length;
-    const totalVlogs = filteredPlaces.filter((item) => Boolean(item.youtubeUrl)).length;
+    const totalVlogs = filteredPlaces.reduce(
+        (sum, item) => sum + getValidVideos(item).length,
+        0
+    );
 
     statCountriesEl.textContent = countriesCount;
     statPlacesEl.textContent = totalPlaces;
@@ -647,7 +910,7 @@ function updateStats(filteredPlaces) {
 }
 
 /**
- * Filtruoja vietas pagal pasirinktą kategoriją ir paieškos tekstą
+ * Filtruoja vietas pagal pasirinktą kategoriją, šeimos narį ir paieškos tekstą
  */
 function getFilteredPlaces() {
     const normalizedQuery = normalizeText(state.searchQuery);
@@ -655,12 +918,21 @@ function getFilteredPlaces() {
     return state.places.filter((place) => {
         const matchesCategory =
             state.activeCategory === 'Visos' || place.category === state.activeCategory;
-
         if (!matchesCategory) return false;
+
+        const travelers = getPlaceTravelers(place);
+        const matchesTraveler =
+            state.activeTraveler === 'Visi' || travelers.includes(state.activeTraveler);
+        if (!matchesTraveler) return false;
+
         if (!normalizedQuery) return true;
 
+        const videoTitles = getValidVideos(place)
+            .map((v) => v.title)
+            .join(' ');
+
         const searchableText = normalizeText(
-            `${place.title} ${place.country} ${place.category} ${place.description} ${place.date || ''}`
+            `${place.title} ${place.country} ${place.category} ${place.description} ${place.date || ''} ${travelers.join(' ')} ${videoTitles}`
         );
         return searchableText.includes(normalizedQuery);
     });
@@ -758,9 +1030,98 @@ function setActiveCategoryButton(category) {
     });
 }
 
+/**
+ * Nustato aktyvų šeimos nario filtro mygtuką
+ */
+function setActiveTravelerButton(traveler) {
+    const buttons = travelerFiltersEl.querySelectorAll('.traveler-chip');
+    buttons.forEach((btn) => {
+        const isCurrent = btn.dataset.traveler === traveler;
+        btn.classList.toggle('is-active', isCurrent);
+    });
+}
+
 /* ==========================================================================
    ADMINISTRAVIMO REŽIMAS (?admin=1 arba spynos mygtukas kampe)
    ========================================================================== */
+
+/**
+ * Nustato šeimos narių varneles (checkboxes) admin formoje
+ */
+function setAdminTravelerCheckboxes(selectedTravelers = DEFAULT_TRAVELERS) {
+    const selectedSet = new Set(selectedTravelers);
+    const checkboxes = adminTravelersCheckboxesEl.querySelectorAll('input[name="placeTraveler"]');
+    checkboxes.forEach((cb) => {
+        cb.checked = selectedSet.has(cb.value);
+    });
+}
+
+/**
+ * Nuskaito pažymėtus šeimos narius iš admin formos varnelių
+ */
+function readAdminTravelerCheckboxes() {
+    const checkboxes = adminTravelersCheckboxesEl.querySelectorAll(
+        'input[name="placeTraveler"]:checked'
+    );
+    return Array.from(checkboxes).map((cb) => cb.value);
+}
+
+/**
+ * Atvaizduoja „videos“ įvesties eilutes admin formoje
+ */
+function renderAdminVideoRows(videos = []) {
+    if (!Array.isArray(videos) || videos.length === 0) {
+        adminVideosContainerEl.innerHTML =
+            '<div class="admin-videos-empty">Video nuorodų dar nepridėta (videos: []).</div>';
+        return;
+    }
+
+    adminVideosContainerEl.innerHTML = videos
+        .map(
+            (video, idx) => `
+            <div class="admin-video-row" data-video-idx="${idx}">
+                <input
+                    type="text"
+                    class="admin-video-title"
+                    placeholder="Pvz., 2026 m. kruizas"
+                    value="${escapeHtml(video.title || '')}"
+                >
+                <input
+                    type="url"
+                    class="admin-video-url"
+                    placeholder="https://www.youtube.com/watch?v=..."
+                    value="${escapeHtml(video.url || '')}"
+                    required
+                >
+                <button
+                    type="button"
+                    class="admin-video-row__remove"
+                    data-remove-video-idx="${idx}"
+                    title="Pašalinti video"
+                    aria-label="Pašalinti video"
+                >✕</button>
+            </div>
+        `
+        )
+        .join('');
+}
+
+/**
+ * Nuskaito šiuo metu admin formoje įvestas „videos“ eilutes
+ */
+function readAdminVideoRowsFromDom() {
+    const rows = adminVideosContainerEl.querySelectorAll('.admin-video-row');
+    const result = [];
+    rows.forEach((row) => {
+        const titleInput = row.querySelector('.admin-video-title');
+        const urlInput = row.querySelector('.admin-video-url');
+        result.push({
+            title: titleInput ? titleInput.value.trim() : '',
+            url: urlInput ? urlInput.value.trim() : ''
+        });
+    });
+    return result;
+}
 
 /**
  * Įjungia arba išjungia administravimo šoninį skydelį
@@ -810,7 +1171,8 @@ function resetPlaceForm() {
     placeFormHeadingEl.textContent = 'Pridėti naują vietą';
     savePlaceBtnEl.textContent = 'Pridėti vietą';
     cancelEditBtnEl.hidden = true;
-    placeYoutubeInputEl.value = 'https://www.youtube.com/@Lisauskukeliones';
+    setAdminTravelerCheckboxes(DEFAULT_TRAVELERS);
+    renderAdminVideoRows([]);
 
     if (adminPickMarker) {
         map.removeLayer(adminPickMarker);
@@ -834,7 +1196,8 @@ function startEditingPlace(placeId) {
     placeDateInputEl.value = place.date || '';
     placeCategoryInputEl.value = place.category;
     placeDescInputEl.value = place.description;
-    placeYoutubeInputEl.value = place.youtubeUrl;
+    setAdminTravelerCheckboxes(getPlaceTravelers(place));
+    renderAdminVideoRows(getValidVideos(place));
 
     placeFormHeadingEl.textContent = `Redaguoti: ${place.title}`;
     savePlaceBtnEl.textContent = 'Išsaugoti pakeitimus';
@@ -854,6 +1217,7 @@ function deletePlace(placeId) {
         resetPlaceForm();
     }
     renderMap({ fitBounds: false });
+    renderCountriesLayer();
     renderAdminPanel();
 }
 
@@ -884,11 +1248,13 @@ function renderAdminPanel() {
     adminPlacesListEl.innerHTML = state.places
         .map((place) => {
             const meta = CATEGORY_META[place.category] || { emoji: '📍' };
+            const videosCount = getValidVideos(place).length;
+            const travelers = getPlaceTravelers(place);
             return `
                 <div class="admin-place-item">
                     <div class="admin-place-item__info">
                         <div class="admin-place-item__title">${meta.emoji} ${escapeHtml(place.title)}</div>
-                        <div class="admin-place-item__meta">${escapeHtml(place.country)} • ${escapeHtml(place.date || '')}</div>
+                        <div class="admin-place-item__meta">${escapeHtml(place.country)} • ${escapeHtml(place.date || '')} • ${travelers.join(', ')} • ${videosCount} vlog.</div>
                     </div>
                     <div class="admin-place-item__actions">
                         <button type="button" class="admin-icon-btn" data-edit-id="${place.id}">Redaguoti</button>
@@ -932,6 +1298,23 @@ adminCloseBtnEl.addEventListener('click', () => {
     setAdminMode(false);
 });
 
+// „+ Pridėti video“ mygtukas admin formoje
+addVideoRowBtnEl.addEventListener('click', () => {
+    const currentVideos = readAdminVideoRowsFromDom();
+    currentVideos.push({ title: '', url: '' });
+    renderAdminVideoRows(currentVideos);
+});
+
+// Video eilutės pašalinimas admin formoje
+adminVideosContainerEl.addEventListener('click', (event) => {
+    const removeBtn = event.target.closest('[data-remove-video-idx]');
+    if (!removeBtn) return;
+
+    const idxToRemove = Number(removeBtn.dataset.removeVideoIdx);
+    const currentVideos = readAdminVideoRowsFromDom().filter((_, idx) => idx !== idxToRemove);
+    renderAdminVideoRows(currentVideos);
+});
+
 // 2) Vietos pridėjimo / redagavimo formos pateikimas
 placeFormEl.addEventListener('submit', (event) => {
     event.preventDefault();
@@ -942,6 +1325,16 @@ placeFormEl.addEventListener('submit', (event) => {
     if (Number.isNaN(lat) || Number.isNaN(lng)) {
         return;
     }
+
+    const selectedTravelers = readAdminTravelerCheckboxes();
+
+    const rawVideos = readAdminVideoRowsFromDom();
+    const cleanedVideos = rawVideos
+        .map((v) => ({
+            title: v.title.trim(),
+            url: getValidHttpUrl(v.url)
+        }))
+        .filter((v) => Boolean(v.url));
 
     const placePayload = {
         id:
@@ -955,7 +1348,8 @@ placeFormEl.addEventListener('submit', (event) => {
         date: placeDateInputEl.value,
         category: placeCategoryInputEl.value,
         description: placeDescInputEl.value.trim(),
-        youtubeUrl: placeYoutubeInputEl.value.trim()
+        travelers: selectedTravelers.length > 0 ? selectedTravelers : [...DEFAULT_TRAVELERS],
+        videos: cleanedVideos
     };
 
     if (state.editingPlaceId !== null) {
@@ -968,6 +1362,7 @@ placeFormEl.addEventListener('submit', (event) => {
 
     resetPlaceForm();
     renderMap({ fitBounds: false });
+    renderCountriesLayer();
     renderAdminPanel();
 
     map.flyTo([placePayload.lat, placePayload.lng], Math.max(map.getZoom(), 7), {
@@ -1067,11 +1462,23 @@ async function initApp() {
         }
         const data = await response.json();
         state.visitedCountries = Array.isArray(data.visitedCountries) ? data.visitedCountries : [];
-        state.places = Array.isArray(data.places) ? data.places : [];
+        state.places = Array.isArray(data.places)
+            ? data.places.map((place) => ({
+                  ...place,
+                  travelers: Array.isArray(place.travelers)
+                      ? place.travelers
+                      : [...DEFAULT_TRAVELERS],
+                  videos: Array.isArray(place.videos) ? place.videos : []
+              }))
+            : [];
     } catch (error) {
         console.warn('Nepavyko užkrauti keliones.json per fetch, naudojami atsarginiai duomenys:', error);
         state.visitedCountries = [...FALLBACK_DATA.visitedCountries];
-        state.places = FALLBACK_DATA.places.map((item) => ({ ...item }));
+        state.places = FALLBACK_DATA.places.map((item) => ({
+            ...item,
+            travelers: Array.isArray(item.travelers) ? [...item.travelers] : [...DEFAULT_TRAVELERS],
+            videos: Array.isArray(item.videos) ? [...item.videos] : []
+        }));
     }
 
     resetPlaceForm();
@@ -1096,6 +1503,23 @@ categoryFiltersEl.addEventListener('click', (event) => {
 
     state.activeCategory = selectedCategory;
     setActiveCategoryButton(selectedCategory);
+    renderMap({ fitBounds: true, isSearch: false });
+});
+
+// Šeimos narių filtrų paspaudimai (Tomas / Sandra / Lukas / Linas)
+travelerFiltersEl.addEventListener('click', (event) => {
+    const button = event.target.closest('.traveler-chip');
+    if (!button) return;
+
+    const selectedTraveler = button.dataset.traveler;
+    // Jei paspaudžiamas jau aktyvus narys, grąžiname į „Visi“
+    const nextTraveler =
+        selectedTraveler === state.activeTraveler && selectedTraveler !== 'Visi'
+            ? 'Visi'
+            : selectedTraveler;
+
+    state.activeTraveler = nextTraveler;
+    setActiveTravelerButton(nextTraveler);
     renderMap({ fitBounds: true, isSearch: false });
 });
 
@@ -1142,10 +1566,12 @@ clearSearchBtnEl.addEventListener('click', () => {
 // Visų filtrų atstatymas, kai nieko nerasta
 resetFiltersBtnEl.addEventListener('click', () => {
     state.activeCategory = 'Visos';
+    state.activeTraveler = 'Visi';
     state.searchQuery = '';
     searchInputEl.value = '';
     clearSearchBtnEl.hidden = true;
     setActiveCategoryButton('Visos');
+    setActiveTravelerButton('Visi');
     renderMap({ fitBounds: true, isSearch: false });
 });
 
@@ -1153,10 +1579,12 @@ resetFiltersBtnEl.addEventListener('click', () => {
 resetMapBtnEl.addEventListener('click', (event) => {
     event.preventDefault();
     state.activeCategory = 'Visos';
+    state.activeTraveler = 'Visi';
     state.searchQuery = '';
     searchInputEl.value = '';
     clearSearchBtnEl.hidden = true;
     setActiveCategoryButton('Visos');
+    setActiveTravelerButton('Visi');
     renderMap({ fitBounds: true, isSearch: false });
 });
 
