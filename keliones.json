@@ -58,7 +58,7 @@
       "country": "Latvija",
       "lat": 57.3937,
       "lng": 21.5647,
-      "date": "2023-07-08",
+      "date": "2026-02-22",
       "category": "Automobiliu",
       "description": "Šioje kelionėje mes išbandėme viską:\n⛷️ Aktyviai leidome laiką ir gaudėme adrenaliną Ventspilio slidinėjimo trasoje („Lemberga hūte“).\n🌊 Mėgavomės šiluma ir nusileidimo kalneliais Ventspilio vandens parke („Ūdens piedzīvojumu parks“).\n🔬 Pasinėrėme į mokslo atradimus ir interaktyvias pramogas naujajame VIZIUM mokslo centre.\n🚶‍♂️ Leidomės į ramų pasivaikščiojimą jaukia Ventspilio krantine.\n🏰 O grįždami atgal į Lietuvą, nepraleidome progos aplankyti istorinį ir be galo žavingą Kuldygos (Kuldīga) miestelį!",
       "travelers": [
@@ -82,14 +82,19 @@
       "lng": 24.7536,
       "date": "2023-08-12",
       "category": "Automobiliu",
-      "description": "Viduramžių dvasia alsuojantis Talino senamiestis, Tompea kalva, Telliskivi ir jūros muziejus.",
+      "description": "Šiame vloge pamatysite įspūdingą šeimos savaitgalio kelionę po Taliną ir jo apylinkes: nuo stebuklingo „PROTO“ atradimų centro ir nusileidimo į istorinį povandeninį laivą „Lennusadam“ iki kvapą gniaužiančio vaizdo iš 314 metrų televizijos bokšto ir pasivaikščiojimo po senamiestį. Taip pat išgirsite nuoširdų atsiliepimą apie Talino zoologijos sodą bei grožėsitės galinguoju Jegalos kriokliu.",
       "travelers": [
         "Tomas",
         "Sandra",
         "Lukas",
         "Linas"
       ],
-      "videos": []
+      "videos": [
+        {
+          "title": "Talinas ir Helsinkis | Ilgasis savaitgalis automobiliu",
+          "url": "https://www.youtube.com/watch?v=tisL0y7fcOw"
+        }
+      ]
     },
     {
       "id": 5,
@@ -99,14 +104,20 @@
       "lng": 24.9384,
       "date": "2023-08-14",
       "category": "Kruizas",
-      "description": "Keltu per Suomijos įlanką į Helsinkį: Senato aikštė, Uolų bažnyčia ir Suomenlinna tvirtovė.",
+      "description": "Šiame vloge leiskitės į kelionę keltu per Baltijos jūrą į Suomijos sostinę Helsinkį, kur aplankėte didžiulį prekybos centrą ant vandens ir Vantos mieste esantį interaktyvų mokslo centrą „Heureka“. Taip pat galėjote pasigrožėti įspūdingais miesto architektūros perlajis – raudonų plytų Uspenskio soboru, sniego baltumo Helsinkio katedra ir unikalia uoloje iškalta Tempeliaukio bažnyčia.",
       "travelers": [
         "Tomas",
         "Sandra",
         "Lukas",
         "Linas"
       ],
-      "videos": []
+      "videos": [
+        {
+          "title": "Helsinkis",
+          "url": "https://www.youtube.com/watch?v=tisL0y7fcOw",
+          "timestamp": "07:55"
+        }
+      ]
     },
     {
       "id": 6,
