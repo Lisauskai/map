@@ -502,12 +502,27 @@ function escapeHtml(text) {
 }
 
 /**
- * Patikrina ir grąžina saugų išorinį http/https URL (arba tuščią eilutę, jei netinkamas)
+ * Patikrina ir grąžina saugų išorinį http/https URL (arba tuščią eilutę, jei netinkamas).
+ * Palaiko tiesiogiai įklijuotus YouTube adresus net ir be „https://“ pradžios.
  */
 function getValidHttpUrl(rawUrl) {
     if (!rawUrl || typeof rawUrl !== 'string') return '';
+    let candidate = rawUrl.replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
+    if (!candidate) return '';
+
+    // Jei įklijuotas tekstas su nuoroda viduje, ištraukiame pačią nuorodą
+    const urlMatch = candidate.match(/https?:\/\/[^\s"'<>]+/i);
+    if (urlMatch) {
+        candidate = urlMatch[0];
+    } else if (
+        !/^https?:\/\//i.test(candidate) &&
+        /^(?:www\.|m\.|music\.)?(?:youtube\.com|youtu\.be)\//i.test(candidate)
+    ) {
+        candidate = `https://${candidate}`;
+    }
+
     try {
-        const parsed = new URL(rawUrl.trim());
+        const parsed = new URL(candidate);
         if (parsed.protocol === 'https:' || parsed.protocol === 'http:') {
             return parsed.href;
         }
@@ -656,12 +671,17 @@ function buildYouTubeUrlWithTimestamp(rawUrl, timestampRaw) {
 }
 
 /**
- * Grąžina tikrus, patikrintus vietos YouTube video objektus iš „videos“ masyvo: [{ title, url, timestamp }]
+ * Grąžina tikrus, patikrintus vietos YouTube video objektus iš „videos“ masyvo: [{ title, url, timestamp? }]
  */
 function getValidVideos(place) {
     if (!place || !Array.isArray(place.videos)) {
         return [];
     }
+
+    const fallbackBaseTitle =
+        place && typeof place.title === 'string' && place.title.trim()
+            ? place.title.trim()
+            : 'Kelionės vlogas';
 
     const result = [];
     for (const item of place.videos) {
@@ -676,11 +696,12 @@ function getValidVideos(place) {
                   ? String(item.t).trim()
                   : '';
 
+        const customTitle = String(item.title || '').trim();
         const videoEntry = {
-            title: String(item.title || '').trim(),
+            title: customTitle || fallbackBaseTitle,
             url: validUrl
         };
-        if (rawTimestamp) {
+        if (rawTimestamp && parseTimestampToSeconds(rawTimestamp) > 0) {
             videoEntry.timestamp = rawTimestamp;
         }
         result.push(videoEntry);
@@ -1590,16 +1611,16 @@ function readAdminTravelerCheckboxes() {
 }
 
 /**
- * Atvaizduoja „videos“ įvesties eilutes admin formoje (Pavadinimas, Laiko žyma t, Video URL)
+ * Atvaizduoja „videos“ įvesties eilutes admin formoje (Video URL, neprivalomas Pavadinimas ir neprivaloma Laiko žyma t).
+ * Net jei video dar nėra, iškart parodoma 1 paruošta įvesties eilutė patogiam URL įklijavimui (Paste).
  */
 function renderAdminVideoRows(videos = []) {
-    if (!Array.isArray(videos) || videos.length === 0) {
-        adminVideosContainerEl.innerHTML =
-            '<div class="admin-videos-empty">Video nuorodų dar nepridėta (videos: []).</div>';
-        return;
-    }
+    const rowsToRender =
+        Array.isArray(videos) && videos.length > 0
+            ? videos
+            : [{ title: '', url: '', timestamp: '' }];
 
-    adminVideosContainerEl.innerHTML = videos
+    adminVideosContainerEl.innerHTML = rowsToRender
         .map((video, idx) => {
             const savedTimestamp =
                 video && video.timestamp !== undefined && video.timestamp !== null
@@ -1611,30 +1632,34 @@ function renderAdminVideoRows(videos = []) {
             <div class="admin-video-row" data-video-idx="${idx}">
                 <input
                     type="text"
-                    class="admin-video-title"
-                    placeholder="Pavadinimas (pvz., 2026 m. kruizas)"
-                    value="${escapeHtml((video && video.title) || '')}"
-                >
-                <input
-                    type="text"
-                    class="admin-video-timestamp"
-                    placeholder="Laiko žyma (pvz. 03:45)"
-                    title="Laiko žyma (t, pvz. 03:45, 3m30s arba sekundėmis)"
-                    value="${escapeHtml(savedTimestamp)}"
+                    inputmode="url"
+                    class="admin-video-url"
+                    placeholder="Įklijuokite YouTube video URL (https://www.youtube.com/watch?v=...)"
+                    value="${escapeHtml((video && video.url) || '')}"
+                    autocomplete="off"
+                    spellcheck="false"
                 >
                 <button
                     type="button"
                     class="admin-video-row__remove"
                     data-remove-video-idx="${idx}"
-                    title="Pašalinti video"
+                    title="Išvalyti arba pašalinti video eilutę"
                     aria-label="Pašalinti video"
                 >✕</button>
                 <input
-                    type="url"
-                    class="admin-video-url"
-                    placeholder="Video URL (https://www.youtube.com/watch?v=...)"
-                    value="${escapeHtml((video && video.url) || '')}"
-                    required
+                    type="text"
+                    class="admin-video-title"
+                    placeholder="Video pavadinimas (neprivaloma – priskirs automatiškai)"
+                    value="${escapeHtml((video && video.title) || '')}"
+                    autocomplete="off"
+                >
+                <input
+                    type="text"
+                    class="admin-video-timestamp"
+                    placeholder="Laiko žyma (neprivaloma, pvz. 03:45)"
+                    title="Neprivaloma laiko žyma (t, pvz. 03:45, 3m30s arba sekundėmis)"
+                    value="${escapeHtml(savedTimestamp)}"
+                    autocomplete="off"
                 >
             </div>
         `;
@@ -2435,6 +2460,10 @@ addVideoRowBtnEl.addEventListener('click', () => {
     const currentVideos = readAdminVideoRowsFromDom();
     currentVideos.push({ title: '', url: '', timestamp: '' });
     renderAdminVideoRows(currentVideos);
+    const urlInputs = adminVideosContainerEl.querySelectorAll('.admin-video-url');
+    if (urlInputs.length > 0) {
+        urlInputs[urlInputs.length - 1].focus();
+    }
 });
 
 // Video eilutės pašalinimas admin formoje
@@ -2462,21 +2491,34 @@ placeFormEl.addEventListener('submit', (event) => {
         return;
     }
 
+    const placeTitle = placeTitleInputEl.value.trim();
     const selectedTravelers = readAdminTravelerCheckboxes();
 
     const rawVideos = readAdminVideoRowsFromDom();
-    const cleanedVideos = rawVideos
-        .map((v) => {
+    const nonEmptyVideos = rawVideos.filter((v) => String(v.url || '').trim().length > 0);
+    const cleanedVideos = nonEmptyVideos
+        .map((v, idx) => {
             const validUrl = getValidHttpUrl(v.url);
             if (!validUrl) return null;
-            const trimmedTimestamp = String(v.timestamp || '').trim();
+
+            // 3) Išmanus video pavadinimas: jei neįvestas ranka, priskiriame vietos pavadinimą arba „Kelionės vlogas“
+            const manualTitle = String(v.title || '').trim();
+            const defaultBaseTitle = placeTitle || 'Kelionės vlogas';
+            const smartTitle =
+                manualTitle ||
+                (nonEmptyVideos.length > 1 ? `${defaultBaseTitle} #${idx + 1}` : defaultBaseTitle);
+
             const entry = {
-                title: v.title.trim(),
+                title: smartTitle,
                 url: validUrl
             };
-            if (trimmedTimestamp) {
+
+            // 2) Laiko žyma (timestamp) yra neprivaloma: įrašoma tik jei įvesta ir galiojanti (> 0 s)
+            const trimmedTimestamp = String(v.timestamp || '').trim();
+            if (trimmedTimestamp && parseTimestampToSeconds(trimmedTimestamp) > 0) {
                 entry.timestamp = trimmedTimestamp;
             }
+
             return entry;
         })
         .filter(Boolean);
@@ -2547,6 +2589,11 @@ placeFormEl.addEventListener('submit', (event) => {
     map.flyTo([placePayload.lat, placePayload.lng], Math.max(map.getZoom(), 7), {
         duration: 0.7
     });
+
+    const updatedMarker = markersByPlaceId.get(placePayload.id);
+    if (updatedMarker) {
+        updatedMarker.openPopup();
+    }
 });
 
 cancelEditBtnEl.addEventListener('click', () => {
