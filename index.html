@@ -6,7 +6,7 @@
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta
         http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self' https://unpkg.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://unpkg.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https://unpkg.com https://cdnjs.cloudflare.com https://tile.openstreetmap.org https://*.tile.openstreetmap.org https://*.basemaps.cartocdn.com; connect-src 'self' https://raw.githubusercontent.com https://tile.openstreetmap.org https://*.tile.openstreetmap.org https://*.basemaps.cartocdn.com; font-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self';"
+        content="default-src 'self'; script-src 'self' https://unpkg.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://unpkg.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https://unpkg.com https://cdnjs.cloudflare.com https://i.ytimg.com https://*.ytimg.com https://server.arcgisonline.com https://tile.openstreetmap.org https://*.tile.openstreetmap.org https://*.basemaps.cartocdn.com; connect-src 'self' https://raw.githubusercontent.com https://nominatim.openstreetmap.org https://server.arcgisonline.com https://i.ytimg.com https://tile.openstreetmap.org https://*.tile.openstreetmap.org https://*.basemaps.cartocdn.com; font-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self';"
     >
     <title>Lisauskų kelionės – Interaktyvus kelionių žemėlapis | map.lisauskai.lt</title>
     <meta name="description" content="Interaktyvus YouTube kanalo „Lisauskų kelionės“ aplankytų vietų ir vlogų žemėlapis.">
@@ -122,6 +122,18 @@
                         <button type="button" class="traveler-chip" data-traveler="Lukas">Lukas</button>
                         <button type="button" class="traveler-chip" data-traveler="Linas">Linas</button>
                     </nav>
+
+                    <div class="controls-divider" aria-hidden="true"></div>
+
+                    <!-- Žemėlapio režimo perjungiklis: Detalus žemėlapis / Tik šalys -->
+                    <div class="map-mode-switcher" role="group" aria-label="Žemėlapio vaizdo režimas" id="mapModeSwitcher">
+                        <button type="button" class="mode-btn is-active" data-mode="detailed">
+                            Detalus žemėlapis
+                        </button>
+                        <button type="button" class="mode-btn" data-mode="countries">
+                            Tik šalys
+                        </button>
+                    </div>
                 </div>
             </div>
         </header>
@@ -153,158 +165,298 @@
                 </svg>
             </button>
 
-            <!-- Administravimo šoninis skydelis -->
-            <aside id="adminPanel" class="admin-panel" aria-label="Administravimo skydelis" hidden>
-                <div class="admin-panel__header">
-                    <div class="admin-panel__title-wrap">
-                        <span class="admin-panel__badge">ADMIN</span>
-                        <h2 class="admin-panel__title">Duomenų valdymas</h2>
+            <!-- Juosta koordinačių parinkimui žemėlapyje (kai Admin langas laikinai sumažintas) -->
+            <div id="adminPickBanner" class="admin-pick-banner" hidden>
+                <div class="admin-pick-banner__inner">
+                    <span>📍 Paspauskite bet kur ant žemėlapio, kad parinktumėte vietos <strong>lat</strong> ir <strong>lng</strong> koordinates.</span>
+                    <button type="button" id="returnToAdminBtn" class="admin-btn admin-btn--primary">
+                        Grįžti į Admin langą
+                    </button>
+                </div>
+            </div>
+
+            <!-- 2) Admin prisijungimo langelis (Slaptažodžio patikra) -->
+            <div id="adminLoginModal" class="admin-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="adminLoginTitle" hidden>
+                <div class="admin-login-card">
+                    <div class="admin-login-card__header">
+                        <div class="admin-login-card__icon" aria-hidden="true">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 id="adminLoginTitle" class="admin-login-card__title">Administratoriaus prisijungimas</h2>
+                            <p class="admin-login-card__subtitle">Įveskite slaptažodį, kad atidarytumėte Admin Dashboard</p>
+                        </div>
                     </div>
-                    <button type="button" id="adminCloseBtn" class="admin-panel__close" aria-label="Uždaryti administravimo skydelį">
-                        ✕
-                    </button>
-                </div>
 
-                <!-- 3) Eksportavimo mygtukai viršuje, kad visada būtų po ranka -->
-                <div class="admin-export-bar">
-                    <button type="button" id="downloadJsonBtn" class="admin-btn admin-btn--primary">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                            <polyline points="7 10 12 15 17 10"></polyline>
-                            <line x1="12" y1="15" x2="12" y2="3"></line>
-                        </svg>
-                        <span>Atsisiųsti keliones.json</span>
-                    </button>
-                    <button type="button" id="copyJsonBtn" class="admin-btn admin-btn--secondary">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                        </svg>
-                        <span id="copyJsonBtnText">Kopijuoti JSON</span>
-                    </button>
-                </div>
-
-                <div class="admin-panel__content">
-                    <!-- 1 & 2) Naujos vietos / redagavimo forma -->
-                    <section class="admin-section">
-                        <h3 class="admin-section__heading" id="placeFormHeading">Pridėti naują vietą</h3>
-                        <p class="admin-hint">
-                            💡 Paspauskite bet kur ant žemėlapio – <strong>lat</strong> ir <strong>lng</strong> koordinatės bus įrašytos automatiškai.
-                        </p>
-
-                        <form id="placeForm" class="admin-form">
-                            <input type="hidden" id="placeIdInput" value="">
-
-                            <div class="admin-form__row admin-form__row--2col">
-                                <div class="admin-field">
-                                    <label for="placeLatInput">Platuma (lat)</label>
-                                    <input type="number" step="any" id="placeLatInput" placeholder="55.9349" required>
-                                </div>
-                                <div class="admin-field">
-                                    <label for="placeLngInput">Ilguma (lng)</label>
-                                    <input type="number" step="any" id="placeLngInput" placeholder="23.3137" required>
-                                </div>
-                            </div>
-
-                            <div class="admin-form__row admin-form__row--2col">
-                                <div class="admin-field">
-                                    <label for="placeTitleInput">Pavadinimas</label>
-                                    <input type="text" id="placeTitleInput" placeholder="Pvz., Šiauliai" required>
-                                </div>
-                                <div class="admin-field">
-                                    <label for="placeCountryInput">Šalis</label>
-                                    <input type="text" id="placeCountryInput" placeholder="Pvz., Lietuva" required>
-                                </div>
-                            </div>
-
-                            <div class="admin-form__row admin-form__row--2col">
-                                <div class="admin-field">
-                                    <label for="placeDateInput">Data</label>
-                                    <input type="date" id="placeDateInput" required>
-                                </div>
-                                <div class="admin-field">
-                                    <label for="placeCategoryInput">Kategorija</label>
-                                    <select id="placeCategoryInput" required>
-                                        <option value="Kruizas">Kruizas</option>
-                                        <option value="Automobiliu">Automobiliu</option>
-                                        <option value="Lėktuvu">Lėktuvu</option>
-                                        <option value="Lietuva">Lietuva</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="admin-field">
-                                <label for="placeDescInput">Aprašymas</label>
-                                <textarea id="placeDescInput" rows="2" placeholder="Trumpas kelionės aprašymas..." required></textarea>
-                            </div>
-
-                            <div class="admin-field">
-                                <label>Kas dalyvavo kelionėje (travelers)</label>
-                                <div class="admin-travelers-grid" id="adminTravelersCheckboxes">
-                                    <label class="admin-checkbox-label">
-                                        <input type="checkbox" name="placeTraveler" value="Tomas" checked>
-                                        <span>Tomas</span>
-                                    </label>
-                                    <label class="admin-checkbox-label">
-                                        <input type="checkbox" name="placeTraveler" value="Sandra" checked>
-                                        <span>Sandra</span>
-                                    </label>
-                                    <label class="admin-checkbox-label">
-                                        <input type="checkbox" name="placeTraveler" value="Lukas" checked>
-                                        <span>Lukas</span>
-                                    </label>
-                                    <label class="admin-checkbox-label">
-                                        <input type="checkbox" name="placeTraveler" value="Linas" checked>
-                                        <span>Linas</span>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div class="admin-field">
-                                <div class="admin-field__label-row">
-                                    <label>YouTube vlogai (videos)</label>
-                                    <button type="button" id="addVideoRowBtn" class="admin-add-video-btn">+ Pridėti video</button>
-                                </div>
-                                <div id="adminVideosContainer" class="admin-videos-container"></div>
-                            </div>
-
-                            <div class="admin-form__actions">
-                                <button type="submit" id="savePlaceBtn" class="admin-btn admin-btn--accent">
-                                    Pridėti vietą
-                                </button>
-                                <button type="button" id="cancelEditBtn" class="admin-btn admin-btn--ghost" hidden>
-                                    Atšaukti
-                                </button>
-                            </div>
-                        </form>
-                    </section>
-
-                    <!-- Aplankytų šalių (visitedCountries) valdymas -->
-                    <section class="admin-section">
-                        <h3 class="admin-section__heading">Aplankytos šalys (visitedCountries)</h3>
-                        <form id="countryForm" class="admin-country-form">
+                    <form id="adminLoginForm" class="admin-login-form">
+                        <div class="admin-field">
+                            <label for="adminPasswordInput">Slaptažodis</label>
                             <input
-                                type="text"
-                                id="newCountryCodeInput"
-                                class="admin-country-form__input"
-                                placeholder="ISO-2 kodas (pvz. NO, SE)"
-                                maxlength="2"
+                                type="password"
+                                id="adminPasswordInput"
+                                placeholder="Įveskite administratoriaus slaptažodį..."
+                                autocomplete="current-password"
                                 required
                             >
-                            <button type="submit" class="admin-btn admin-btn--secondary">Pridėti šalį</button>
-                        </form>
-                        <div id="adminCountriesList" class="admin-countries-list" aria-label="Aplankytų šalių ISO kodai"></div>
-                    </section>
-
-                    <!-- Esamų taškų sąrašas su Redaguoti / Ištrinti -->
-                    <section class="admin-section">
-                        <div class="admin-section__header-row">
-                            <h3 class="admin-section__heading">Esami taškai (<span id="adminPlacesCount">0</span>)</h3>
                         </div>
-                        <div id="adminPlacesList" class="admin-places-list"></div>
-                    </section>
+                        <p id="adminLoginError" class="admin-login-error" hidden>
+                            Neteisingas slaptažodis. Bandykite dar kartą.
+                        </p>
+                        <div class="admin-login-form__actions">
+                            <button type="button" id="adminLoginCancelBtn" class="admin-btn admin-btn--ghost">
+                                Atšaukti
+                            </button>
+                            <button type="submit" class="admin-btn admin-btn--accent">
+                                Atrinkti ir atidaryti
+                            </button>
+                        </div>
+                    </form>
                 </div>
-            </aside>
+            </div>
+
+            <!-- 1) Erdvus per visą ekraną atsidarantis modalinis langas (Admin Dashboard) -->
+            <div id="adminDashboardModal" class="admin-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="adminDashboardTitle" hidden>
+                <div class="admin-dashboard">
+                    <!-- Viršutinė Admin Dashboard juosta -->
+                    <header class="admin-dashboard__header">
+                        <div class="admin-dashboard__brand">
+                            <span class="admin-panel__badge">ADMIN DASHBOARD</span>
+                            <h2 id="adminDashboardTitle" class="admin-dashboard__title">
+                                „Lisauskų kelionės“ duomenų valdymas
+                            </h2>
+                        </div>
+
+                        <div class="admin-dashboard__toolbar">
+                            <button type="button" id="pickCoordsOnMapBtn" class="admin-btn admin-btn--secondary" title="Laikinai paslėpti langą ir paspausti ant žemėlapio">
+                                📍 Parinkti koordinates žemėlapyje
+                            </button>
+                            <button type="button" id="downloadJsonBtn" class="admin-btn admin-btn--primary">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                                <span>Atsisiųsti keliones.json</span>
+                            </button>
+                            <button type="button" id="copyJsonBtn" class="admin-btn admin-btn--secondary">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                                <span id="copyJsonBtnText">Kopijuoti JSON</span>
+                            </button>
+                            <button type="button" id="adminLogoutBtn" class="admin-btn admin-btn--ghost" title="Atsijungti iš Admin sesijos">
+                                Atsijungti
+                            </button>
+                            <button type="button" id="adminCloseBtn" class="admin-panel__close" aria-label="Uždaryti administravimo langą">
+                                ✕
+                            </button>
+                        </div>
+                    </header>
+
+                    <!-- Dviejų dalių turinys: Kairė (Forma + Šalys) ir Dešinė (Plati taškų lentelė) -->
+                    <div class="admin-dashboard__body">
+                        <!-- KAIRĖ DALIS: Vietos pridėjimo/redagavimo forma ir aplankytų šalių sąrašas -->
+                        <div class="admin-dashboard__left">
+                            <section class="admin-section">
+                                <div class="admin-section__header-row">
+                                    <h3 class="admin-section__heading" id="placeFormHeading">Pridėti naują vietą</h3>
+                                    <button type="button" id="inlinePickCoordsBtn" class="admin-add-video-btn">
+                                        📍 Pasiimti iš žemėlapio
+                                    </button>
+                                </div>
+
+                                <form id="placeForm" class="admin-form">
+                                    <input type="hidden" id="placeIdInput" value="">
+
+                                    <!-- 1) Išmanus vietos, šalies ir koordinačių suradimas per Nominatim API -->
+                                    <div class="admin-field admin-geocode-box">
+                                        <label for="placeGeocodeInput">
+                                            Įvesk miestą arba vietą (pvz., Sirakūzai, Valeta, Heureka)
+                                        </label>
+                                        <div class="admin-geocode-box__row">
+                                            <input
+                                                type="search"
+                                                id="placeGeocodeInput"
+                                                class="admin-geocode-box__input"
+                                                placeholder="Įvesk miestą arba vietą (pvz., Sirakūzai, Valeta, Heureka)"
+                                                autocomplete="off"
+                                            >
+                                            <button type="button" id="placeGeocodeBtn" class="admin-btn admin-btn--primary">
+                                                🔍 Rasti
+                                            </button>
+                                        </div>
+                                        <div id="placeGeocodeResults" class="admin-geocode-results" role="listbox" aria-label="Rastų vietų sąrašas" hidden></div>
+                                    </div>
+
+                                    <div class="admin-form__row admin-form__row--place-country">
+                                        <div class="admin-field">
+                                            <label for="placeTitleInput">Pavadinimas</label>
+                                            <input type="text" id="placeTitleInput" placeholder="Pvz., Sirakūzai" required>
+                                        </div>
+                                        <div class="admin-field">
+                                            <label for="placeCountryInput">Šalis</label>
+                                            <input type="text" id="placeCountryInput" placeholder="Pvz., Italija" required>
+                                        </div>
+                                        <div class="admin-field">
+                                            <label for="placeCountryCodeInput" title="Šalies ISO-2 kodas (automatiškai įtraukiamas į aplankytas šalis)">ISO-2</label>
+                                            <input type="text" id="placeCountryCodeInput" placeholder="IT" maxlength="2">
+                                        </div>
+                                    </div>
+
+                                    <div class="admin-form__row admin-form__row--2col">
+                                        <div class="admin-field">
+                                            <label for="placeDateInput">Data</label>
+                                            <input type="date" id="placeDateInput" required>
+                                        </div>
+                                        <div class="admin-field">
+                                            <label for="placeCategoryInput">Kategorija</label>
+                                            <select id="placeCategoryInput" required>
+                                                <option value="Kruizas">Kruizas</option>
+                                                <option value="Automobiliu">Automobiliu</option>
+                                                <option value="Lėktuvu">Lėktuvu</option>
+                                                <option value="Lietuva">Lietuva</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- Paslėpti lat/lng laukeliai po „Smulkesni nustatymai“ -->
+                                    <details id="placeAdvancedDetails" class="admin-advanced-details">
+                                        <summary class="admin-advanced-details__summary">
+                                            <span>⚙️ Smulkesni nustatymai (lat / lng koordinatės)</span>
+                                            <span id="coordsPreviewBadge" class="admin-coords-preview">Koordinatės dar neparinktos</span>
+                                        </summary>
+                                        <div class="admin-advanced-details__body">
+                                            <div class="admin-form__row admin-form__row--2col">
+                                                <div class="admin-field">
+                                                    <label for="placeLatInput">Platuma (lat)</label>
+                                                    <input type="number" step="any" id="placeLatInput" placeholder="55.9349">
+                                                </div>
+                                                <div class="admin-field">
+                                                    <label for="placeLngInput">Ilguma (lng)</label>
+                                                    <input type="number" step="any" id="placeLngInput" placeholder="23.3137">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </details>
+
+                                    <div class="admin-field">
+                                        <label for="placeDescInput">Aprašymas</label>
+                                        <textarea id="placeDescInput" rows="2" placeholder="Trumpas kelionės aprašymas..." required></textarea>
+                                    </div>
+
+                                    <div class="admin-field">
+                                        <label>Kas dalyvavo kelionėje (travelers)</label>
+                                        <div class="admin-travelers-grid" id="adminTravelersCheckboxes">
+                                            <label class="admin-checkbox-label">
+                                                <input type="checkbox" name="placeTraveler" value="Tomas" checked>
+                                                <span>Tomas</span>
+                                            </label>
+                                            <label class="admin-checkbox-label">
+                                                <input type="checkbox" name="placeTraveler" value="Sandra" checked>
+                                                <span>Sandra</span>
+                                            </label>
+                                            <label class="admin-checkbox-label">
+                                                <input type="checkbox" name="placeTraveler" value="Lukas" checked>
+                                                <span>Lukas</span>
+                                            </label>
+                                            <label class="admin-checkbox-label">
+                                                <input type="checkbox" name="placeTraveler" value="Linas" checked>
+                                                <span>Linas</span>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="admin-field">
+                                        <div class="admin-field__label-row">
+                                            <label>YouTube vlogai (videos)</label>
+                                            <button type="button" id="addVideoRowBtn" class="admin-add-video-btn">+ Pridėti video</button>
+                                        </div>
+                                        <div id="adminVideosContainer" class="admin-videos-container"></div>
+                                    </div>
+
+                                    <div class="admin-form__actions">
+                                        <button type="submit" id="savePlaceBtn" class="admin-btn admin-btn--accent">
+                                            Pridėti vietą
+                                        </button>
+                                        <button type="button" id="cancelEditBtn" class="admin-btn admin-btn--ghost" hidden>
+                                            Atšaukti redagavimą
+                                        </button>
+                                    </div>
+                                </form>
+                            </section>
+
+                            <!-- Aplankytų šalių (visitedCountries) valdymas -->
+                            <section class="admin-section">
+                                <h3 class="admin-section__heading">Aplankytos šalys (visitedCountries)</h3>
+                                <form id="countryForm" class="admin-country-form">
+                                    <input
+                                        type="text"
+                                        id="newCountryCodeInput"
+                                        class="admin-country-form__input"
+                                        placeholder="ISO-2 kodas (pvz. NO, SE, HU)"
+                                        maxlength="2"
+                                        required
+                                    >
+                                    <button type="submit" class="admin-btn admin-btn--secondary">Pridėti šalį</button>
+                                </form>
+                                <div id="adminCountriesList" class="admin-countries-list" aria-label="Aplankytų šalių ISO kodai"></div>
+                            </section>
+                        </div>
+
+                        <!-- DEŠINĖ DALIS: Plati esamų taškų lentelė su paieška ir filtravimu -->
+                        <div class="admin-dashboard__right">
+                            <section class="admin-section admin-section--table">
+                                <div class="admin-table-toolbar">
+                                    <div class="admin-table-toolbar__title">
+                                        <h3 class="admin-section__heading">
+                                            Esami kelionių taškai (<span id="adminPlacesCount">0</span>)
+                                        </h3>
+                                    </div>
+
+                                    <div class="admin-table-toolbar__filters">
+                                        <input
+                                            type="search"
+                                            id="adminTableSearchInput"
+                                            class="admin-table-search"
+                                            placeholder="Ieškoti lentelėje (miestas, šalis, data)..."
+                                            aria-label="Ieškoti taškų lentelėje"
+                                        >
+                                        <select id="adminTableCategoryFilter" class="admin-table-select" aria-label="Filtruoti lentelę pagal kategoriją">
+                                            <option value="Visos">Visos kategorijos</option>
+                                            <option value="Kruizas">🚢 Kruizas</option>
+                                            <option value="Automobiliu">🚗 Automobiliu</option>
+                                            <option value="Lėktuvu">✈️ Lėktuvu</option>
+                                            <option value="Lietuva">🇱🇹 Lietuva</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="admin-table-wrap">
+                                    <table class="admin-table">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Vieta ir šalis</th>
+                                                <th>Kategorija</th>
+                                                <th>Data</th>
+                                                <th>Keliautojai</th>
+                                                <th>Koordinatės</th>
+                                                <th>Vlogai</th>
+                                                <th class="admin-table__actions-col">Veiksmai</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="adminPlacesTableBody"></tbody>
+                                    </table>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
 

@@ -392,6 +392,41 @@ body {
     box-shadow: 0 2px 8px rgba(56, 189, 248, 0.18);
 }
 
+/* Žemėlapio režimo perjungiklis (Detalus žemėlapis / Tik šalys) */
+.map-mode-switcher {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem;
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-pill);
+    gap: 0.2rem;
+}
+
+.mode-btn {
+    padding: 0.34rem 0.72rem;
+    border: none;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: inherit;
+    font-size: 0.76rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    white-space: nowrap;
+}
+
+.mode-btn:hover {
+    color: var(--text-primary);
+}
+
+.mode-btn.is-active {
+    background: linear-gradient(135deg, #0284c7 0%, #06b6d4 100%);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(6, 182, 212, 0.35);
+}
+
 /* ==========================================================================
    Žemėlapio sritis (visas likęs ekranas po juosta)
    ========================================================================== */
@@ -406,12 +441,18 @@ body {
     width: 100%;
     height: 100%;
     z-index: 1;
-    background-color: #e2e8f0;
+    background-color: #cfe8fc;
+    transition: background-color 0.25s ease;
 }
 
-/* Švelnus pastelinis filtras OpenStreetMap plytelėms (neveikia smeigtukų ir šalių poligonų) */
+/* Režimas „Tik šalys“ – švarus vienspalvis jūros fonas */
+#map.map--countries-only {
+    background-color: #cfe8fc;
+}
+
+/* Švelnus kolorito subalansavimas Esri World Street Map plytelėms */
 #map .leaflet-tile-pane {
-    filter: saturate(0.68) contrast(0.94) brightness(1.04);
+    filter: saturate(0.92) contrast(0.98) brightness(1.01);
 }
 
 /* Tuščios paieškos pranešimas */
@@ -686,7 +727,90 @@ body {
 .popup-card__videos {
     display: flex;
     flex-direction: column;
+    gap: 0.7rem;
+    max-height: 310px;
+    overflow-y: auto;
+    padding-right: 2px;
+}
+
+.popup-video-card {
+    background: rgba(30, 41, 59, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.popup-video-card__thumb-link {
+    position: relative;
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #020617;
+    overflow: hidden;
+    text-decoration: none;
+}
+
+.popup-video-card__thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.25s ease, filter 0.25s ease;
+}
+
+.popup-video-card__thumb-link:hover .popup-video-card__thumb {
+    transform: scale(1.04);
+    filter: brightness(1.06);
+}
+
+.popup-video-card__play {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0.12) 0%, rgba(15, 23, 42, 0.48) 100%);
+    transition: background-color 0.2s ease;
+}
+
+.popup-video-card__play-circle {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: rgba(239, 68, 68, 0.88);
+    border: 2px solid rgba(255, 255, 255, 0.92);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(4px);
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease;
+}
+
+.popup-video-card__play-circle svg {
+    margin-left: 2px;
+}
+
+.popup-video-card__thumb-link:hover .popup-video-card__play-circle {
+    transform: scale(1.12);
+    background: rgba(220, 38, 38, 0.98);
+}
+
+.popup-video-card__info {
+    padding: 0.65rem 0.75rem 0.75rem;
+    display: flex;
+    flex-direction: column;
     gap: 0.5rem;
+}
+
+.popup-video-card__title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #f8fafc;
+    line-height: 1.35;
 }
 
 .popup-card__yt-btn {
@@ -730,8 +854,45 @@ body {
     border-top-color: rgba(15, 23, 42, 0.94);
 }
 
+/* Režimo „Tik šalys“ šalių pavadinimai tiesiai ant šalių kontūrų centro */
+.country-center-label-icon {
+    background: transparent;
+    border: none;
+    pointer-events: none;
+}
+
+.country-center-label {
+    display: inline-block;
+    transform: translate(-50%, -50%);
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 700;
+    line-height: 1.15;
+    white-space: nowrap;
+    text-align: center;
+    pointer-events: none;
+    user-select: none;
+    padding: 1px 4px;
+    border-radius: 4px;
+}
+
+.country-center-label--visited {
+    color: #083344;
+    text-shadow:
+        0 0 4px rgba(255, 255, 255, 0.95),
+        0 1px 2px rgba(255, 255, 255, 0.9);
+    font-weight: 800;
+}
+
+.country-center-label--unvisited {
+    color: #64748b;
+    font-weight: 600;
+    font-size: 0.67rem;
+    text-shadow: 0 0 3px rgba(255, 255, 255, 0.85);
+}
+
 /* ==========================================================================
-   Administravimo režimas: spynos mygtukas ir šoninis skydelis
+   Administravimo režimas: spynos mygtukas, Prisijungimo langas ir Admin Dashboard
    ========================================================================== */
 .admin-lock-btn {
     position: absolute;
@@ -762,67 +923,184 @@ body {
     transform: scale(1.06);
 }
 
-.admin-panel {
+/* Koordinačių parinkimo juosta virš žemėlapio */
+.admin-pick-banner {
     position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: 400px;
-    max-width: 100%;
-    z-index: 900;
-    background: rgba(15, 23, 42, 0.97);
-    backdrop-filter: blur(18px);
-    border-left: 1px solid var(--border-subtle);
-    box-shadow: -12px 0 36px rgba(0, 0, 0, 0.5);
-    display: flex;
-    flex-direction: column;
-    color: var(--text-primary);
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 850;
+    max-width: 92%;
 }
 
-.admin-panel[hidden] {
+.admin-pick-banner[hidden] {
     display: none;
 }
 
-.admin-panel__header {
+.admin-pick-banner__inner {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 0.9rem 1.15rem;
-    border-bottom: 1px solid var(--border-subtle);
+    gap: 1rem;
+    padding: 0.65rem 1.1rem;
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(56, 189, 248, 0.55);
+    border-radius: var(--radius-pill);
+    color: #f8fafc;
+    font-size: 0.84rem;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+}
+
+/* Modalinių langų fonas */
+.admin-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    background: rgba(2, 6, 23, 0.78);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.25rem;
+}
+
+.admin-modal-overlay[hidden] {
+    display: none;
+}
+
+/* Prisijungimo langelis (Slaptažodis) */
+.admin-login-card {
+    width: 100%;
+    max-width: 420px;
+    background: #0f172a;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 24px 50px rgba(0, 0, 0, 0.65);
+}
+
+.admin-login-card__header {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    margin-bottom: 1.2rem;
+}
+
+.admin-login-card__icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: rgba(56, 189, 248, 0.15);
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    color: #38bdf8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     flex-shrink: 0;
 }
 
-.admin-panel__title-wrap {
+.admin-login-card__title {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #f8fafc;
+    margin-bottom: 0.18rem;
+}
+
+.admin-login-card__subtitle {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+}
+
+.admin-login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+.admin-login-error {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #fb7185;
+    background: rgba(244, 63, 94, 0.14);
+    border: 1px solid rgba(244, 63, 94, 0.38);
+    border-radius: var(--radius-sm);
+    padding: 0.5rem 0.7rem;
+}
+
+.admin-login-form__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.55rem;
+    margin-top: 0.25rem;
+}
+
+/* Erdvus Admin Dashboard modalinis langas per visą ekraną */
+.admin-dashboard {
+    width: 100%;
+    max-width: 1680px;
+    height: calc(100dvh - 2.5rem);
+    background: #0f172a;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 18px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    color: var(--text-primary);
+}
+
+.admin-dashboard__header {
     display: flex;
     align-items: center;
-    gap: 0.55rem;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.95rem 1.4rem;
+    background: rgba(30, 41, 59, 0.75);
+    border-bottom: 1px solid var(--border-subtle);
+    flex-shrink: 0;
+    flex-wrap: wrap;
+}
+
+.admin-dashboard__brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
 }
 
 .admin-panel__badge {
-    padding: 0.18rem 0.5rem;
+    padding: 0.22rem 0.58rem;
     border-radius: 6px;
     background: rgba(56, 189, 248, 0.18);
     border: 1px solid rgba(56, 189, 248, 0.45);
     color: #38bdf8;
-    font-size: 0.68rem;
+    font-size: 0.7rem;
     font-weight: 800;
     letter-spacing: 0.05em;
 }
 
-.admin-panel__title {
-    font-size: 0.98rem;
-    font-weight: 700;
+.admin-dashboard__title {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #f8fafc;
+}
+
+.admin-dashboard__toolbar {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    flex-wrap: wrap;
 }
 
 .admin-panel__close {
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     border: 1px solid var(--border-subtle);
     background: rgba(255, 255, 255, 0.06);
     color: var(--text-secondary);
     cursor: pointer;
-    font-size: 0.8rem;
+    font-size: 0.88rem;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -834,72 +1112,77 @@ body {
     color: #ffffff;
 }
 
-/* Eksportavimo mygtukai */
-.admin-export-bar {
+/* Dviejų stulpelių išdėstymas: Kairėje forma + šalys, Dešinėje plati lentelė */
+.admin-dashboard__body {
+    flex: 1 1 auto;
+    min-height: 0;
     display: grid;
-    grid-template-columns: 1.25fr 1fr;
-    gap: 0.55rem;
-    padding: 0.75rem 1.15rem;
-    background: rgba(30, 41, 59, 0.65);
-    border-bottom: 1px solid var(--border-subtle);
-    flex-shrink: 0;
+    grid-template-columns: 440px 1fr;
+    gap: 1.25rem;
+    padding: 1.25rem 1.4rem;
+    overflow: hidden;
 }
 
-.admin-panel__content {
-    flex: 1 1 auto;
-    overflow-y: auto;
-    padding: 1rem 1.15rem 1.5rem;
+.admin-dashboard__left {
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
+    gap: 1.1rem;
+    overflow-y: auto;
+    padding-right: 0.35rem;
+}
+
+.admin-dashboard__right {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
 }
 
 .admin-section {
-    background: rgba(30, 41, 59, 0.45);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(30, 41, 59, 0.48);
+    border: 1px solid rgba(255, 255, 255, 0.09);
     border-radius: var(--radius-md);
-    padding: 0.95rem;
+    padding: 1.05rem;
+}
+
+.admin-section--table {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
 }
 
 .admin-section__header-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 0.65rem;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
 }
 
 .admin-section__heading {
-    font-size: 0.88rem;
+    font-size: 0.92rem;
     font-weight: 700;
     color: #f8fafc;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.55rem;
 }
 
-.admin-section__header-row .admin-section__heading {
+.admin-section__header-row .admin-section__heading,
+.admin-table-toolbar__title .admin-section__heading {
     margin-bottom: 0;
-}
-
-.admin-hint {
-    font-size: 0.76rem;
-    line-height: 1.45;
-    color: #cbd5e1;
-    background: rgba(56, 189, 248, 0.1);
-    border: 1px solid rgba(56, 189, 248, 0.25);
-    border-radius: var(--radius-sm);
-    padding: 0.5rem 0.65rem;
-    margin-bottom: 0.8rem;
 }
 
 .admin-form {
     display: flex;
     flex-direction: column;
-    gap: 0.65rem;
+    gap: 0.7rem;
 }
 
 .admin-form__row--2col {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0.55rem;
+    gap: 0.6rem;
 }
 
 .admin-field {
@@ -916,13 +1199,13 @@ body {
 }
 
 .admin-add-video-btn {
-    padding: 0.18rem 0.5rem;
+    padding: 0.22rem 0.58rem;
     border-radius: 6px;
     border: 1px solid rgba(56, 189, 248, 0.45);
     background: rgba(56, 189, 248, 0.14);
     color: #38bdf8;
     font-family: inherit;
-    font-size: 0.7rem;
+    font-size: 0.72rem;
     font-weight: 700;
     cursor: pointer;
     transition: background-color 0.15s ease;
@@ -939,7 +1222,7 @@ body {
 }
 
 .admin-videos-empty {
-    font-size: 0.73rem;
+    font-size: 0.74rem;
     color: var(--text-muted);
     font-style: italic;
     padding: 0.25rem 0;
@@ -953,14 +1236,14 @@ body {
 }
 
 .admin-video-row__remove {
-    width: 26px;
-    height: 28px;
+    width: 28px;
+    height: 30px;
     border-radius: 6px;
     border: 1px solid rgba(255, 255, 255, 0.12);
     background: rgba(255, 255, 255, 0.05);
     color: var(--text-secondary);
     cursor: pointer;
-    font-size: 0.72rem;
+    font-size: 0.74rem;
 }
 
 .admin-video-row__remove:hover {
@@ -970,7 +1253,7 @@ body {
 }
 
 .admin-field label {
-    font-size: 0.73rem;
+    font-size: 0.74rem;
     font-weight: 600;
     color: var(--text-secondary);
 }
@@ -978,28 +1261,32 @@ body {
 .admin-field input,
 .admin-field select,
 .admin-field textarea,
-.admin-country-form__input {
+.admin-country-form__input,
+.admin-table-search,
+.admin-table-select {
     width: 100%;
-    padding: 0.46rem 0.65rem;
-    background: rgba(15, 23, 42, 0.85);
+    padding: 0.5rem 0.7rem;
+    background: rgba(15, 23, 42, 0.88);
     border: 1px solid rgba(255, 255, 255, 0.14);
     border-radius: var(--radius-sm);
     color: var(--text-primary);
     font-family: inherit;
-    font-size: 0.8rem;
+    font-size: 0.81rem;
     outline: none;
     transition: border-color 0.18s ease, box-shadow 0.18s ease;
 }
 
 .admin-field textarea {
     resize: vertical;
-    min-height: 56px;
+    min-height: 58px;
 }
 
 .admin-field input:focus,
 .admin-field select:focus,
 .admin-field textarea:focus,
-.admin-country-form__input:focus {
+.admin-country-form__input:focus,
+.admin-table-search:focus,
+.admin-table-select:focus {
     border-color: var(--border-focus);
     box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.18);
 }
@@ -1007,20 +1294,20 @@ body {
 .admin-form__actions {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    margin-top: 0.25rem;
+    gap: 0.55rem;
+    margin-top: 0.3rem;
 }
 
 .admin-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.4rem;
-    padding: 0.5rem 0.8rem;
+    gap: 0.42rem;
+    padding: 0.52rem 0.9rem;
     border-radius: var(--radius-sm);
     border: 1px solid transparent;
     font-family: inherit;
-    font-size: 0.78rem;
+    font-size: 0.8rem;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.16s ease;
@@ -1071,7 +1358,7 @@ body {
 .admin-country-form {
     display: flex;
     gap: 0.45rem;
-    margin-bottom: 0.65rem;
+    margin-bottom: 0.7rem;
 }
 
 .admin-country-form__input {
@@ -1081,19 +1368,19 @@ body {
 .admin-countries-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.35rem;
+    gap: 0.38rem;
 }
 
 .admin-country-chip {
     display: inline-flex;
     align-items: center;
-    gap: 0.3rem;
-    padding: 0.22rem 0.5rem;
+    gap: 0.32rem;
+    padding: 0.24rem 0.55rem;
     background: rgba(6, 182, 212, 0.16);
     border: 1px solid rgba(6, 182, 212, 0.4);
     border-radius: var(--radius-pill);
     color: #67e8f9;
-    font-size: 0.73rem;
+    font-size: 0.74rem;
     font-weight: 700;
 }
 
@@ -1102,7 +1389,7 @@ body {
     background: transparent;
     color: #94a3b8;
     cursor: pointer;
-    font-size: 0.72rem;
+    font-size: 0.74rem;
     line-height: 1;
     padding: 0 2px;
 }
@@ -1111,76 +1398,296 @@ body {
     color: #f43f5e;
 }
 
-/* Esamų taškų sąrašas */
-.admin-places-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.45rem;
-    max-height: 290px;
-    overflow-y: auto;
-    padding-right: 2px;
-}
-
-.admin-place-item {
+/* Dešinės pusės plati esamų taškų lentelė */
+.admin-table-toolbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 0.5rem;
-    padding: 0.55rem 0.65rem;
-    background: rgba(15, 23, 42, 0.75);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: var(--radius-sm);
-}
-
-.admin-place-item__info {
-    min-width: 0;
-    flex: 1;
-}
-
-.admin-place-item__title {
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: #f8fafc;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.admin-place-item__meta {
-    font-size: 0.7rem;
-    color: var(--text-secondary);
-}
-
-.admin-place-item__actions {
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
+    gap: 0.85rem;
+    margin-bottom: 0.85rem;
+    flex-wrap: wrap;
     flex-shrink: 0;
 }
 
-.admin-icon-btn {
-    padding: 0.28rem 0.5rem;
-    border-radius: 6px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    background: rgba(255, 255, 255, 0.05);
+.admin-table-toolbar__filters {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    flex: 1 1 360px;
+    justify-content: flex-end;
+}
+
+.admin-table-search {
+    max-width: 300px;
+}
+
+.admin-table-select {
+    max-width: 190px;
+}
+
+.admin-table-wrap {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    background: rgba(15, 23, 42, 0.65);
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+    text-align: left;
+}
+
+.admin-table thead {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: #1e293b;
+}
+
+.admin-table th {
+    padding: 0.7rem 0.85rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
     color: var(--text-secondary);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    white-space: nowrap;
+}
+
+.admin-table td {
+    padding: 0.68rem 0.85rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    color: #e2e8f0;
+    vertical-align: middle;
+}
+
+.admin-table tbody tr:hover {
+    background: rgba(56, 189, 248, 0.06);
+}
+
+.admin-table tbody tr.is-editing {
+    background: rgba(56, 189, 248, 0.14);
+}
+
+.admin-table__id {
+    color: var(--text-muted);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.admin-table__place-title {
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.admin-table__place-country {
+    font-size: 0.73rem;
+    color: var(--text-secondary);
+}
+
+.admin-table__coords {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.73rem;
+    color: #94a3b8;
+    white-space: nowrap;
+}
+
+.admin-table__actions-col {
+    text-align: right;
+}
+
+.admin-table__actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.4rem;
+    white-space: nowrap;
+}
+
+.admin-table__empty {
+    text-align: center;
+    padding: 2rem !important;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.admin-icon-btn {
+    padding: 0.32rem 0.6rem;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-primary);
     font-family: inherit;
-    font-size: 0.7rem;
+    font-size: 0.73rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.15s ease;
 }
 
 .admin-icon-btn:hover {
-    background: rgba(56, 189, 248, 0.18);
-    border-color: rgba(56, 189, 248, 0.45);
+    background: rgba(56, 189, 248, 0.2);
+    border-color: rgba(56, 189, 248, 0.5);
     color: #38bdf8;
 }
 
 .admin-icon-btn--danger:hover {
-    background: rgba(244, 63, 94, 0.2);
-    border-color: rgba(244, 63, 94, 0.5);
+    background: rgba(244, 63, 94, 0.22);
+    border-color: rgba(244, 63, 94, 0.55);
     color: #fb7185;
+}
+
+/* Išmanios Nominatim vietos paieškos blokas Admin formoje */
+.admin-geocode-box {
+    padding: 0.75rem;
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(20, 184, 166, 0.08));
+    border: 1px solid rgba(56, 189, 248, 0.32);
+}
+
+.admin-geocode-box__row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: stretch;
+}
+
+.admin-geocode-box__input {
+    flex: 1;
+}
+
+.admin-geocode-results {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin-top: 0.45rem;
+    max-height: 220px;
+    overflow-y: auto;
+    padding: 0.35rem;
+    background: rgba(11, 17, 32, 0.94);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    border-radius: var(--radius-sm);
+}
+
+.admin-geocode-results[hidden] {
+    display: none;
+}
+
+.admin-geocode-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.65rem;
+    width: 100%;
+    padding: 0.5rem 0.65rem;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-primary);
+    font-family: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.admin-geocode-item:hover {
+    background: rgba(56, 189, 248, 0.16);
+    border-color: rgba(56, 189, 248, 0.5);
+}
+
+.admin-geocode-item__main {
+    min-width: 0;
+    flex: 1;
+}
+
+.admin-geocode-item__title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.admin-geocode-item__sub {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.admin-geocode-item__badge {
+    flex-shrink: 0;
+    padding: 0.18rem 0.48rem;
+    border-radius: var(--radius-pill);
+    background: rgba(56, 189, 248, 0.18);
+    border: 1px solid rgba(56, 189, 248, 0.42);
+    color: #7dd3fc;
+    font-size: 0.69rem;
+    font-weight: 700;
+}
+
+.admin-geocode-status {
+    padding: 0.45rem 0.6rem;
+    font-size: 0.76rem;
+    color: var(--text-secondary);
+}
+
+.admin-form__row--place-country {
+    grid-template-columns: 1.3fr 1.1fr 74px;
+}
+
+#placeCountryCodeInput {
+    text-transform: uppercase;
+    text-align: center;
+    font-weight: 700;
+}
+
+/* Smulkesni nustatymai (paslėpti lat/lng laukeliai) */
+.admin-advanced-details {
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(15, 23, 42, 0.55);
+    overflow: hidden;
+}
+
+.admin-advanced-details__summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.52rem 0.7rem;
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    user-select: none;
+    list-style: none;
+}
+
+.admin-advanced-details__summary::-webkit-details-marker {
+    display: none;
+}
+
+.admin-advanced-details__summary:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.admin-coords-preview {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.71rem;
+    padding: 0.14rem 0.45rem;
+    border-radius: var(--radius-pill);
+    background: rgba(56, 189, 248, 0.14);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    color: #7dd3fc;
+}
+
+.admin-advanced-details__body {
+    padding: 0.65rem 0.7rem 0.7rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* Šeimos narių varnelės (checkboxes) admin formoje */
@@ -1226,6 +1733,22 @@ body {
     background: #f43f5e;
     border: 3px solid #ffffff;
     box-shadow: 0 0 0 4px rgba(244, 63, 94, 0.35), 0 4px 12px rgba(0, 0, 0, 0.45);
+}
+
+@media (max-width: 1180px) {
+    .admin-dashboard__body {
+        grid-template-columns: 1fr;
+        overflow-y: auto;
+    }
+
+    .admin-dashboard__left,
+    .admin-dashboard__right {
+        overflow: visible;
+    }
+
+    .admin-table-wrap {
+        max-height: 460px;
+    }
 }
 
 /* ==========================================================================

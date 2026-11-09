@@ -1,6 +1,6 @@
 /**
  * map.lisauskai.lt – „Lisauskų kelionės“ interaktyvus kelionių žemėlapis
- * Grynas Vanilla JS + Leaflet.js + keliones.json + Pasaulio šalių GeoJSON + Admin režimas
+ * Grynas Vanilla JS + Leaflet.js (Esri World Street Map) + keliones.json + Pasaulio šalių GeoJSON + Admin režimas
  */
 
 // Vieši patikimi pasaulio šalių GeoJSON šaltiniai iš raw.githubusercontent.com (atitinka CSP taisykles)
@@ -12,7 +12,13 @@ const WORLD_GEOJSON_URLS = [
 // Standartinis šeimos narių sąrašas
 const DEFAULT_TRAVELERS = ['Tomas', 'Sandra', 'Lukas', 'Linas'];
 
-// Lietuviški šalių pavadinimai pagal ISO-2 kodą (iškylantiems tooltip langams)
+// Naršyklės Intl.DisplayNames API šalių ISO-2 kodų vertimui į lietuvių kalbą
+const regionDisplayNamesLt =
+    typeof Intl !== 'undefined' && typeof Intl.DisplayNames === 'function'
+        ? new Intl.DisplayNames(['lt'], { type: 'region' })
+        : null;
+
+// Atsarginis lietuviškų šalių pavadinimų žodynas pagal ISO-2 kodą
 const COUNTRY_NAMES_LT = {
     LT: 'Lietuva',
     LV: 'Latvija',
@@ -29,10 +35,11 @@ const COUNTRY_NAMES_LT = {
     FR: 'Prancūzija',
     ES: 'Ispanija',
     IL: 'Izraelis',
-    EG: 'Egiptas'
+    EG: 'Egiptas',
+    XK: 'Kosovas'
 };
 
-// Pagalbinis ISO-3 -> ISO-2 žemėlapis (kai kuriuose GeoJSON šaltiniuose, pvz. Prancūzijai, ISO_A2 būna "-99")
+// Pagalbinis ISO-3 -> ISO-2 žemėlapis (kai kuriuose GeoJSON šaltiniuose, pvz. Prancūzijai ar Norvegijai, ISO_A2 būna "-99")
 const ISO3_TO_ISO2 = {
     LTU: 'LT',
     LVA: 'LV',
@@ -49,7 +56,47 @@ const ISO3_TO_ISO2 = {
     FRA: 'FR',
     ESP: 'ES',
     ISR: 'IL',
-    EGY: 'EG'
+    EGY: 'EG',
+    NOR: 'NO',
+    SWE: 'SE',
+    DNK: 'DK',
+    GBR: 'GB',
+    IRL: 'IE',
+    ISL: 'IS',
+    NLD: 'NL',
+    BEL: 'BE',
+    LUX: 'LU',
+    CHE: 'CH',
+    AUT: 'AT',
+    PRT: 'PT',
+    SVK: 'SK',
+    HUN: 'HU',
+    SVN: 'SI',
+    BIH: 'BA',
+    MNE: 'ME',
+    MKD: 'MK',
+    ALB: 'AL',
+    ROU: 'RO',
+    BGR: 'BG',
+    UKR: 'UA',
+    BLR: 'BY',
+    MDA: 'MD',
+    TUR: 'TR',
+    CYP: 'CY',
+    GEO: 'GE',
+    ARM: 'AM',
+    AZE: 'AZ',
+    MAR: 'MA',
+    TUN: 'TN',
+    DZA: 'DZ',
+    LBY: 'LY',
+    JOR: 'JO',
+    LBN: 'LB',
+    SYR: 'SY',
+    SAU: 'SA',
+    ARE: 'AE',
+    XKX: 'XK',
+    KOS: 'XK'
 };
 
 // Atsarginiai duomenys (jei index.html atidaromas tiesiogiai per file:// protokolą be serverio)
@@ -314,19 +361,29 @@ const CATEGORY_META = {
     }
 };
 
+// Administravimo prieigos nustatymai (slaptažodis „Lisauskai2026“)
+const ADMIN_SESSION_KEY = 'lisauskai_admin_auth';
+const ADMIN_PASSWORD_PLAIN = 'Lisauskai2026';
+const ADMIN_PASSWORD_SHA256 = '5a5ca17e3c636d26a22f58b3702074e33d9b488a0cfbd659c147fce951579fcb';
+
 // Būsena
 const state = {
     visitedCountries: [],
     places: [],
     activeCategory: 'Visos',
     activeTraveler: 'Visi',
+    mapMode: 'detailed', // 'detailed' | 'countries'
     searchQuery: '',
     isAdminOpen: false,
+    isPickingCoords: false,
     editingPlaceId: null,
+    adminTableSearch: '',
+    adminTableCategory: 'Visos',
     cachedWorldGeoJson: null
 };
 
 // Pagrindiniai DOM elementai
+const mapContainerEl = document.getElementById('map');
 const statCountriesEl = document.getElementById('statCountries');
 const statPlacesEl = document.getElementById('statPlaces');
 const statVlogsEl = document.getElementById('statVlogs');
@@ -334,14 +391,26 @@ const searchInputEl = document.getElementById('searchInput');
 const clearSearchBtnEl = document.getElementById('clearSearchBtn');
 const categoryFiltersEl = document.getElementById('categoryFilters');
 const travelerFiltersEl = document.getElementById('travelerFilters');
+const mapModeSwitcherEl = document.getElementById('mapModeSwitcher');
 const emptyStateEl = document.getElementById('emptyState');
 const resetFiltersBtnEl = document.getElementById('resetFiltersBtn');
 const resetMapBtnEl = document.getElementById('resetMapBtn');
 
-// Administravimo DOM elementai
+// Administravimo DOM elementai (prisijungimo modalas ir pilno ekrano Admin Dashboard)
 const adminToggleBtnEl = document.getElementById('adminToggleBtn');
-const adminPanelEl = document.getElementById('adminPanel');
+const adminLoginModalEl = document.getElementById('adminLoginModal');
+const adminLoginFormEl = document.getElementById('adminLoginForm');
+const adminPasswordInputEl = document.getElementById('adminPasswordInput');
+const adminLoginErrorEl = document.getElementById('adminLoginError');
+const adminLoginCancelBtnEl = document.getElementById('adminLoginCancelBtn');
+
+const adminDashboardModalEl = document.getElementById('adminDashboardModal');
 const adminCloseBtnEl = document.getElementById('adminCloseBtn');
+const adminLogoutBtnEl = document.getElementById('adminLogoutBtn');
+const pickCoordsOnMapBtnEl = document.getElementById('pickCoordsOnMapBtn');
+const inlinePickCoordsBtnEl = document.getElementById('inlinePickCoordsBtn');
+const adminPickBannerEl = document.getElementById('adminPickBanner');
+const returnToAdminBtnEl = document.getElementById('returnToAdminBtn');
 const downloadJsonBtnEl = document.getElementById('downloadJsonBtn');
 const copyJsonBtnEl = document.getElementById('copyJsonBtn');
 const copyJsonBtnTextEl = document.getElementById('copyJsonBtnText');
@@ -349,10 +418,16 @@ const copyJsonBtnTextEl = document.getElementById('copyJsonBtnText');
 const placeFormEl = document.getElementById('placeForm');
 const placeFormHeadingEl = document.getElementById('placeFormHeading');
 const placeIdInputEl = document.getElementById('placeIdInput');
+const placeGeocodeInputEl = document.getElementById('placeGeocodeInput');
+const placeGeocodeBtnEl = document.getElementById('placeGeocodeBtn');
+const placeGeocodeResultsEl = document.getElementById('placeGeocodeResults');
 const placeLatInputEl = document.getElementById('placeLatInput');
 const placeLngInputEl = document.getElementById('placeLngInput');
 const placeTitleInputEl = document.getElementById('placeTitleInput');
 const placeCountryInputEl = document.getElementById('placeCountryInput');
+const placeCountryCodeInputEl = document.getElementById('placeCountryCodeInput');
+const placeAdvancedDetailsEl = document.getElementById('placeAdvancedDetails');
+const coordsPreviewBadgeEl = document.getElementById('coordsPreviewBadge');
 const placeDateInputEl = document.getElementById('placeDateInput');
 const placeCategoryInputEl = document.getElementById('placeCategoryInput');
 const placeDescInputEl = document.getElementById('placeDescInput');
@@ -366,7 +441,9 @@ const countryFormEl = document.getElementById('countryForm');
 const newCountryCodeInputEl = document.getElementById('newCountryCodeInput');
 const adminCountriesListEl = document.getElementById('adminCountriesList');
 const adminPlacesCountEl = document.getElementById('adminPlacesCount');
-const adminPlacesListEl = document.getElementById('adminPlacesList');
+const adminTableSearchInputEl = document.getElementById('adminTableSearchInput');
+const adminTableCategoryFilterEl = document.getElementById('adminTableCategoryFilter');
+const adminPlacesTableBodyEl = document.getElementById('adminPlacesTableBody');
 
 // Inicializuojame Leaflet žemėlapį
 const map = L.map('map', {
@@ -382,15 +459,19 @@ L.control.zoom({
     position: 'bottomright'
 }).addTo(map);
 
-// 100% nemokamas švarus OpenStreetMap sluoksnis be jokio API rakto (su pasteliniu CSS filtru style.css faile)
-L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors',
-    maxZoom: 19
-}).addTo(map);
+// 1) Nemokamas „Esri World Street Map“ sluoksnis, kuriame visi pavadinimai yra lotyniški
+const baseTileLayer = L.tileLayer(
+    'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+    {
+        attribution:
+            'Tiles &copy; <a href="https://www.esri.com/" target="_blank" rel="noopener noreferrer">Esri</a> &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, TomTom',
+        maxZoom: 18
+    }
+).addTo(map);
 
-// Sluoksniai: pasaulio šalys (apačioje), vietovių smeigtukai (viršuje) ir laikinas admin paspaudimo žymeklis
+// Sluoksniai: pasaulio šalys (apačioje), šalių centrų užrašai, vietovių smeigtukai (viršuje) ir laikinas admin žymeklis
 let countriesGeoJsonLayer = null;
+const countryLabelsLayer = L.layerGroup().addTo(map);
 const markersLayer = L.layerGroup().addTo(map);
 const markersByPlaceId = new Map();
 let adminPickMarker = null;
@@ -429,6 +510,55 @@ function getValidHttpUrl(rawUrl) {
         // Neteisingas URL formatas
     }
     return '';
+}
+
+/**
+ * 1) Iš bet kokios YouTube nuorodos (youtube.com/watch?v=..., youtu.be/..., youtube.com/shorts/..., embed/..., live/...)
+ * ištraukia 11 simbolių Video ID.
+ */
+function extractYouTubeVideoId(rawUrl) {
+    if (!rawUrl || typeof rawUrl !== 'string') return '';
+    const trimmed = rawUrl.trim();
+
+    try {
+        const parsed = new URL(trimmed);
+        const host = parsed.hostname.replace(/^www\./i, '').toLowerCase();
+
+        // 1. youtu.be/<11-char-id>
+        if (host === 'youtu.be') {
+            const seg = parsed.pathname.split('/').filter(Boolean)[0] || '';
+            if (/^[A-Za-z0-9_-]{11}$/.test(seg)) {
+                return seg;
+            }
+        }
+
+        // 2. youtube.com arba m.youtube.com arba music.youtube.com
+        if (host.endsWith('youtube.com') || host.endsWith('youtube-nocookie.com')) {
+            const vParam = parsed.searchParams.get('v');
+            if (vParam && /^[A-Za-z0-9_-]{11}$/.test(vParam)) {
+                return vParam;
+            }
+
+            // /shorts/<id>, /embed/<id>, /live/<id>, /v/<id>
+            const pathParts = parsed.pathname.split('/').filter(Boolean);
+            if (
+                pathParts.length >= 2 &&
+                ['shorts', 'embed', 'live', 'v'].includes(pathParts[0].toLowerCase())
+            ) {
+                const candidate = pathParts[1];
+                if (/^[A-Za-z0-9_-]{11}$/.test(candidate)) {
+                    return candidate;
+                }
+            }
+        }
+    } catch {
+        // Atsarginis reguliariosios išraiškos patikrinimas
+    }
+
+    const regexMatch = trimmed.match(
+        /(?:youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|live\/|v\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/i
+    );
+    return regexMatch ? regexMatch[1] : '';
 }
 
 /**
@@ -477,6 +607,7 @@ function getCountryIso2(feature) {
         props.iso_a2,
         props['ISO3166-1-Alpha-2'],
         props.WB_A2,
+        props.FIPS_10_,
         props.postal
     ];
 
@@ -486,7 +617,14 @@ function getCountryIso2(feature) {
         }
     }
 
-    const iso3Candidates = [props.ADM0_A3, props.ISO_A3, props.SOV_A3, props.GU_A3];
+    const iso3Candidates = [
+        props.ADM0_A3,
+        props.ISO_A3,
+        props.ISO_A3_EH,
+        props.SOV_A3,
+        props.GU_A3,
+        props.SU_A3
+    ];
     for (const iso3 of iso3Candidates) {
         if (typeof iso3 === 'string' && ISO3_TO_ISO2[iso3.trim().toUpperCase()]) {
             return ISO3_TO_ISO2[iso3.trim().toUpperCase()];
@@ -497,31 +635,67 @@ function getCountryIso2(feature) {
 }
 
 /**
- * Grąžina šalies pavadinimą lietuviškai (arba iš GeoJSON, jei nėra žodyne)
+ * 2) Naudojant naršyklės API `new Intl.DisplayNames(['lt'], { type: 'region' })`,
+ * verčia visus GeoJSON šalių ISO-2 kodus į lietuvių kalbą (pvz., DE -> Vokietija, HU -> Vengrija, EG -> Egiptas)
  */
 function getCountryDisplayName(feature, iso2) {
+    if (iso2 && regionDisplayNamesLt) {
+        try {
+            const translated = regionDisplayNamesLt.of(iso2);
+            if (translated && translated.toUpperCase() !== iso2.toUpperCase()) {
+                return translated;
+            }
+        } catch {
+            // Jei nestandartinis kodas, naudojame žodyną žemiau
+        }
+    }
+
     if (iso2 && COUNTRY_NAMES_LT[iso2]) {
         return COUNTRY_NAMES_LT[iso2];
     }
+
     const props = (feature && feature.properties) || {};
     return props.NAME_LT || props.NAME || props.ADMIN || props.name || iso2 || 'Šalis';
 }
 
 /**
- * Stilius aplankytoms ir neaplankytoms šalims
+ * Stilius aplankytoms ir neaplankytoms šalims priklausomai nuo žemėlapio režimo („detailed“ arba „countries“)
  */
 function getCountryBaseStyle(isVisited) {
+    const isCountriesOnlyMode = state.mapMode === 'countries';
+
+    if (isCountriesOnlyMode) {
+        if (isVisited) {
+            return {
+                color: '#0369a1',
+                weight: 1.5,
+                opacity: 1,
+                fillColor: '#22d3ee',
+                fillOpacity: 0.85
+            };
+        }
+
+        // Režime „Tik šalys“ neaplankytos šalys yra šviesiai pilkos
+        return {
+            color: '#cbd5e1',
+            weight: 1,
+            opacity: 1,
+            fillColor: '#f1f5f9',
+            fillOpacity: 1
+        };
+    }
+
+    // Režimas „Detalus žemėlapis“
     if (isVisited) {
         return {
-            color: '#0891b2',      // Akcentinis mėlynai žalsvas rėmelis
+            color: '#0891b2',
             weight: 1.4,
             opacity: 0.85,
-            fillColor: '#06b6d4',  // Pusiau permatomas mėlynai žalsvas užpildas
+            fillColor: '#06b6d4',
             fillOpacity: 0.24
         };
     }
 
-    // Neaplankytos šalys lieka neutralios
     return {
         color: '#94a3b8',
         weight: 0.5,
@@ -573,7 +747,6 @@ function hasPlaceInPolygon(polygonCoords, places) {
         if (lat > maxLat) maxLat = lat;
     }
 
-    // Maža paklaida pakrantės miestams / saloms (0.18 laipsnio)
     const coastalMargin = 0.18;
 
     return places.some((place) => {
@@ -611,14 +784,13 @@ function shouldKeepPolygonPart(polygonCoords, places) {
         return true;
     }
 
-    // Jei poligonas yra už Europos/Viduržemio jūros ribų, piešiame tik jei jame yra kelionės smeigtukas
     return hasPlaceInPolygon(polygonCoords, places);
 }
 
 /**
  * Paruošia GeoJSON duomenis išfiltruojant neaplankytas užjūrio teritorijas iš MultiPolygon šalių
  */
-function prepareFilteredGeoJson(rawGeoJson, places) {
+function prepareFilteredGeoJson(rawGeoJson, visitedSet, places) {
     if (!rawGeoJson || !Array.isArray(rawGeoJson.features)) {
         return rawGeoJson;
     }
@@ -630,12 +802,25 @@ function prepareFilteredGeoJson(rawGeoJson, places) {
                 return feature;
             }
 
+            const iso2 = getCountryIso2(feature);
+            const isVisited = visitedSet.has(iso2);
+
+            // Užjūrio teritorijas filtruojame aplankytoms Europos/Viduržemio šalims (arba kai bent viena dalis yra Europoje)
+            const hasPartInEurope = geom.coordinates.some((polyCoords) => {
+                const ring = polyCoords && polyCoords[0];
+                return Array.isArray(ring) && ring.some((pt) => pt[0] >= -11 && pt[1] >= 25);
+            });
+
+            if (!isVisited && !hasPartInEurope) {
+                return feature;
+            }
+
             const keptPolygons = geom.coordinates.filter((polyCoords) =>
                 shouldKeepPolygonPart(polyCoords, places)
             );
 
             if (keptPolygons.length === 0) {
-                return null;
+                return feature;
             }
 
             if (keptPolygons.length === geom.coordinates.length) {
@@ -659,7 +844,98 @@ function prepareFilteredGeoJson(rawGeoJson, places) {
 }
 
 /**
- * Atvaizduoja pasaulio šalių GeoJSON sluoksnį pagal esamą visitedCountries masyvą
+ * Apskaičiuoja pagrindinio (didžiausio) šalies poligono centrą [lat, lng] ir apytikslį plotą
+ */
+function getCountryMainPolygonMetrics(feature) {
+    const geom = feature && feature.geometry;
+    if (!geom || !Array.isArray(geom.coordinates)) return null;
+
+    const polygons =
+        geom.type === 'Polygon'
+            ? [geom.coordinates]
+            : geom.type === 'MultiPolygon'
+              ? geom.coordinates
+              : [];
+
+    let bestCenter = null;
+    let maxBboxArea = -1;
+
+    for (const poly of polygons) {
+        const ring = poly && poly[0];
+        if (!Array.isArray(ring) || ring.length === 0) continue;
+
+        let minLng = Infinity;
+        let maxLng = -Infinity;
+        let minLat = Infinity;
+        let maxLat = -Infinity;
+
+        for (const pt of ring) {
+            const lng = pt[0];
+            const lat = pt[1];
+            if (lng < minLng) minLng = lng;
+            if (lng > maxLng) maxLng = lng;
+            if (lat < minLat) minLat = lat;
+            if (lat > maxLat) maxLat = lat;
+        }
+
+        const bboxArea = Math.abs((maxLng - minLng) * (maxLat - minLat));
+        if (bboxArea > maxBboxArea) {
+            maxBboxArea = bboxArea;
+            bestCenter = [(minLat + maxLat) / 2, (minLng + maxLng) / 2];
+        }
+    }
+
+    if (!bestCenter) return null;
+    return { center: bestCenter, bboxArea: maxBboxArea };
+}
+
+/**
+ * Atvaizduoja lietuviškus šalių pavadinimus tiesiai ant šalių kontūrų centro režime „Tik šalys“
+ */
+function renderCountryCenterLabels(processedGeoJson, visitedSet) {
+    countryLabelsLayer.clearLayers();
+
+    if (state.mapMode !== 'countries' || !processedGeoJson || !Array.isArray(processedGeoJson.features)) {
+        return;
+    }
+
+    const currentZoom = map.getZoom();
+
+    processedGeoJson.features.forEach((feature) => {
+        const iso2 = getCountryIso2(feature);
+        const isVisited = visitedSet.has(iso2);
+        const metrics = getCountryMainPolygonMetrics(feature);
+        if (!metrics) return;
+
+        // Neaplankytoms mažoms šalims rodome užrašus tik priartinus, kad nesusiklotų tekstas
+        if (!isVisited) {
+            if (currentZoom <= 3 && metrics.bboxArea < 12) return;
+            if (currentZoom === 4 && metrics.bboxArea < 2.2) return;
+            if (currentZoom === 5 && metrics.bboxArea < 0.4) return;
+        }
+
+        const countryName = getCountryDisplayName(feature, iso2);
+        const modifierClass = isVisited
+            ? 'country-center-label--visited'
+            : 'country-center-label--unvisited';
+
+        const labelMarker = L.marker(metrics.center, {
+            interactive: false,
+            keyboard: false,
+            icon: L.divIcon({
+                className: 'country-center-label-icon',
+                html: `<span class="country-center-label ${modifierClass}">${escapeHtml(countryName)}</span>`,
+                iconSize: [0, 0],
+                iconAnchor: [0, 0]
+            })
+        });
+
+        countryLabelsLayer.addLayer(labelMarker);
+    });
+}
+
+/**
+ * Atvaizduoja pasaulio šalių GeoJSON sluoksnį pagal esamą visitedCountries masyvą ir žemėlapio režimą
  */
 function renderCountriesLayer() {
     if (!state.cachedWorldGeoJson) return;
@@ -672,7 +948,11 @@ function renderCountriesLayer() {
         map.removeLayer(countriesGeoJsonLayer);
     }
 
-    const processedGeoJson = prepareFilteredGeoJson(state.cachedWorldGeoJson, state.places);
+    const processedGeoJson = prepareFilteredGeoJson(
+        state.cachedWorldGeoJson,
+        visitedSet,
+        state.places
+    );
 
     countriesGeoJsonLayer = L.geoJSON(processedGeoJson, {
         style: (feature) => {
@@ -683,32 +963,41 @@ function renderCountriesLayer() {
         onEachFeature: (feature, layer) => {
             const iso2 = getCountryIso2(feature);
             const isVisited = visitedSet.has(iso2);
-
-            if (!isVisited) {
-                return;
-            }
-
             const countryName = getCountryDisplayName(feature, iso2);
 
-            // Priskiriame iškylantį šalies pavadinimą (tooltip)
-            layer.bindTooltip(`✓ ${escapeHtml(countryName)}`, {
+            // 2) Užvedus pelę ant bet kurios šalies – rodomas lietuviškas šalies pavadinimas
+            const tooltipLabel = isVisited
+                ? `✓ ${escapeHtml(countryName)}`
+                : escapeHtml(countryName);
+
+            layer.bindTooltip(tooltipLabel, {
                 sticky: true,
                 direction: 'top',
                 offset: [0, -8],
                 className: 'country-tooltip'
             });
 
-            // Hover efektas: paryškiname rėmelį ir užpildą
+            // Hover efektas: paryškiname rėmelį
             layer.on({
                 mouseover: (event) => {
                     const targetLayer = event.target;
-                    targetLayer.setStyle({
-                        color: '#0284c7',
-                        weight: 2.8,
-                        opacity: 1,
-                        fillColor: '#06b6d4',
-                        fillOpacity: 0.42
-                    });
+                    if (isVisited) {
+                        targetLayer.setStyle({
+                            color: '#0284c7',
+                            weight: 2.8,
+                            opacity: 1,
+                            fillColor: state.mapMode === 'countries' ? '#06b6d4' : '#06b6d4',
+                            fillOpacity: state.mapMode === 'countries' ? 0.95 : 0.42
+                        });
+                    } else {
+                        targetLayer.setStyle({
+                            color: '#64748b',
+                            weight: 1.8,
+                            opacity: 0.9,
+                            fillColor: state.mapMode === 'countries' ? '#e2e8f0' : '#94a3b8',
+                            fillOpacity: state.mapMode === 'countries' ? 1 : 0.14
+                        });
+                    }
 
                     if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
                         targetLayer.bringToFront();
@@ -716,7 +1005,7 @@ function renderCountriesLayer() {
                 },
                 mouseout: (event) => {
                     const targetLayer = event.target;
-                    targetLayer.setStyle(getCountryBaseStyle(true));
+                    targetLayer.setStyle(getCountryBaseStyle(isVisited));
                 }
             });
         }
@@ -724,6 +1013,38 @@ function renderCountriesLayer() {
 
     // Užtikriname, kad šalių poligonai liktų po žymekliais
     countriesGeoJsonLayer.bringToBack();
+
+    // Atvaizduojame šalių centrų užrašus (jei įjungtas režimas „Tik šalys“)
+    renderCountryCenterLabels(processedGeoJson, visitedSet);
+}
+
+/**
+ * 3) Perjungia žemėlapio režimą: „Detalus žemėlapis“ ('detailed') arba „Tik šalys“ ('countries')
+ */
+function setMapMode(mode) {
+    state.mapMode = mode === 'countries' ? 'countries' : 'detailed';
+
+    // Atnaujiname mygtukų aktyvią būseną
+    const buttons = mapModeSwitcherEl.querySelectorAll('.mode-btn');
+    buttons.forEach((btn) => {
+        btn.classList.toggle('is-active', btn.dataset.mode === state.mapMode);
+    });
+
+    // Paslepiame arba parodome pagrindinį plytelių sluoksnį
+    if (state.mapMode === 'countries') {
+        if (map.hasLayer(baseTileLayer)) {
+            map.removeLayer(baseTileLayer);
+        }
+        mapContainerEl.classList.add('map--countries-only');
+    } else {
+        if (!map.hasLayer(baseTileLayer)) {
+            baseTileLayer.addTo(map);
+            baseTileLayer.bringToBack();
+        }
+        mapContainerEl.classList.remove('map--countries-only');
+    }
+
+    renderCountriesLayer();
 }
 
 /**
@@ -795,10 +1116,10 @@ function createTravelersBadgesHtml(place) {
 }
 
 /**
- * Sukuria YouTube mygtuko (arba kelių mygtukų) HTML pagal „videos“ masyvą:
+ * Sukuria YouTube video kortelės (arba kelių kompaktiškų kortelių su viršeliais) HTML pagal „videos“ masyvą:
  * - Jei „videos“ tuščias: nerodo nieko.
- * - Jei 1 video: rodo mygtuką „Žiūrėti vlogą YouTube“.
- * - Jei keli video: rodo kelis atskirus mygtukus su jų pavadinimais.
+ * - Jei yra video: atvaizduoja sumažintą video viršelį (`https://i.ytimg.com/vi/${videoId}/mqdefault.jpg`),
+ *   ant jo pusiau permatomą „Play“ ikoną, o po juo – video pavadinimą ir mygtuką.
  */
 function createVideosButtonsHtml(place) {
     const validVideos = getValidVideos(place);
@@ -812,31 +1133,60 @@ function createVideosButtonsHtml(place) {
         </svg>
     `;
 
-    if (validVideos.length === 1) {
-        const singleVideo = validVideos[0];
-        return `
-            <div class="popup-card__videos">
-                <a href="${escapeHtml(singleVideo.url)}" target="_blank" rel="noopener noreferrer" class="popup-card__yt-btn">
-                    ${ytIconSvg}
-                    <span>Žiūrėti vlogą YouTube</span>
-                </a>
-            </div>
-        `;
-    }
+    const playTriangleSvg = `
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <polygon points="6 4 20 12 6 20 6 4"></polygon>
+        </svg>
+    `;
 
-    const buttonsHtml = validVideos
+    const cardsHtml = validVideos
         .map((video, idx) => {
-            const label = video.title || `Žiūrėti vlogą #${idx + 1}`;
-            return `
-                <a href="${escapeHtml(video.url)}" target="_blank" rel="noopener noreferrer" class="popup-card__yt-btn">
-                    ${ytIconSvg}
-                    <span>${escapeHtml(label)}</span>
+            const safeUrl = escapeHtml(video.url);
+            const videoId = extractYouTubeVideoId(video.url);
+            const videoTitle =
+                video.title ||
+                (validVideos.length === 1
+                    ? `${place.title} – kelionės vlogas`
+                    : `${place.title} – vlogas #${idx + 1}`);
+            const btnLabel =
+                validVideos.length === 1 || !video.title
+                    ? 'Žiūrėti vlogą YouTube'
+                    : video.title;
+
+            const thumbHtml = videoId
+                ? `
+                <a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="popup-video-card__thumb-link" title="${escapeHtml(videoTitle)}">
+                    <img
+                        src="https://i.ytimg.com/vi/${escapeHtml(videoId)}/mqdefault.jpg"
+                        alt="${escapeHtml(videoTitle)}"
+                        class="popup-video-card__thumb"
+                        loading="lazy"
+                    >
+                    <div class="popup-video-card__play" aria-hidden="true">
+                        <span class="popup-video-card__play-circle">
+                            ${playTriangleSvg}
+                        </span>
+                    </div>
                 </a>
+                `
+                : '';
+
+            return `
+                <div class="popup-video-card">
+                    ${thumbHtml}
+                    <div class="popup-video-card__info">
+                        <div class="popup-video-card__title">${escapeHtml(videoTitle)}</div>
+                        <a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="popup-card__yt-btn">
+                            ${ytIconSvg}
+                            <span>${escapeHtml(btnLabel)}</span>
+                        </a>
+                    </div>
+                </div>
             `;
         })
         .join('');
 
-    return `<div class="popup-card__videos">${buttonsHtml}</div>`;
+    return `<div class="popup-card__videos">${cardsHtml}</div>`;
 }
 
 /**
@@ -1042,8 +1392,76 @@ function setActiveTravelerButton(traveler) {
 }
 
 /* ==========================================================================
-   ADMINISTRAVIMO REŽIMAS (?admin=1 arba spynos mygtukas kampe)
+   ADMINISTRAVIMO REŽIMAS (Slaptažodis, sessionStorage, Admin Dashboard)
    ========================================================================== */
+
+/**
+ * Patikrina, ar vartotojas šioje naršyklės sesijoje jau įvedė teisingą slaptažodį
+ */
+function isAdminAuthenticated() {
+    try {
+        return sessionStorage.getItem(ADMIN_SESSION_KEY) === '1';
+    } catch {
+        return false;
+    }
+}
+
+/**
+ * Išsaugo arba išvalo administravimo sesiją sessionStorage
+ */
+function setAdminAuthenticated(isAuthenticated) {
+    try {
+        if (isAuthenticated) {
+            sessionStorage.setItem(ADMIN_SESSION_KEY, '1');
+        } else {
+            sessionStorage.removeItem(ADMIN_SESSION_KEY);
+        }
+    } catch {
+        // Ignoruojame, jei sessionStorage neprieinamas
+    }
+}
+
+/**
+ * Patikrina įvestą slaptažodį per SHA-256 (su konstantos palyginimo atsarginiu variantu)
+ */
+async function verifyAdminPassword(password) {
+    const trimmed = String(password || '');
+    if (window.crypto && window.crypto.subtle && window.TextEncoder) {
+        try {
+            const msgBuffer = new TextEncoder().encode(trimmed);
+            const hashBuffer = await window.crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+            return hashHex === ADMIN_PASSWORD_SHA256;
+        } catch {
+            return trimmed === ADMIN_PASSWORD_PLAIN;
+        }
+    }
+    return trimmed === ADMIN_PASSWORD_PLAIN;
+}
+
+/**
+ * Atidaro arba uždaro slaptažodžio prisijungimo modalinį langelį
+ */
+function setLoginModalOpen(isOpen) {
+    adminLoginModalEl.hidden = !isOpen;
+    adminLoginErrorEl.hidden = true;
+    adminPasswordInputEl.value = '';
+    if (isOpen) {
+        setTimeout(() => adminPasswordInputEl.focus(), 50);
+    }
+}
+
+/**
+ * Iškviečia Admin prisijungimo langą arba (jei sesija galioja) atidaro Admin Dashboard
+ */
+function requestAdminAccess() {
+    if (isAdminAuthenticated()) {
+        setAdminMode(true);
+    } else {
+        setLoginModalOpen(true);
+    }
+}
 
 /**
  * Nustato šeimos narių varneles (checkboxes) admin formoje
@@ -1124,15 +1542,19 @@ function readAdminVideoRowsFromDom() {
 }
 
 /**
- * Įjungia arba išjungia administravimo šoninį skydelį
+ * Įjungia arba išjungia pilno ekrano Admin Dashboard modalinį langą
  */
 function setAdminMode(isOpen) {
     state.isAdminOpen = Boolean(isOpen);
-    adminPanelEl.hidden = !state.isAdminOpen;
-    adminToggleBtnEl.classList.toggle('is-active', state.isAdminOpen);
+    if (state.isAdminOpen) {
+        state.isPickingCoords = false;
+        adminPickBannerEl.hidden = true;
+    }
+    adminDashboardModalEl.hidden = !state.isAdminOpen;
+    adminToggleBtnEl.classList.toggle('is-active', state.isAdminOpen || state.isPickingCoords);
     adminToggleBtnEl.setAttribute('aria-expanded', String(state.isAdminOpen));
 
-    if (!state.isAdminOpen && adminPickMarker) {
+    if (!state.isAdminOpen && !state.isPickingCoords && adminPickMarker) {
         map.removeLayer(adminPickMarker);
         adminPickMarker = null;
     }
@@ -1140,6 +1562,17 @@ function setAdminMode(isOpen) {
     if (state.isAdminOpen) {
         renderAdminPanel();
     }
+}
+
+/**
+ * Įjungia koordinačių parinkimo iš žemėlapio režimą (laikinai paslepia modalą, kad būtų galima paspausti ant žemėlapio)
+ */
+function startPickingCoordsOnMap() {
+    state.isAdminOpen = false;
+    state.isPickingCoords = true;
+    adminDashboardModalEl.hidden = true;
+    adminPickBannerEl.hidden = false;
+    adminToggleBtnEl.classList.add('is-active');
 }
 
 /**
@@ -1162,17 +1595,207 @@ function setAdminPickMarker(lat, lng) {
 }
 
 /**
+ * Atnaujina „Smulkesni nustatymai“ antraštėje rodomą lat/lng santrauką
+ */
+function updateCoordsPreviewBadge() {
+    if (!coordsPreviewBadgeEl) return;
+    const lat = parseFloat(placeLatInputEl.value);
+    const lng = parseFloat(placeLngInputEl.value);
+    if (!Number.isNaN(lat) && !Number.isNaN(lng)) {
+        coordsPreviewBadgeEl.textContent = `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+    } else {
+        coordsPreviewBadgeEl.textContent = 'Koordinatės dar neparinktos';
+    }
+}
+
+/**
+ * Pagal lietuvišką šalies pavadinimą suranda jos ISO-2 kodą (jei įmanoma)
+ */
+function findIso2ByCountryName(countryName) {
+    const target = normalizeText(countryName);
+    if (!target) return '';
+
+    if (state.cachedWorldGeoJson && Array.isArray(state.cachedWorldGeoJson.features)) {
+        for (const feature of state.cachedWorldGeoJson.features) {
+            const code = getFeatureIsoCode(feature);
+            if (/^[A-Z]{2}$/.test(code)) {
+                const ltName = normalizeText(getCountryDisplayName(feature, code));
+                if (ltName === target) {
+                    return code;
+                }
+            }
+        }
+    }
+
+    const commonIsoCodes = [
+        'LT', 'LV', 'EE', 'PL', 'DE', 'AT', 'IT', 'ES', 'FR', 'GR', 'TR', 'EG', 'MT', 'FI', 'SE',
+        'NO', 'DK', 'NL', 'BE', 'CH', 'CZ', 'SK', 'HU', 'HR', 'SI', 'RO', 'BG', 'PT', 'GB', 'IE',
+        'IS', 'CY', 'US', 'CA', 'AE', 'TH', 'JP', 'GE', 'AL', 'ME', 'BA', 'RS', 'MK', 'UA'
+    ];
+    for (const code of commonIsoCodes) {
+        if (normalizeText(getCountryDisplayName(null, code)) === target) {
+            return code;
+        }
+    }
+
+    return '';
+}
+
+// Paskutiniai Nominatim paieškos rezultatai
+let lastNominatimResults = [];
+let nominatimDebounceTimer = null;
+
+/**
+ * Iš Nominatim objekto ištraukia lietuvišką vietos pavadinimą, šalies pavadinimą (per Intl.DisplayNames), ISO-2 kodą ir lat/lng
+ */
+function parseNominatimItem(item) {
+    const addr = item.address || {};
+    const rawIso2 = addr.country_code ? String(addr.country_code).trim().toUpperCase() : '';
+    const iso2 = /^[A-Z]{2}$/.test(rawIso2) ? rawIso2 : '';
+
+    // Šalies pavadinimas lietuviškai per Intl.DisplayNames
+    const countryLt = iso2
+        ? getCountryDisplayName(null, iso2)
+        : addr.country || '';
+
+    // Vietos pavadinimas lietuviškai
+    const displayParts = String(item.display_name || '')
+        .split(',')
+        .map((part) => part.trim())
+        .filter(Boolean);
+
+    const placeTitle =
+        item.name ||
+        addr.city ||
+        addr.town ||
+        addr.village ||
+        addr.municipality ||
+        addr.tourism ||
+        addr.attraction ||
+        addr.island ||
+        displayParts[0] ||
+        '';
+
+    const lat = Number(parseFloat(item.lat).toFixed(4));
+    const lng = Number(parseFloat(item.lon).toFixed(4));
+
+    return {
+        title: placeTitle,
+        countryLt,
+        iso2,
+        lat,
+        lng,
+        displayName: item.display_name || `${placeTitle}, ${countryLt}`
+    };
+}
+
+/**
+ * Kreipiasi į nemokamą Nominatim API ir atvaizduoja rastų vietų sąrašą
+ */
+async function searchNominatimPlaces(rawQuery) {
+    const query = String(rawQuery || '').trim();
+    if (query.length < 2) {
+        placeGeocodeResultsEl.hidden = true;
+        placeGeocodeResultsEl.innerHTML = '';
+        lastNominatimResults = [];
+        return;
+    }
+
+    placeGeocodeResultsEl.hidden = false;
+    placeGeocodeResultsEl.innerHTML =
+        '<div class="admin-geocode-status">Ieškoma vietų per OpenStreetMap Nominatim...</div>';
+
+    const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&accept-language=lt&limit=5&q=${encodeURIComponent(query)}`;
+
+    try {
+        const response = await fetch(url, {
+            headers: {
+                'Accept-Language': 'lt'
+            }
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const items = await response.json();
+        if (!Array.isArray(items) || items.length === 0) {
+            lastNominatimResults = [];
+            placeGeocodeResultsEl.innerHTML =
+                '<div class="admin-geocode-status">Vietų nerasta. Pabandykite kitą pavadinimą.</div>';
+            return;
+        }
+
+        lastNominatimResults = items.map(parseNominatimItem);
+
+        placeGeocodeResultsEl.innerHTML = lastNominatimResults
+            .map(
+                (res, idx) => `
+                <button
+                    type="button"
+                    class="admin-geocode-item"
+                    role="option"
+                    data-geocode-idx="${idx}"
+                >
+                    <div class="admin-geocode-item__main">
+                        <div class="admin-geocode-item__title">
+                            📍 ${escapeHtml(res.title)} ${res.countryLt ? `— ${escapeHtml(res.countryLt)}` : ''}
+                        </div>
+                        <div class="admin-geocode-item__sub">${escapeHtml(res.displayName)}</div>
+                    </div>
+                    <span class="admin-geocode-item__badge">
+                        ${escapeHtml(res.iso2 || '—')} · ${res.lat}, ${res.lng}
+                    </span>
+                </button>
+            `
+            )
+            .join('');
+    } catch (error) {
+        console.warn('Nominatim paieškos klaida:', error);
+        placeGeocodeResultsEl.innerHTML =
+            '<div class="admin-geocode-status">Nepavyko susisiekti su Nominatim paieška. Bandykite dar kartą.</div>';
+    }
+}
+
+/**
+ * Pasirinkus vietą iš Nominatim sąrašo, automatiškai užpildo formos laukelius
+ */
+function applyGeocodeResult(result) {
+    if (!result) return;
+
+    placeTitleInputEl.value = result.title;
+    placeCountryInputEl.value = result.countryLt;
+    placeCountryCodeInputEl.value = result.iso2 || '';
+    placeLatInputEl.value = result.lat;
+    placeLngInputEl.value = result.lng;
+
+    updateCoordsPreviewBadge();
+    setAdminPickMarker(result.lat, result.lng);
+    map.flyTo([result.lat, result.lng], 8, { duration: 0.65 });
+
+    placeGeocodeResultsEl.hidden = true;
+}
+
+/**
  * Atstato vietos formą į kūrimo būseną
  */
 function resetPlaceForm() {
     state.editingPlaceId = null;
     placeFormEl.reset();
     placeIdInputEl.value = '';
+    if (placeGeocodeInputEl) placeGeocodeInputEl.value = '';
+    if (placeGeocodeResultsEl) {
+        placeGeocodeResultsEl.hidden = true;
+        placeGeocodeResultsEl.innerHTML = '';
+    }
+    if (placeCountryCodeInputEl) placeCountryCodeInputEl.value = '';
+    if (placeAdvancedDetailsEl) placeAdvancedDetailsEl.open = false;
+
     placeFormHeadingEl.textContent = 'Pridėti naują vietą';
     savePlaceBtnEl.textContent = 'Pridėti vietą';
     cancelEditBtnEl.hidden = true;
     setAdminTravelerCheckboxes(DEFAULT_TRAVELERS);
     renderAdminVideoRows([]);
+    updateCoordsPreviewBadge();
 
     if (adminPickMarker) {
         map.removeLayer(adminPickMarker);
@@ -1193,11 +1816,20 @@ function startEditingPlace(placeId) {
     placeLngInputEl.value = place.lng;
     placeTitleInputEl.value = place.title;
     placeCountryInputEl.value = place.country;
+    if (placeCountryCodeInputEl) {
+        placeCountryCodeInputEl.value =
+            place.countryCode || findIso2ByCountryName(place.country) || '';
+    }
     placeDateInputEl.value = place.date || '';
     placeCategoryInputEl.value = place.category;
     placeDescInputEl.value = place.description;
     setAdminTravelerCheckboxes(getPlaceTravelers(place));
     renderAdminVideoRows(getValidVideos(place));
+    updateCoordsPreviewBadge();
+
+    if (placeGeocodeResultsEl) {
+        placeGeocodeResultsEl.hidden = true;
+    }
 
     placeFormHeadingEl.textContent = `Redaguoti: ${place.title}`;
     savePlaceBtnEl.textContent = 'Išsaugoti pakeitimus';
@@ -1205,6 +1837,7 @@ function startEditingPlace(placeId) {
 
     setAdminPickMarker(place.lat, place.lng);
     map.flyTo([place.lat, place.lng], 9, { duration: 0.7 });
+    renderAdminPanel();
     placeTitleInputEl.focus();
 }
 
@@ -1222,45 +1855,110 @@ function deletePlace(placeId) {
 }
 
 /**
- * Atvaizduoja aplankytų šalių ISO kodus ir esamus taškus admin skydelyje
+ * Grąžina Admin lentelės taškus pagal paieškos ir kategorijos filtrus
+ */
+function getAdminFilteredPlaces() {
+    const query = normalizeText(state.adminTableSearch);
+    const category = state.adminTableCategory;
+
+    return state.places.filter((place) => {
+        const matchesCategory = category === 'Visos' || place.category === category;
+        if (!matchesCategory) return false;
+
+        if (!query) return true;
+
+        const searchable = normalizeText(
+            `${place.id} ${place.title} ${place.country} ${place.date || ''} ${place.description || ''} ${getPlaceTravelers(place).join(' ')}`
+        );
+        return searchable.includes(query);
+    });
+}
+
+/**
+ * Atvaizduoja aplankytų šalių ISO kodus ir plačią esamų taškų lentelę Admin Dashboard modale
  */
 function renderAdminPanel() {
-    // 1) Aplankytos šalys
+    // 1) Aplankytos šalys (ISO-2 + lietuviškas pavadinimas)
     adminCountriesListEl.innerHTML = state.visitedCountries
-        .map(
-            (code) => `
-            <span class="admin-country-chip">
-                <span>${escapeHtml(code)}</span>
+        .map((code) => {
+            const ltName = getCountryDisplayName(null, code);
+            return `
+            <span class="admin-country-chip" title="${escapeHtml(ltName)}">
+                <span>${escapeHtml(code)} · ${escapeHtml(ltName)}</span>
                 <button
                     type="button"
                     class="admin-country-chip__remove"
                     data-remove-country="${escapeHtml(code)}"
-                    title="Pašalinti ${escapeHtml(code)}"
+                    title="Pašalinti ${escapeHtml(ltName)} (${escapeHtml(code)})"
                     aria-label="Pašalinti šalį ${escapeHtml(code)}"
                 >✕</button>
             </span>
-        `
-        )
+        `;
+        })
         .join('');
 
-    // 2) Esami taškai
-    adminPlacesCountEl.textContent = state.places.length;
-    adminPlacesListEl.innerHTML = state.places
+    // 2) Plačios esamų taškų lentelės atvaizdavimas
+    const filteredPlaces = getAdminFilteredPlaces();
+    adminPlacesCountEl.textContent = `${filteredPlaces.length} / ${state.places.length}`;
+
+    if (filteredPlaces.length === 0) {
+        adminPlacesTableBodyEl.innerHTML = `
+            <tr>
+                <td colspan="8" class="admin-table__empty">
+                    Pagal pasirinktus paieškos ar kategorijos filtrus vietų nerasta.
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    adminPlacesTableBodyEl.innerHTML = filteredPlaces
         .map((place) => {
-            const meta = CATEGORY_META[place.category] || { emoji: '📍' };
+            const meta = CATEGORY_META[place.category] || {
+                emoji: '📍',
+                badgeClass: 'popup-card__category--car'
+            };
             const videosCount = getValidVideos(place).length;
             const travelers = getPlaceTravelers(place);
+            const isEditing = state.editingPlaceId === place.id;
+
+            const travelersHtml = travelers
+                .map(
+                    (name) =>
+                        `<span class="admin-table__traveler-pill">${escapeHtml(name)}</span>`
+                )
+                .join('');
+
+            const vlogsHtml =
+                videosCount > 0
+                    ? `<span class="admin-table__vlog-badge admin-table__vlog-badge--has">▶ ${videosCount} vlog.</span>`
+                    : `<span class="admin-table__vlog-badge admin-table__vlog-badge--none">0</span>`;
+
             return `
-                <div class="admin-place-item">
-                    <div class="admin-place-item__info">
-                        <div class="admin-place-item__title">${meta.emoji} ${escapeHtml(place.title)}</div>
-                        <div class="admin-place-item__meta">${escapeHtml(place.country)} • ${escapeHtml(place.date || '')} • ${travelers.join(', ')} • ${videosCount} vlog.</div>
-                    </div>
-                    <div class="admin-place-item__actions">
-                        <button type="button" class="admin-icon-btn" data-edit-id="${place.id}">Redaguoti</button>
-                        <button type="button" class="admin-icon-btn admin-icon-btn--danger" data-delete-id="${place.id}">Ištrinti</button>
-                    </div>
-                </div>
+                <tr class="${isEditing ? 'is-editing' : ''}">
+                    <td class="admin-table__id">#${place.id}</td>
+                    <td>
+                        <div class="admin-table__place-title">${escapeHtml(place.title)}</div>
+                        <div class="admin-table__place-country">${escapeHtml(place.country)}</div>
+                    </td>
+                    <td>
+                        <span class="popup-card__category ${meta.badgeClass}">
+                            ${meta.emoji} ${escapeHtml(place.category)}
+                        </span>
+                    </td>
+                    <td>${escapeHtml(place.date || '—')}</td>
+                    <td>
+                        <div class="admin-table__travelers">${travelersHtml}</div>
+                    </td>
+                    <td class="admin-table__coords">${Number(place.lat).toFixed(4)}, ${Number(place.lng).toFixed(4)}</td>
+                    <td>${vlogsHtml}</td>
+                    <td>
+                        <div class="admin-table__actions">
+                            <button type="button" class="admin-icon-btn" data-edit-id="${place.id}">Redaguoti</button>
+                            <button type="button" class="admin-icon-btn admin-icon-btn--danger" data-delete-id="${place.id}">Ištrinti</button>
+                        </div>
+                    </td>
+                </tr>
             `;
         })
         .join('');
@@ -1277,25 +1975,160 @@ function generateKelionesJsonString() {
     return JSON.stringify(payload, null, 2) + '\n';
 }
 
-// 1) Paspaudus bet kur ant žemėlapio admin režime – įrašomos lat ir lng koordinatės į formą
+// 1) Paspaudus bet kur ant žemėlapio (kai renkamos koordinatės arba sesija aktyvi) – įrašomos lat ir lng koordinatės į formą
 map.on('click', (event) => {
-    if (!state.isAdminOpen) return;
+    if (!state.isPickingCoords && !isAdminAuthenticated()) return;
 
     const lat = Number(event.latlng.lat.toFixed(4));
     const lng = Number(event.latlng.lng.toFixed(4));
 
     placeLatInputEl.value = lat;
     placeLngInputEl.value = lng;
+    updateCoordsPreviewBadge();
     setAdminPickMarker(lat, lng);
+
+    if (state.isPickingCoords) {
+        setAdminMode(true);
+    }
 });
 
-// Spynos mygtuko ir uždarymo mygtuko įvykiai
+// Keičiant lat/lng rankiniu būdu po „Smulkesni nustatymai“ – atnaujiname santraukos ženkliuką
+placeLatInputEl.addEventListener('input', updateCoordsPreviewBadge);
+placeLngInputEl.addEventListener('input', updateCoordsPreviewBadge);
+
+// Išmanios Nominatim vietos paieškos įvykiai (mygtukas „Rasti“, Enter ir teksto įvedimas)
+placeGeocodeBtnEl.addEventListener('click', () => {
+    if (nominatimDebounceTimer) clearTimeout(nominatimDebounceTimer);
+    searchNominatimPlaces(placeGeocodeInputEl.value);
+});
+
+placeGeocodeInputEl.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        if (nominatimDebounceTimer) clearTimeout(nominatimDebounceTimer);
+        searchNominatimPlaces(placeGeocodeInputEl.value);
+    }
+});
+
+placeGeocodeInputEl.addEventListener('input', (event) => {
+    const query = event.target.value.trim();
+    if (nominatimDebounceTimer) clearTimeout(nominatimDebounceTimer);
+
+    if (query.length < 2) {
+        placeGeocodeResultsEl.hidden = true;
+        placeGeocodeResultsEl.innerHTML = '';
+        return;
+    }
+
+    nominatimDebounceTimer = setTimeout(() => {
+        searchNominatimPlaces(query);
+    }, 420);
+});
+
+// Paspaudus ant rastos vietos iš Nominatim sąrašo – automatiškai užpildome formą
+placeGeocodeResultsEl.addEventListener('click', (event) => {
+    const optionBtn = event.target.closest('[data-geocode-idx]');
+    if (!optionBtn) return;
+
+    const idx = Number(optionBtn.dataset.geocodeIdx);
+    const chosen = lastNominatimResults[idx];
+    if (chosen) {
+        applyGeocodeResult(chosen);
+    }
+});
+
+// Keičiant priartinimą režime „Tik šalys“ – atnaujiname šalių centrų užrašus
+map.on('zoomend', () => {
+    if (state.mapMode === 'countries' && state.cachedWorldGeoJson) {
+        const visitedSet = new Set(
+            state.visitedCountries.map((code) => String(code).trim().toUpperCase())
+        );
+        const processedGeoJson = prepareFilteredGeoJson(
+            state.cachedWorldGeoJson,
+            visitedSet,
+            state.places
+        );
+        renderCountryCenterLabels(processedGeoJson, visitedSet);
+    }
+});
+
+// Spynos mygtuko paspaudimas kampe
 adminToggleBtnEl.addEventListener('click', () => {
-    setAdminMode(!state.isAdminOpen);
+    if (state.isAdminOpen) {
+        setAdminMode(false);
+    } else {
+        requestAdminAccess();
+    }
 });
 
+// Prisijungimo formos pateikimas (slaptažodžio patikra)
+adminLoginFormEl.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const enteredPassword = adminPasswordInputEl.value;
+    const isValid = await verifyAdminPassword(enteredPassword);
+
+    if (isValid) {
+        setAdminAuthenticated(true);
+        setLoginModalOpen(false);
+        setAdminMode(true);
+    } else {
+        adminLoginErrorEl.hidden = false;
+        adminPasswordInputEl.select();
+    }
+});
+
+adminLoginCancelBtnEl.addEventListener('click', () => {
+    setLoginModalOpen(false);
+});
+
+// Atsijungimo mygtukas Admin Dashboard viršuje
+adminLogoutBtnEl.addEventListener('click', () => {
+    setAdminAuthenticated(false);
+    state.isPickingCoords = false;
+    adminPickBannerEl.hidden = true;
+    setAdminMode(false);
+});
+
+// Admin Dashboard uždarymo mygtukas
 adminCloseBtnEl.addEventListener('click', () => {
     setAdminMode(false);
+});
+
+// Koordinačių parinkimo iš žemėlapio mygtukai
+pickCoordsOnMapBtnEl.addEventListener('click', () => {
+    startPickingCoordsOnMap();
+});
+
+inlinePickCoordsBtnEl.addEventListener('click', () => {
+    startPickingCoordsOnMap();
+});
+
+returnToAdminBtnEl.addEventListener('click', () => {
+    setAdminMode(true);
+});
+
+// Escape klavišas uždaro prisijungimo arba Admin Dashboard langą
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+        if (!adminLoginModalEl.hidden) {
+            setLoginModalOpen(false);
+        } else if (state.isAdminOpen) {
+            setAdminMode(false);
+        } else if (state.isPickingCoords) {
+            setAdminMode(true);
+        }
+    }
+});
+
+// Admin lentelės paieškos ir kategorijos filtrai
+adminTableSearchInputEl.addEventListener('input', (event) => {
+    state.adminTableSearch = event.target.value;
+    renderAdminPanel();
+});
+
+adminTableCategoryFilterEl.addEventListener('change', (event) => {
+    state.adminTableCategory = event.target.value;
+    renderAdminPanel();
 });
 
 // „+ Pridėti video“ mygtukas admin formoje
@@ -1323,6 +2156,10 @@ placeFormEl.addEventListener('submit', (event) => {
     const lng = parseFloat(placeLngInputEl.value);
 
     if (Number.isNaN(lat) || Number.isNaN(lng)) {
+        if (placeAdvancedDetailsEl) {
+            placeAdvancedDetailsEl.open = true;
+        }
+        placeLatInputEl.focus();
         return;
     }
 
@@ -1336,13 +2173,26 @@ placeFormEl.addEventListener('submit', (event) => {
         }))
         .filter((v) => Boolean(v.url));
 
+    const countryName = placeCountryInputEl.value.trim();
+    const rawIso2 = placeCountryCodeInputEl
+        ? placeCountryCodeInputEl.value.trim().toUpperCase()
+        : '';
+    const resolvedIso2 = /^[A-Z]{2}$/.test(rawIso2)
+        ? rawIso2
+        : findIso2ByCountryName(countryName);
+
+    // Išsaugant vietą, automatiškai įtraukiame jos šalies ISO-2 kodą į visitedCountries, jei jo ten dar nėra
+    if (/^[A-Z]{2}$/.test(resolvedIso2) && !state.visitedCountries.includes(resolvedIso2)) {
+        state.visitedCountries.push(resolvedIso2);
+    }
+
     const placePayload = {
         id:
             state.editingPlaceId !== null
                 ? state.editingPlaceId
                 : state.places.reduce((maxId, item) => Math.max(maxId, Number(item.id) || 0), 0) + 1,
         title: placeTitleInputEl.value.trim(),
-        country: placeCountryInputEl.value.trim(),
+        country: countryName,
         lat: Number(lat.toFixed(4)),
         lng: Number(lng.toFixed(4)),
         date: placeDateInputEl.value,
@@ -1372,10 +2222,11 @@ placeFormEl.addEventListener('submit', (event) => {
 
 cancelEditBtnEl.addEventListener('click', () => {
     resetPlaceForm();
+    renderAdminPanel();
 });
 
-// Esamų taškų sąrašo paspaudimai (Redaguoti / Ištrinti)
-adminPlacesListEl.addEventListener('click', (event) => {
+// Esamų taškų lentelės paspaudimai (Redaguoti / Ištrinti)
+adminPlacesTableBodyEl.addEventListener('click', (event) => {
     const editBtn = event.target.closest('[data-edit-id]');
     if (editBtn) {
         const placeId = Number(editBtn.dataset.editId);
@@ -1448,7 +2299,7 @@ copyJsonBtnEl.addEventListener('click', async () => {
 });
 
 /* ==========================================================================
-   Paieškos, filtrų ir pradinio užkrovimo valdymas
+   Paieškos, filtrų, žemėlapio režimo ir pradinio užkrovimo valdymas
    ========================================================================== */
 
 /**
@@ -1484,10 +2335,10 @@ async function initApp() {
     resetPlaceForm();
     renderMap({ fitBounds: true });
 
-    // Patikriname, ar URL turi ?admin=1
+    // Patikriname, ar URL turi ?admin=1 (jei sesija neaktyvi – paprašys slaptažodžio)
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('admin') === '1') {
-        setAdminMode(true);
+        requestAdminAccess();
     }
 
     await loadWorldCountriesGeoJson();
@@ -1512,7 +2363,6 @@ travelerFiltersEl.addEventListener('click', (event) => {
     if (!button) return;
 
     const selectedTraveler = button.dataset.traveler;
-    // Jei paspaudžiamas jau aktyvus narys, grąžiname į „Visi“
     const nextTraveler =
         selectedTraveler === state.activeTraveler && selectedTraveler !== 'Visi'
             ? 'Visi'
@@ -1521,6 +2371,17 @@ travelerFiltersEl.addEventListener('click', (event) => {
     state.activeTraveler = nextTraveler;
     setActiveTravelerButton(nextTraveler);
     renderMap({ fitBounds: true, isSearch: false });
+});
+
+// Žemėlapio režimo perjungiklio paspaudimai („Detalus žemėlapis“ / „Tik šalys“)
+mapModeSwitcherEl.addEventListener('click', (event) => {
+    const button = event.target.closest('.mode-btn');
+    if (!button) return;
+
+    const selectedMode = button.dataset.mode;
+    if (selectedMode === state.mapMode) return;
+
+    setMapMode(selectedMode);
 });
 
 // Paieškos įvestis (su debounce sklandžiam flyTo priartinimui)
