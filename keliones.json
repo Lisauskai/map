@@ -27,7 +27,12 @@
       "date": "2023-05-14",
       "category": "Lietuva",
       "description": "Saulės miestas: Talkšos ežero pakrantė, Geležinė lapė, Frenkelio vila ir Kryžių kalnas.",
-      "travelers": ["Tomas", "Sandra", "Lukas", "Linas"],
+      "travelers": [
+        "Tomas",
+        "Sandra",
+        "Lukas",
+        "Linas"
+      ],
       "videos": []
     },
     {
@@ -39,7 +44,12 @@
       "date": "2023-06-18",
       "category": "Lietuva",
       "description": "Medžių lajų takas, Puntuko akmuo, Kalitos kalnas ir Šventosios upės slėnio atradimai.",
-      "travelers": ["Tomas", "Sandra", "Lukas", "Linas"],
+      "travelers": [
+        "Tomas",
+        "Sandra",
+        "Lukas",
+        "Linas"
+      ],
       "videos": []
     },
     {
@@ -50,9 +60,19 @@
       "lng": 21.5647,
       "date": "2023-07-08",
       "category": "Automobiliu",
-      "description": "Šeimos kelionė į Latvijos pajūrį: Mėlynosios vėliavos paplūdimys, uosto molas ir karvučių paradas.",
-      "travelers": ["Tomas", "Sandra", "Lukas", "Linas"],
-      "videos": []
+      "description": "Šioje kelionėje mes išbandėme viską:\n⛷️ Aktyviai leidome laiką ir gaudėme adrenaliną Ventspilio slidinėjimo trasoje („Lemberga hūte“).\n🌊 Mėgavomės šiluma ir nusileidimo kalneliais Ventspilio vandens parke („Ūdens piedzīvojumu parks“).\n🔬 Pasinėrėme į mokslo atradimus ir interaktyvias pramogas naujajame VIZIUM mokslo centre.\n🚶‍♂️ Leidomės į ramų pasivaikščiojimą jaukia Ventspilio krantine.\n🏰 O grįždami atgal į Lietuvą, nepraleidome progos aplankyti istorinį ir be galo žavingą Kuldygos (Kuldīga) miestelį!",
+      "travelers": [
+        "Tomas",
+        "Sandra",
+        "Lukas",
+        "Linas"
+      ],
+      "videos": [
+        {
+          "title": "Ventspilis",
+          "url": "https://www.youtube.com/watch?v=2lw_jcTL2ww"
+        }
+      ]
     },
     {
       "id": 4,
@@ -63,7 +83,12 @@
       "date": "2023-08-12",
       "category": "Automobiliu",
       "description": "Viduramžių dvasia alsuojantis Talino senamiestis, Tompea kalva, Telliskivi ir jūros muziejus.",
-      "travelers": ["Tomas", "Sandra", "Lukas", "Linas"],
+      "travelers": [
+        "Tomas",
+        "Sandra",
+        "Lukas",
+        "Linas"
+      ],
       "videos": []
     },
     {
@@ -75,7 +100,12 @@
       "date": "2023-08-14",
       "category": "Kruizas",
       "description": "Keltu per Suomijos įlanką į Helsinkį: Senato aikštė, Uolų bažnyčia ir Suomenlinna tvirtovė.",
-      "travelers": ["Tomas", "Sandra", "Lukas", "Linas"],
+      "travelers": [
+        "Tomas",
+        "Sandra",
+        "Lukas",
+        "Linas"
+      ],
       "videos": []
     },
     {
@@ -87,7 +117,12 @@
       "date": "2023-09-22",
       "category": "Automobiliu",
       "description": "Kelionė automobiliu į Vokietijos sostinę: Brandenburgo vartai, Reichstagas ir Berlyno sienos galerija.",
-      "travelers": ["Tomas", "Sandra", "Lukas", "Linas"],
+      "travelers": [
+        "Tomas",
+        "Sandra",
+        "Lukas",
+        "Linas"
+      ],
       "videos": []
     },
     {
@@ -99,7 +134,12 @@
       "date": "2023-09-25",
       "category": "Automobiliu",
       "description": "Šimto bokštų miestas: Karolio tiltas, Prahos pilis, Senamiesčio aikštė ir astronominis laikrodis.",
-      "travelers": ["Tomas", "Sandra", "Lukas", "Linas"],
+      "travelers": [
+        "Tomas",
+        "Sandra",
+        "Lukas",
+        "Linas"
+      ],
       "videos": []
     },
     {
@@ -111,7 +151,12 @@
       "date": "2023-09-27",
       "category": "Automobiliu",
       "description": "Futuristinis Ještedo televizijos bokštas ir viešbutis kalno viršūnėje su kvapą gniaužiančia panorama.",
-      "travelers": ["Tomas", "Sandra", "Lukas", "Linas"],
+      "travelers": [
+        "Tomas",
+        "Sandra",
+        "Lukas",
+        "Linas"
+      ],
       "videos": []
     },
     {
@@ -123,7 +168,12 @@
       "date": "2023-11-10",
       "category": "Lėktuvu",
       "description": "Kalemegdano tvirtovė prie Dunojaus ir Savos santakos, bohemiškasis Skadarlija kvartalas ir Šv. Savos soboras.",
-      "travelers": ["Tomas", "Sandra", "Lukas", "Linas"],
+      "travelers": [
+        "Tomas",
+        "Sandra",
+        "Lukas",
+        "Linas"
+      ],
       "videos": []
     },
     {
@@ -135,7 +185,12 @@
       "date": "2024-04-15",
       "category": "Kruizas",
       "description": "Antikinė Sicilijos dvasia: Ortidžijos sala, katedros aikštė, Arethusa šaltinis ir Neapolio archeologinis parkas.",
-      "travelers": ["Tomas", "Sandra", "Lukas", "Linas"],
+      "travelers": [
+        "Tomas",
+        "Sandra",
+        "Lukas",
+        "Linas"
+      ],
       "videos": []
     },
     {
@@ -147,7 +202,12 @@
       "date": "2024-04-16",
       "category": "Kruizas",
       "description": "Kruizinio laivo sustojimas saulėtoje Maltoje: Didysis uostas, Aukštutiniai Barrakka sodai ir senamiesčio gatvelės.",
-      "travelers": ["Tomas", "Sandra", "Lukas", "Linas"],
+      "travelers": [
+        "Tomas",
+        "Sandra",
+        "Lukas",
+        "Linas"
+      ],
       "videos": []
     },
     {
@@ -159,7 +219,12 @@
       "date": "2024-06-04",
       "category": "Kruizas",
       "description": "Adrijos jūros perlas: imperatoriaus Diokletiano rūmai, Riva promenada ir Marjan kalvos apžvalgos aikštelė.",
-      "travelers": ["Tomas", "Sandra", "Lukas", "Linas"],
+      "travelers": [
+        "Tomas",
+        "Sandra",
+        "Lukas",
+        "Linas"
+      ],
       "videos": []
     },
     {
@@ -171,7 +236,12 @@
       "date": "2024-06-06",
       "category": "Kruizas",
       "description": "Žalioji Jonijos jūros sala: venecijietiškas Kerkyros senamiestis, Senoji tvirtovė ir žydros įlankos.",
-      "travelers": ["Tomas", "Sandra", "Lukas", "Linas"],
+      "travelers": [
+        "Tomas",
+        "Sandra",
+        "Lukas",
+        "Linas"
+      ],
       "videos": []
     },
     {
@@ -183,7 +253,12 @@
       "date": "2024-06-08",
       "category": "Kruizas",
       "description": "Kruizo uostas Adrijos šiaurėje: Piazza Unità d'Italia aikštė, Didysis kanalas ir Miramare pilis.",
-      "travelers": ["Tomas", "Sandra", "Lukas", "Linas"],
+      "travelers": [
+        "Tomas",
+        "Sandra",
+        "Lukas",
+        "Linas"
+      ],
       "videos": []
     },
     {
@@ -195,7 +270,12 @@
       "date": "2024-09-14",
       "category": "Lėktuvu",
       "description": "Stiliaus ir architektūros sostinė: didingoji Milano katedra (Duomo), Vittorio Emanuele II galerija ir Navigli kanalai.",
-      "travelers": ["Tomas", "Sandra", "Lukas", "Linas"],
+      "travelers": [
+        "Tomas",
+        "Sandra",
+        "Lukas",
+        "Linas"
+      ],
       "videos": []
     },
     {
@@ -207,7 +287,12 @@
       "date": "2024-10-20",
       "category": "Kruizas",
       "description": "Prancūzijos Rivjeros vartai: Senasis uostas (Vieux-Port), Notre-Dame de la Garde bazilika ir Le Panier kvartalas.",
-      "travelers": ["Tomas", "Sandra", "Lukas", "Linas"],
+      "travelers": [
+        "Tomas",
+        "Sandra",
+        "Lukas",
+        "Linas"
+      ],
       "videos": []
     },
     {
@@ -219,7 +304,12 @@
       "date": "2024-10-22",
       "category": "Kruizas",
       "description": "Menų ir mokslo miestelis, Turijos sodai, Valensijos senamiestis ir autentiškos paelijos gimtinė.",
-      "travelers": ["Tomas", "Sandra", "Lukas", "Linas"],
+      "travelers": [
+        "Tomas",
+        "Sandra",
+        "Lukas",
+        "Linas"
+      ],
       "videos": []
     },
     {
@@ -231,7 +321,12 @@
       "date": "2023-03-11",
       "category": "Lėktuvu",
       "description": "Tūkstantmetė istorija: Jeruzalės senamiestis, Raudų siena, Alyvų kalnas ir rytietiški turgūs.",
-      "travelers": ["Tomas", "Sandra", "Lukas", "Linas"],
+      "travelers": [
+        "Tomas",
+        "Sandra",
+        "Lukas",
+        "Linas"
+      ],
       "videos": []
     },
     {
@@ -243,7 +338,12 @@
       "date": "2024-02-05",
       "category": "Lėktuvu",
       "description": "Raudonosios jūros koraliniai rifai, Naama Bay, Farsha kavinė ant uolos ir Sinajaus pusiasalio saulėlydžiai.",
-      "travelers": ["Tomas", "Sandra", "Lukas", "Linas"],
+      "travelers": [
+        "Tomas",
+        "Sandra",
+        "Lukas",
+        "Linas"
+      ],
       "videos": []
     }
   ]
