@@ -28,7 +28,8 @@
     "SM",
     "BY",
     "RU",
-    "LU"
+    "LU",
+    "UA"
   ],
   "places": [
     {
@@ -1401,6 +1402,20 @@
       "description": "Kelionė autobusu po Beneliukso šalis",
       "travelers": [
         "Tomas"
+      ],
+      "videos": []
+    },
+    {
+      "id": 62,
+      "title": "Kijevas",
+      "country": "Ukraina",
+      "lat": 50.45,
+      "lng": 30.5241,
+      "date": "2006-07-07",
+      "category": "Autobusu",
+      "description": "Sportinės varžybos",
+      "travelers": [
+        "Sandra"
       ],
       "videos": []
     }
