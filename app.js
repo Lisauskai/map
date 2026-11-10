@@ -1703,8 +1703,14 @@ function extractYouTubeVideoId(rawUrl) {
     if (!rawUrl || typeof rawUrl !== 'string') return '';
     const trimmed = rawUrl.trim();
 
+    // 1. Tiesioginis 11 simbolių Video ID
+    if (/^[A-Za-z0-9_-]{11}$/.test(trimmed)) {
+        return trimmed;
+    }
+
     try {
-        const parsed = new URL(trimmed);
+        const urlToParse = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+        const parsed = new URL(urlToParse);
         const host = parsed.hostname.replace(/^www\./i, '').toLowerCase();
 
         // 1. youtu.be/<11-char-id>
@@ -1743,6 +1749,7 @@ function extractYouTubeVideoId(rawUrl) {
     );
     return regexMatch ? regexMatch[1] : '';
 }
+window.extractYouTubeVideoId = extractYouTubeVideoId;
 
 /**
  * Grąžina vietos keliautojų (šeimos narių) sąrašą.
@@ -1824,26 +1831,75 @@ function formatSecondsToTimeLabel(totalSeconds) {
 }
 
 /**
- * Prideda laiko parametrą (pvz., &t=210s arba ?t=210s) prie YouTube nuorodos, jei timestamp nurodytas
+ * Iš bet kokios YouTube nuorodos ištraukia laiko parametrą (sekundėmis),
+ * pvz. ?t=120s, ?t=03:45, #t=90 arba ?start=120
+ * @param {string} rawUrl
+ * @returns {number} sekundės
  */
-function buildYouTubeUrlWithTimestamp(rawUrl, timestampRaw) {
-    const validUrl = getValidHttpUrl(rawUrl);
-    if (!validUrl) return '';
-
-    const seconds = parseTimestampToSeconds(timestampRaw);
-    if (seconds <= 0) {
-        return validUrl;
-    }
-
+function extractTimestampFromUrl(rawUrl) {
+    if (!rawUrl || typeof rawUrl !== 'string') return 0;
+    const trimmed = rawUrl.trim();
     try {
-        const urlObj = new URL(validUrl);
-        urlObj.searchParams.set('t', `${seconds}s`);
-        return urlObj.toString();
+        const urlToParse = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+        const parsed = new URL(urlToParse);
+        const tParam = parsed.searchParams.get('t') || parsed.searchParams.get('start');
+        if (tParam) {
+            return parseTimestampToSeconds(tParam);
+        }
+        if (parsed.hash) {
+            const hashMatch = parsed.hash.match(/[#&?](?:t|start)=([^&]+)/i);
+            if (hashMatch) {
+                return parseTimestampToSeconds(hashMatch[1]);
+            }
+        }
     } catch {
-        const separator = validUrl.includes('?') ? '&' : '?';
-        return `${validUrl}${separator}t=${seconds}s`;
+        const match = trimmed.match(/[?&#](?:t|start)=([^&#]+)/i);
+        if (match) {
+            return parseTimestampToSeconds(match[1]);
+        }
     }
+    return 0;
 }
+window.extractTimestampFromUrl = extractTimestampFromUrl;
+
+/**
+ * 3) Sukuria vieningą ir švarią YouTube žiūrėjimo nuorodą:
+ * - Iš bet kokio įvesto URL (youtube.com/watch?v=..., youtu.be/..., youtube.com/shorts/..., embed/..., live/...)
+ *   ištraukia tikslų 11 simbolių videoId.
+ * - Jei nurodyta laiko žyma (timestamp lauke arba pačiame URL), konvertuoja ją į sekundes (pvz., "03:45" -> 225, "120" -> 120).
+ * - Visada sugeneruoja švarų standartinį adresą: https://www.youtube.com/watch?v=${videoId}
+ *   (o jei sekundės > 0, prideda &t=${seconds}s, pvz.: https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=225s).
+ *
+ * @param {string} url - Bet koks YouTube URL arba video ID
+ * @param {string|number} [timestamp] - Pasirinktinė laiko žyma
+ * @returns {string} Standartinė YouTube žiūrėjimo nuoroda
+ */
+function buildYoutubeWatchUrl(url, timestamp) {
+    if (!url || typeof url !== 'string') return '';
+    const videoId = extractYouTubeVideoId(url);
+    if (!videoId) {
+        return getValidHttpUrl(url) || '';
+    }
+
+    let seconds = 0;
+    if (timestamp !== undefined && timestamp !== null && String(timestamp).trim() !== '') {
+        seconds = parseTimestampToSeconds(timestamp);
+    } else {
+        seconds = extractTimestampFromUrl(url);
+    }
+
+    if (seconds > 0) {
+        return `https://www.youtube.com/watch?v=${videoId}&t=${seconds}s`;
+    }
+    return `https://www.youtube.com/watch?v=${videoId}`;
+}
+window.buildYoutubeWatchUrl = buildYoutubeWatchUrl;
+
+// Atgaliniam suderinamumui
+function buildYouTubeUrlWithTimestamp(rawUrl, timestampRaw) {
+    return buildYoutubeWatchUrl(rawUrl, timestampRaw);
+}
+window.buildYouTubeUrlWithTimestamp = buildYouTubeUrlWithTimestamp;
 
 /**
  * Grąžina tikrus, patikrintus vietos YouTube video objektus iš „videos“ masyvo: [{ title, url, timestamp? }]
@@ -2552,10 +2608,11 @@ function createVideosButtonsHtml(place) {
 
     const cardsHtml = validVideos
         .map((video, idx) => {
-            const finalPlaybackUrl = buildYouTubeUrlWithTimestamp(video.url, video.timestamp);
+            const finalPlaybackUrl = buildYoutubeWatchUrl(video.url, video.timestamp);
             const safeUrl = escapeHtml(finalPlaybackUrl || video.url);
             const videoId = extractYouTubeVideoId(video.url);
-            const timestampSeconds = parseTimestampToSeconds(video.timestamp);
+            const timestampSeconds =
+                parseTimestampToSeconds(video.timestamp) || extractTimestampFromUrl(video.url);
             const timeBadgeLabel = formatSecondsToTimeLabel(timestampSeconds);
 
             const videoTitle =
@@ -2577,7 +2634,7 @@ function createVideosButtonsHtml(place) {
 
             const thumbHtml = videoId
                 ? `
-                <a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="popup-video-card__thumb-link" title="${escapeHtml(videoTitle)}">
+                <a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="popup-video-card__thumb-link" title="${escapeHtml(videoTitle)}" onclick="event.stopPropagation();">
                     <img
                         src="https://i.ytimg.com/vi/${escapeHtml(videoId)}/mqdefault.jpg"
                         alt="${escapeHtml(videoTitle)}"
@@ -2599,7 +2656,7 @@ function createVideosButtonsHtml(place) {
                     ${thumbHtml}
                     <div class="popup-video-card__info">
                         <div class="popup-video-card__title">${escapeHtml(videoTitle)}</div>
-                        <a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="popup-card__yt-btn">
+                        <a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="popup-card__yt-btn" onclick="event.stopPropagation();">
                             ${ytIconSvg}
                             <span>${escapeHtml(btnLabel)}</span>
                         </a>
@@ -4391,6 +4448,31 @@ map.on('click', (event) => {
     if (state.isPickingCoords) {
         setAdminMode(true);
     }
+});
+
+// 4) Sustabdo paspaudimo plitimą (event.stopPropagation), kad paspaudus ant YouTube nuorodos
+// (tiek viršelio, tiek Play ikonos, tiek mygtuko) Leaflet žemėlapio kortelė (Popup) nepersikrautų ir neišsijungtų
+map.on('popupopen', (event) => {
+    const popupEl = event.popup ? event.popup.getElement() : null;
+    if (!popupEl) return;
+
+    const videoLinks = popupEl.querySelectorAll(
+        'a.popup-video-card__thumb-link, a.popup-card__yt-btn, .popup-card__videos a'
+    );
+    videoLinks.forEach((link) => {
+        if (window.L && L.DomEvent) {
+            L.DomEvent.disableClickPropagation(link);
+        }
+        link.addEventListener('click', (ev) => {
+            ev.stopPropagation();
+        });
+        link.addEventListener('mousedown', (ev) => {
+            ev.stopPropagation();
+        });
+        link.addEventListener('touchstart', (ev) => {
+            ev.stopPropagation();
+        }, { passive: true });
+    });
 });
 
 // Keičiant lat/lng rankiniu būdu po „Smulkesni nustatymai“ – atnaujiname santraukos ženkliuką
