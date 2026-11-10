@@ -1367,6 +1367,7 @@ const state = {
     places: [],
     activeCategory: 'Visos',
     activeTraveler: 'Visi',
+    selectedModalTraveler: 'Visi',
     mapMode: 'detailed', // 'detailed' | 'countries'
     searchQuery: '',
     isAdminOpen: false,
@@ -1385,6 +1386,7 @@ const statVlogsEl = document.getElementById('statVlogs');
 const openCountriesStatsBtnEl = document.getElementById('openCountriesStatsBtn');
 const countriesStatsModalEl = document.getElementById('countriesStatsModal');
 const closeCountriesStatsBtnEl = document.getElementById('closeCountriesStatsBtn');
+const modalTravelerFiltersEl = document.getElementById('modalTravelerFilters');
 const europeChallengeTextEl = document.getElementById('europeChallengeText');
 const europeProgressBarEl = document.getElementById('europeProgressBar');
 const europeProgressFillEl = document.getElementById('europeProgressFill');
@@ -1393,6 +1395,8 @@ const tabVisitedCountriesEl = document.getElementById('tabVisitedCountries');
 const tabMissingCountriesEl = document.getElementById('tabMissingCountries');
 const visitedTabContentEl = document.getElementById('visitedTabContent');
 const missingTabContentEl = document.getElementById('missingTabContent');
+const visitedTabNoteEl = document.getElementById('visitedTabNote');
+const missingTabNoteEl = document.getElementById('missingTabNote');
 const visitedCountriesCountBadgeEl = document.getElementById('visitedCountriesCountBadge');
 const missingCountriesCountBadgeEl = document.getElementById('missingCountriesCountBadge');
 const visitedCountriesTableBodyEl = document.getElementById('visitedCountriesTableBody');
@@ -1486,6 +1490,7 @@ let countriesGeoJsonLayer = null;
 const countryLabelsLayer = L.layerGroup().addTo(map);
 const markersLayer = L.layerGroup().addTo(map);
 const markersByPlaceId = new Map();
+window.markersByPlaceId = markersByPlaceId;
 let adminPickMarker = null;
 
 /**
@@ -3255,11 +3260,20 @@ function getCountryFlagEmoji(iso2) {
 function renderCountriesStatsModal() {
     if (!countriesStatsModalEl) return;
 
-    // 1) Apskaičiuojame Europos iššūkio statistiką visai šeimai
-    const europeStats = getEuropeStats('Visi');
+    const currentTraveler = (state.selectedModalTraveler && (state.selectedModalTraveler === 'Visi' || DEFAULT_TRAVELERS.includes(state.selectedModalTraveler)))
+        ? state.selectedModalTraveler
+        : 'Visi';
+    const isAll = currentTraveler === 'Visi';
+
+    // 1) Apskaičiuojame Europos iššūkio statistiką pasirinktam keliautojui arba visai šeimai
+    const europeStats = getEuropeStats(currentTraveler);
 
     if (europeChallengeTextEl) {
-        europeChallengeTextEl.innerHTML = `Aplankyta <strong>${europeStats.visited}</strong> iš <strong>${europeStats.total}</strong> Europos šalių (<strong>${europeStats.percentageFormatted}</strong>) – dar liko aplankyti <strong>${europeStats.missing}</strong> šalių!`;
+        if (isAll) {
+            europeChallengeTextEl.innerHTML = `Aplankyta <strong>${europeStats.visited}</strong> iš <strong>${europeStats.total}</strong> Europos šalių (<strong>${europeStats.percentageFormatted}</strong>) – šeimai dar liko aplankyti <strong>${europeStats.missing}</strong> šalių!`;
+        } else {
+            europeChallengeTextEl.innerHTML = `<strong>${escapeHtml(currentTraveler)}</strong> aplankė <strong>${europeStats.visited}</strong> iš <strong>${europeStats.total}</strong> Europos šalių (<strong>${europeStats.percentageFormatted}</strong>) – dar liko aplankyti <strong>${europeStats.missing}</strong> šalių!`;
+        }
     }
 
     if (europeProgressPercentEl) {
@@ -3274,14 +3288,39 @@ function renderCountriesStatsModal() {
         europeProgressBarEl.setAttribute('aria-valuenow', String(europeStats.percentage));
     }
 
-    // 2) Atnaujiname skirtukų skaitiklius
+    // 2) Atnaujiname skirtukų skaitiklius ir pastabas
     const allVisited = Array.isArray(state.visitedCountries) ? [...state.visitedCountries] : [];
+    const travelerVisited = isAll ? allVisited : getVisitedCountriesByTraveler(currentTraveler);
+
     if (visitedCountriesCountBadgeEl) {
-        visitedCountriesCountBadgeEl.textContent = allVisited.length;
+        visitedCountriesCountBadgeEl.textContent = travelerVisited.length;
     }
     if (missingCountriesCountBadgeEl) {
         missingCountriesCountBadgeEl.textContent = europeStats.missing;
     }
+
+    if (visitedTabNoteEl) {
+        if (isAll) {
+            visitedTabNoteEl.innerHTML = `Lisauskų šeima iš viso aplankė <strong>${allVisited.length}</strong> šalių (iš jų <strong>${europeStats.visited}</strong> Europoje).`;
+        } else {
+            visitedTabNoteEl.innerHTML = `<strong>${escapeHtml(currentTraveler)}</strong> iš viso aplankė <strong>${travelerVisited.length}</strong> šalių (iš jų <strong>${europeStats.visited}</strong> Europoje). Stulpelis lentelėje paryškintas žaliai.`;
+        }
+    }
+
+    if (missingTabNoteEl) {
+        if (isAll) {
+            missingTabNoteEl.innerHTML = `Europos šalys, kuriose dar nebuvo visa šeima (liko <strong>${europeStats.missing}</strong>):`;
+        } else {
+            missingTabNoteEl.innerHTML = `Europos šalys, kuriose dar nebuvo <strong>${escapeHtml(currentTraveler)}</strong> (liko <strong>${europeStats.missing}</strong>):`;
+        }
+    }
+
+    // Atnaujiname stulpelių antraščių paryškinimą
+    const tableHeaderEls = countriesStatsModalEl.querySelectorAll('th.countries-table__col-member');
+    tableHeaderEls.forEach((th) => {
+        const isHighlighted = !isAll && th.dataset.colMember === currentTraveler;
+        th.classList.toggle('is-highlighted', isHighlighted);
+    });
 
     // 3) Užpildome aplankytų šalių narių lentelę (Tab 1)
     if (visitedCountriesTableBodyEl) {
@@ -3311,16 +3350,17 @@ function renderCountriesStatsModal() {
                     </div>
                 </td>
                 ${memberStats
-                    .map(
-                        (m) => `
-                    <td class="countries-table__col-member">
+                    .map((m) => {
+                        const isColActive = !isAll && m.traveler === currentTraveler;
+                        return `
+                    <td class="countries-table__col-member ${isColActive ? 'is-highlighted' : ''}">
                         <div class="member-summary" title="${m.traveler}: iš viso ${m.total} šalių (iš jų ${m.europe} Europoje)">
                             <strong class="member-summary__total">${m.total}</strong>
                             <span class="member-summary__sub">(${m.europe} Eur.)</span>
                         </div>
                     </td>
-                `
-                    )
+                `;
+                    })
                     .join('')}
             </tr>
         `;
@@ -3342,8 +3382,9 @@ function renderCountriesStatsModal() {
 
             const memberCellsHtml = memberStats.map((m) => {
                 const hasVisited = m.visitedList.includes(iso2);
+                const isColActive = !isAll && m.traveler === currentTraveler;
                 return `
-                    <td class="countries-table__col-member">
+                    <td class="countries-table__col-member ${isColActive ? 'is-highlighted' : ''}">
                         <span class="member-check ${hasVisited ? 'member-check--yes' : 'member-check--no'}" title="${m.traveler}: ${hasVisited ? 'Lankėsi' : 'Nesilankė'}">
                             ${hasVisited ? '✓' : '–'}
                         </span>
@@ -3403,7 +3444,7 @@ function renderCountriesStatsModal() {
         missingCountriesTableBodyEl.innerHTML = missingRowsHtml || `
             <tr>
                 <td colspan="3" style="text-align: center; color: #34d399; padding: 1.5rem;">
-                    🎉 Sveikiname! Visos 46 Europos šalys jau aplankytos!
+                    🎉 Sveikiname! ${isAll ? 'Visos 46 Europos šalys jau aplankytos!' : `${escapeHtml(currentTraveler)} jau aplankė visas 46 Europos šalis!`}
                 </td>
             </tr>
         `;
@@ -3411,11 +3452,37 @@ function renderCountriesStatsModal() {
 }
 
 /**
+ * Nustato aktyvų keliautoją Šalių statistikos modaliniame lange ir atnaujina rodymą
+ */
+function setActiveModalTraveler(traveler) {
+    const validTraveler = (traveler && (traveler === 'Visi' || DEFAULT_TRAVELERS.includes(traveler)))
+        ? traveler
+        : 'Visi';
+
+    state.selectedModalTraveler = validTraveler;
+
+    if (modalTravelerFiltersEl) {
+        const chips = modalTravelerFiltersEl.querySelectorAll('.modal-traveler-chip');
+        chips.forEach((chip) => {
+            const chipTraveler = chip.dataset.modalTraveler;
+            const isActive = chipTraveler === validTraveler;
+            chip.classList.toggle('is-active', isActive);
+            chip.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+        });
+    }
+
+    renderCountriesStatsModal();
+}
+
+/**
  * Atidaro Šalių statistikos modalinį langą
  */
 function openCountriesStatsModal() {
     if (!countriesStatsModalEl) return;
-    renderCountriesStatsModal();
+    const initialTraveler = (state.activeTraveler && (state.activeTraveler === 'Visi' || DEFAULT_TRAVELERS.includes(state.activeTraveler)))
+        ? state.activeTraveler
+        : 'Visi';
+    setActiveModalTraveler(initialTraveler);
     countriesStatsModalEl.hidden = false;
     document.body.style.overflow = 'hidden';
 }
@@ -3430,6 +3497,7 @@ function closeCountriesStatsModal() {
 }
 
 window.renderCountriesStatsModal = renderCountriesStatsModal;
+window.setActiveModalTraveler = setActiveModalTraveler;
 window.openCountriesStatsModal = openCountriesStatsModal;
 window.closeCountriesStatsModal = closeCountriesStatsModal;
 
@@ -4695,6 +4763,11 @@ searchInputEl.addEventListener('input', (event) => {
     state.searchQuery = event.target.value;
     clearSearchBtnEl.hidden = state.searchQuery.length === 0;
 
+    const searchBoxEl = searchInputEl.closest('.search-box');
+    if (searchBoxEl) {
+        searchBoxEl.classList.toggle('has-query', state.searchQuery.length > 0);
+    }
+
     if (searchDebounceTimer) {
         clearTimeout(searchDebounceTimer);
     }
@@ -4704,8 +4777,13 @@ searchInputEl.addEventListener('input', (event) => {
     }, 180);
 });
 
-// Paspaudus Enter paieškos laukelyje – priartiname prie pirmo rasto miesto ir atidarome kortelę
+// Paspaudus Enter paieškos laukelyje – priartiname prie pirmo rasto miesto ir atidarome kortelę; Escape – atleidžia fokusą
 searchInputEl.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+        searchInputEl.blur();
+        return;
+    }
+
     if (event.key === 'Enter') {
         event.preventDefault();
         const filtered = getFilteredPlaces();
@@ -4725,6 +4803,10 @@ clearSearchBtnEl.addEventListener('click', () => {
     state.searchQuery = '';
     searchInputEl.value = '';
     clearSearchBtnEl.hidden = true;
+    const searchBoxEl = searchInputEl.closest('.search-box');
+    if (searchBoxEl) {
+        searchBoxEl.classList.remove('has-query');
+    }
     searchInputEl.focus();
     renderMap({ fitBounds: true, isSearch: false });
 });
@@ -4736,6 +4818,10 @@ resetFiltersBtnEl.addEventListener('click', () => {
     state.searchQuery = '';
     searchInputEl.value = '';
     clearSearchBtnEl.hidden = true;
+    const searchBoxEl = searchInputEl.closest('.search-box');
+    if (searchBoxEl) {
+        searchBoxEl.classList.remove('has-query');
+    }
     setActiveCategoryButton('Visos');
     setActiveTravelerButton('Visi');
     renderMap({ fitBounds: true, isSearch: false });
@@ -4750,6 +4836,10 @@ resetMapBtnEl.addEventListener('click', (event) => {
     state.searchQuery = '';
     searchInputEl.value = '';
     clearSearchBtnEl.hidden = true;
+    const searchBoxEl = searchInputEl.closest('.search-box');
+    if (searchBoxEl) {
+        searchBoxEl.classList.remove('has-query');
+    }
     setActiveCategoryButton('Visos');
     setActiveTravelerButton('Visi');
     renderMap({ fitBounds: true, isSearch: false });
@@ -4772,6 +4862,18 @@ if (countriesStatsModalEl) {
     countriesStatsModalEl.addEventListener('click', (event) => {
         if (event.target === countriesStatsModalEl) {
             closeCountriesStatsModal();
+        }
+    });
+}
+
+// Keliautojo pasirinkimas Šalių statistikos modaliniame lange
+if (modalTravelerFiltersEl) {
+    modalTravelerFiltersEl.addEventListener('click', (event) => {
+        const chip = event.target.closest('.modal-traveler-chip');
+        if (!chip) return;
+        const traveler = chip.dataset.modalTraveler;
+        if (traveler) {
+            setActiveModalTraveler(traveler);
         }
     });
 }

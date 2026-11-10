@@ -64,6 +64,7 @@ body {
     border-bottom: 1px solid var(--border-subtle);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
     flex-shrink: 0;
+    overflow-x: clip;
 }
 
 .top-bar__inner {
@@ -75,6 +76,27 @@ body {
     max-width: 1920px;
     margin: 0 auto;
     flex-wrap: wrap;
+}
+
+/* Antraštės eilutė: Brand + Statistikos skaitikliai */
+.top-bar__header-row {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex-shrink: 0;
+}
+
+/* Valdiklių eilutės (dideliame ekrane contents, mobiliajame ekrane atskiros prabraukiamos eilutės) */
+.controls-row {
+    display: contents;
+}
+
+.back-btn__text-short {
+    display: none;
+}
+
+.mode-btn__label-short {
+    display: none;
 }
 
 /* 1) Logotipo ir grįžimo mygtuko dalis */
@@ -256,7 +278,7 @@ body {
 .controls-section {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.55rem;
     flex-wrap: wrap;
 }
 
@@ -264,7 +286,7 @@ body {
     position: relative;
     display: flex;
     align-items: center;
-    min-width: 220px;
+    min-width: 190px;
 }
 
 .search-box__icon {
@@ -1222,6 +1244,75 @@ body {
     transform: scale(1.05);
 }
 
+/* Modalo greito keliautojo pasirinkimo juosta viršuje */
+.modal-traveler-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.45rem 0.8rem;
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-pill);
+    flex-wrap: wrap;
+}
+
+.modal-traveler-bar__label {
+    font-size: 0.74rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.modal-traveler-bar__chips {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+}
+
+.modal-traveler-chip {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-pill);
+    padding: 0.22rem 0.65rem;
+    color: #94a3b8;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all var(--transition-fast);
+}
+
+.modal-traveler-chip:hover {
+    color: #f8fafc;
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.modal-traveler-chip.is-active {
+    background: rgba(56, 189, 248, 0.2);
+    border-color: rgba(56, 189, 248, 0.55);
+    color: #38bdf8;
+    font-weight: 700;
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.25);
+}
+
+.countries-tab-note {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #cbd5e1;
+    padding: 0.45rem 0.75rem;
+    margin-bottom: 0.5rem;
+    background: rgba(30, 41, 59, 0.55);
+    border-left: 3px solid #38bdf8;
+    border-radius: 4px;
+}
+
+.countries-tab-note strong {
+    color: #38bdf8;
+}
+
 /* „Europos iššūkis“ kortelė */
 .europe-challenge-card {
     background: linear-gradient(135deg, rgba(30, 41, 59, 0.75) 0%, rgba(15, 23, 42, 0.95) 100%);
@@ -1441,6 +1532,36 @@ body {
 .countries-table th.countries-table__col-code,
 .countries-table td.countries-table__col-code {
     text-align: right;
+}
+
+/* Paryškintas pasirinkto keliautojo stulpelis lentelėje */
+.countries-table th.countries-table__col-member.is-highlighted {
+    background: rgba(56, 189, 248, 0.18);
+    color: #38bdf8;
+    border-bottom: 2px solid #38bdf8;
+}
+
+.countries-table td.countries-table__col-member.is-highlighted {
+    background: rgba(56, 189, 248, 0.08);
+}
+
+.countries-table tbody tr:hover td.countries-table__col-member.is-highlighted {
+    background: rgba(56, 189, 248, 0.16);
+}
+
+.countries-table td.countries-table__col-member.is-highlighted .member-summary {
+    transform: scale(1.05);
+}
+
+.countries-table td.countries-table__col-member.is-highlighted .member-summary__total {
+    color: #67e8f9;
+    text-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+}
+
+.countries-table td.countries-table__col-member.is-highlighted .member-check--yes {
+    background: rgba(16, 185, 129, 0.28);
+    border-color: rgba(16, 185, 129, 0.6);
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.35);
 }
 
 /* Šalies ląstelė (vėliava, kodas, pavadinimas) */
@@ -1666,6 +1787,11 @@ body {
     align-items: center;
     gap: 0.55rem;
     flex-wrap: wrap;
+}
+
+.admin-dashboard__primary-actions,
+.admin-dashboard__secondary-actions {
+    display: contents;
 }
 
 .admin-panel__close {
@@ -2505,6 +2631,11 @@ body {
         gap: 0.75rem;
     }
 
+    .top-bar__header-row {
+        width: 100%;
+        justify-content: space-between;
+    }
+
     .controls-section {
         width: 100%;
         justify-content: space-between;
@@ -2518,66 +2649,899 @@ body {
 }
 
 @media (max-width: 768px) {
+    /* 1) Bendra viršutinė juosta ir aukščio apribojimas (iki ~105-115px) */
+    .top-bar {
+        padding: 0;
+    }
+
     .top-bar__inner {
-        padding: 0.65rem 0.85rem;
-        gap: 0.6rem;
+        padding: 0.35rem 0.55rem;
+        gap: 0.25rem;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    /* 1 EILUTĖ: Brand (logotipas + grįžimo mygtukas) ir Statistikos skaitikliai */
+    .top-bar__header-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.35rem;
+        width: 100%;
+        min-height: 28px;
     }
 
     .brand-section {
-        width: 100%;
-        justify-content: space-between;
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        flex-shrink: 0;
+        min-width: 0;
     }
 
-    .brand-divider,
-    .controls-divider {
+    .brand-divider {
         display: none;
     }
 
-    .brand-logo {
-        order: -1;
+    .back-btn {
+        padding: 0.2rem 0.42rem;
+        font-size: 0.68rem;
+        border-radius: var(--radius-sm);
+        gap: 0.22rem;
+        flex-shrink: 0;
     }
 
+    .back-btn__arrow {
+        font-size: 0.82rem;
+    }
+
+    .back-btn__text-full {
+        display: none;
+    }
+
+    .back-btn__text-short {
+        display: inline;
+    }
+
+    .brand-logo {
+        gap: 0.35rem;
+    }
+
+    .brand-logo__icon {
+        width: 26px;
+        height: 26px;
+        border-radius: 7px;
+    }
+
+    .brand-logo__icon svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    .brand-logo__title {
+        font-size: 0.78rem;
+        white-space: nowrap;
+    }
+
+    .brand-logo__subtitle {
+        display: none;
+    }
+
+    /* Statistikos skaitikliai (kompaktiški, tamsiame fone) */
     .stats-bar {
+        padding: 0.16rem 0.42rem;
+        gap: 0.32rem;
+        border-radius: var(--radius-pill);
+        flex-shrink: 0;
+        background: rgba(30, 41, 59, 0.85);
+    }
+
+    .stat-item {
+        gap: 0.2rem;
+    }
+
+    .stat-item--clickable {
+        padding: 0.1rem 0.25rem;
+        margin: -0.1rem -0.2rem;
+    }
+
+    .stat-item__value {
+        font-size: 0.78rem;
+    }
+
+    .stat-item__label {
+        font-size: 0.64rem;
+    }
+
+    .stat-item__icon {
+        width: 10px;
+        height: 10px;
+    }
+
+    .stat-divider {
+        font-size: 0.68rem;
+        opacity: 0.4;
+    }
+
+    /* 2 & 3 EILUTĖS: Valdiklių sekcija */
+    .controls-section {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.24rem;
         width: 100%;
+        padding-top: 0;
+        border-top: none;
+    }
+
+    .controls-divider--section {
+        display: none;
+    }
+
+    /* 2 EILUTĖ: Kompaktiška paieška + Kategorijų filtrai */
+    .controls-row--categories {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        width: 100%;
+        position: relative;
+        min-height: 26px;
+    }
+
+    /* Paieškos laukelis: kompaktiškas numatytoje būsenoje, išsiskleidžiantis ant aktyvumo */
+    .search-box {
+        flex: 0 0 88px;
+        min-width: 0;
+        position: relative;
+        height: 26px;
+        transition: flex 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease;
+    }
+
+    .search-box__input {
+        height: 26px;
+        padding: 0.18rem 1.35rem 0.18rem 1.5rem;
+        font-size: 0.7rem;
+        background-color: rgba(30, 41, 59, 0.85);
+        border-radius: var(--radius-pill);
+    }
+
+    .search-box__icon {
+        left: 0.45rem;
+        width: 12px;
+        height: 12px;
+    }
+
+    .search-box__clear {
+        right: 0.25rem;
+        width: 16px;
+        height: 16px;
+        font-size: 0.6rem;
+    }
+
+    /* Kai paieška aktyvi / fokusuota – sklandžiai išsiskleidžia per visą 2-ąją eilutę */
+    .search-box:focus-within,
+    .search-box.is-expanded {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        flex: 1 1 100%;
+        z-index: 25;
+    }
+
+    .search-box:focus-within .search-box__input,
+    .search-box.is-expanded .search-box__input {
+        background-color: #1e293b;
+        border-color: #38bdf8;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45), 0 0 0 2px rgba(56, 189, 248, 0.25);
+        padding-left: 1.8rem;
+        padding-right: 1.6rem;
+        font-size: 0.76rem;
+    }
+
+    .search-box:focus-within .search-box__icon,
+    .search-box.is-expanded .search-box__icon {
+        left: 0.6rem;
+        width: 14px;
+        height: 14px;
+        color: #38bdf8;
+    }
+
+    /* Jei paieškoje yra įvesta užklausa, bet laukas nefokusuotas – paliekame šiek tiek platesnį */
+    .search-box:not(:focus-within):has(input:not(:placeholder-shown)),
+    .search-box.has-query:not(:focus-within) {
+        flex: 0 0 115px;
+    }
+
+    /* Kategorijų filtrai: kompaktiška horizontali pirštu prabraukiama eilutė */
+    .category-filters {
+        display: flex;
+        align-items: center;
+        flex-wrap: nowrap;
+        gap: 0.26rem;
+        flex: 1 1 auto;
+        min-width: 0;
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        padding-bottom: 1px;
+    }
+
+    .category-filters::-webkit-scrollbar {
+        display: none;
+        width: 0;
+        height: 0;
+    }
+
+    .filter-chip {
+        flex-shrink: 0;
+        white-space: nowrap;
+        padding: 0.22rem 0.52rem;
+        font-size: 0.7rem;
+        gap: 0.28rem;
+    }
+
+    .filter-chip__dot {
+        width: 6px;
+        height: 6px;
+    }
+
+    /* 3 EILUTĖ: Keliautojų filtrai + Žemėlapio režimo perjungiklis */
+    .controls-row--travelers {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.35rem;
+        width: 100%;
+        min-height: 26px;
+    }
+
+    .controls-divider--travelers {
+        display: none;
+    }
+
+    /* Keliautojų filtrai: kompaktiška horizontali pirštu prabraukiama eilutė */
+    .traveler-filters {
+        display: flex;
+        align-items: center;
+        flex-wrap: nowrap;
+        gap: 0.24rem;
+        flex: 1 1 auto;
+        min-width: 0;
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        padding-bottom: 1px;
+    }
+
+    .traveler-filters::-webkit-scrollbar {
+        display: none;
+        width: 0;
+        height: 0;
+    }
+
+    .traveler-filters__label {
+        font-size: 0.66rem;
+        margin-right: 0.1rem;
+        flex-shrink: 0;
+    }
+
+    .traveler-chip {
+        flex-shrink: 0;
+        white-space: nowrap;
+        padding: 0.2rem 0.48rem;
+        font-size: 0.7rem;
+    }
+
+    /* 1) Žemėlapio vietos kortelė (Leaflet Popup) telefone (max-width: 85vw, 40px+ mygtukai) */
+    .leaflet-popup {
+        max-width: 85vw !important;
+    }
+
+    .leaflet-popup-content-wrapper {
+        max-width: 85vw !important;
+        border-radius: 14px;
+        box-shadow: 0 16px 36px rgba(15, 23, 42, 0.75);
+    }
+
+    .leaflet-popup-content {
+        width: min(300px, calc(85vw - 2px)) !important;
+        max-width: calc(85vw - 2px) !important;
+        margin: 0 !important;
+    }
+
+    .leaflet-container a.leaflet-popup-close-button {
+        width: 32px;
+        height: 32px;
+        font-size: 18px;
+        top: 8px;
+        right: 8px;
+    }
+
+    .popup-card__header {
+        padding: 0.85rem 0.95rem 0.65rem;
+    }
+
+    .popup-card__title {
+        font-size: 1rem;
+        line-height: 1.3;
+    }
+
+    .popup-card__body {
+        padding: 0.75rem 0.95rem 0.95rem;
+    }
+
+    .popup-video-card__thumb-link {
+        min-height: 120px;
+        touch-action: manipulation;
+    }
+
+    .popup-video-card__play-circle {
+        width: 44px;
+        height: 44px;
+    }
+
+    .popup-card__yt-btn {
+        min-height: 40px;
+        padding: 0.65rem 1rem;
+        font-size: 0.82rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        touch-action: manipulation;
+    }
+
+    /* 2) Šalių statistikos modalinis langas telefone (95% plotis, 90vh aukštis, vidinis vertikalus slinkimas) */
+    .admin-modal-overlay.countries-modal-overlay {
+        padding: 0.5rem 0;
+        align-items: center;
         justify-content: center;
     }
 
-    .controls-section {
+    .countries-stats-card {
+        width: 95vw !important;
+        max-width: 95vw !important;
+        height: 90vh !important;
+        max-height: 90vh !important;
+        padding: 0.9rem 0.8rem;
+        border-radius: 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 0.65rem;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .countries-stats-card__header {
+        flex-shrink: 0;
+        gap: 0.5rem;
+    }
+
+    .countries-stats-card__icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 9px;
+    }
+
+    .countries-stats-card__icon svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .countries-stats-card__title {
+        font-size: 0.96rem;
+    }
+
+    .countries-stats-card__subtitle {
+        font-size: 0.68rem;
+    }
+
+    .countries-stats-card__close {
+        width: 32px;
+        height: 32px;
+        min-height: 32px;
+        font-size: 1rem;
+    }
+
+    .modal-traveler-bar {
+        flex-shrink: 0;
+        gap: 0.35rem;
+    }
+
+    .modal-traveler-bar__label {
+        font-size: 0.68rem;
+    }
+
+    .modal-traveler-chip {
+        padding: 0.22rem 0.44rem;
+        font-size: 0.7rem;
+    }
+
+    .europe-challenge-card {
+        flex-shrink: 0;
+        padding: 0.75rem 0.8rem;
+        gap: 0.45rem;
+    }
+
+    .europe-challenge-card__text {
+        font-size: 0.78rem;
+    }
+
+    .europe-challenge-card__percent {
+        font-size: 1.05rem;
+    }
+
+    .countries-tabs {
+        flex-shrink: 0;
+        gap: 0.35rem;
+        padding-bottom: 0.35rem;
+    }
+
+    .countries-tab {
+        padding: 0.36rem 0.52rem;
+        font-size: 0.74rem;
+        gap: 0.3rem;
+    }
+
+    .countries-tab__badge {
+        font-size: 0.64rem;
+        padding: 0.08rem 0.35rem;
+    }
+
+    .countries-tab-content {
+        flex: 1 1 auto;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.45rem;
+    }
+
+    .countries-tab-note {
+        font-size: 0.72rem;
+        padding: 0.4rem 0.55rem;
+    }
+
+    /* 3) Aplankytų šalių lentelė: horizontalus slinkimas ir kompaktiška 4 narių matrica */
+    .countries-table-wrap {
+        flex: 1 1 auto;
+        min-height: 0;
+        max-height: none;
+        overflow-x: auto;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .countries-table {
+        width: 100%;
+        min-width: 290px;
+        font-size: 0.74rem;
+        border-collapse: collapse;
+    }
+
+    .countries-table th,
+    .countries-table td {
+        padding: 0.38rem 0.25rem;
+    }
+
+    .countries-table__col-country {
+        min-width: 120px;
+        width: auto;
+        padding-left: 0.45rem !important;
+    }
+
+    .countries-table__col-member {
+        width: 36px;
+        min-width: 34px;
+        max-width: 42px;
+        text-align: center;
+        padding: 0.35rem 0.15rem !important;
+    }
+
+    .country-cell {
+        gap: 0.22rem;
+    }
+
+    .country-cell__flag {
+        font-size: 0.95rem;
+    }
+
+    .country-cell__code {
+        font-size: 0.62rem;
+        padding: 0.08rem 0.24rem;
+    }
+
+    .country-cell__name {
+        font-size: 0.72rem;
+        font-weight: 600;
+    }
+
+    .country-cell__badge-tag {
+        font-size: 0.58rem;
+        padding: 0.06rem 0.3rem;
+    }
+
+    .member-summary__total {
+        font-size: 0.78rem;
+    }
+
+    .member-summary__sub {
+        font-size: 0.58rem;
+    }
+
+    .member-check {
+        font-size: 0.78rem;
+    }
+
+    .summary-cell {
+        gap: 0.25rem;
+    }
+
+    .summary-cell__icon {
+        font-size: 0.95rem;
+    }
+
+    .summary-cell__title {
+        font-size: 0.72rem;
+    }
+
+    .summary-cell__subtitle {
+        font-size: 0.58rem;
+    }
+
+    /* 4) Žemėlapio valdikliai telefone: Mode Switcher (centre), Spynelė (kairėje), Zoom (dešinėje) */
+    .top-bar {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        background: #0f172a;
+    }
+
+    /* Keliautojų juosta viršuje užima visą 3-iąją eilutę */
+    .controls-row--travelers {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        min-height: 26px;
+    }
+
+    .traveler-filters {
+        width: 100%;
+    }
+
+    /* Žemėlapio režimo perjungiklis: fiksuotas ekrano apačioje per vidurį */
+    .map-mode-switcher {
+        position: fixed;
+        left: 50%;
+        bottom: 14px;
+        transform: translateX(-50%);
+        z-index: 850;
+        display: inline-flex;
+        align-items: center;
+        background: rgba(15, 23, 42, 0.94);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        padding: 3px;
+        border-radius: var(--radius-pill);
+        border: 1px solid rgba(56, 189, 248, 0.4);
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6), 0 0 12px rgba(56, 189, 248, 0.18);
+    }
+
+    .mode-btn {
+        padding: 0.28rem 0.65rem;
+        font-size: 0.72rem;
+        font-weight: 700;
+        min-height: 30px;
+        border-radius: var(--radius-pill);
+    }
+
+    .mode-btn__label-full {
+        display: none;
+    }
+
+    .mode-btn__label-short {
+        display: inline;
+    }
+
+    /* Spynelės (Admin) mygtukas: apačioje kairėje */
+    .admin-lock-btn {
+        left: 12px;
+        bottom: 14px;
+        z-index: 800;
+        width: 36px;
+        height: 36px;
+    }
+
+    /* Leaflet mastelio (+/-) mygtukai: apačioje dešinėje */
+    .leaflet-bottom.leaflet-right {
+        right: 12px;
+        bottom: 14px;
+        margin: 0;
+    }
+
+    .leaflet-control-zoom {
+        margin: 0 0 4px 0 !important;
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        border-radius: 8px !important;
+        overflow: hidden;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5) !important;
+    }
+
+    .leaflet-control-zoom a {
+        width: 32px !important;
+        height: 32px !important;
+        line-height: 32px !important;
+        font-size: 16px !important;
+        background: rgba(15, 23, 42, 0.94) !important;
+        color: #f8fafc !important;
+    }
+
+    .leaflet-control-attribution {
+        font-size: 8px !important;
+        background: rgba(15, 23, 42, 0.75) !important;
+        color: #94a3b8 !important;
+        margin: 0 !important;
+        padding: 0 4px !important;
+    }
+
+    /* ==========================================================================
+       Admin valdymo centras (Dashboard) mobiliesiems ekranams
+       ========================================================================== */
+    .admin-dashboard {
+        width: 100vw !important;
+        max-width: 100vw !important;
+        height: 100dvh !important;
+        max-height: 100dvh !important;
+        border-radius: 0 !important;
+        border: none !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .admin-dashboard__header {
+        position: relative;
+        padding: 0.8rem 0.75rem;
+        gap: 0.65rem;
+        background: #1e293b;
+    }
+
+    .admin-dashboard__brand {
+        width: 100%;
+        padding-right: 42px;
+        flex-wrap: wrap;
+        gap: 0.45rem;
+    }
+
+    .admin-dashboard__title {
+        font-size: 0.95rem;
+        line-height: 1.3;
+    }
+
+    .admin-panel__close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 36px;
+        height: 36px;
+        font-size: 1.1rem;
+        z-index: 10;
+    }
+
+    .admin-dashboard__toolbar {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    /* 3) Pilno pločio JSON eksporto mygtukai viršuje */
+    .admin-dashboard__primary-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 0.45rem;
+        width: 100%;
+    }
+
+    #downloadJsonBtn,
+    #copyJsonBtn {
+        width: 100% !important;
+        min-height: 44px;
+        font-size: 0.88rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.65rem 1rem;
+        border-radius: var(--radius-sm);
+    }
+
+    .admin-dashboard__secondary-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+        width: 100%;
+    }
+
+    .admin-dashboard__secondary-actions .admin-btn {
+        flex: 1 1 calc(50% - 0.2rem);
+        min-height: 38px;
+        font-size: 0.76rem;
+        padding: 0.42rem 0.5rem;
+        text-align: center;
+    }
+
+    /* 1) Vienas stulpelis kairė/dešinė blokams vienas po kito su sklandžiu slinkimu */
+    .admin-dashboard__body {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 1.1rem !important;
+        padding: 0.85rem 0.65rem 2.5rem !important;
+        overflow: visible !important;
+        height: auto !important;
+    }
+
+    .admin-dashboard__left,
+    .admin-dashboard__right {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 1.1rem !important;
+        overflow: visible !important;
+        padding-right: 0 !important;
+        width: 100% !important;
+    }
+
+    .admin-section {
+        padding: 0.85rem 0.75rem;
+        border-radius: 12px;
+    }
+
+    .admin-form__row--2col {
+        grid-template-columns: 1fr !important;
+        gap: 0.6rem;
+    }
+
+    .admin-video-row {
+        display: flex;
+        flex-direction: column;
+        gap: 0.45rem;
+        padding: 0.65rem;
+    }
+
+    .admin-video-row__remove {
+        align-self: flex-end;
+        width: 100%;
+        height: 34px;
+    }
+
+    .admin-table-toolbar {
         flex-direction: column;
         align-items: stretch;
         gap: 0.55rem;
     }
 
-    .search-box {
-        flex: 1 1 auto;
+    .admin-table-toolbar__filters {
+        flex-direction: column;
+        gap: 0.45rem;
         width: 100%;
     }
 
-    .category-filters,
-    .traveler-filters {
+    .admin-table-wrap {
+        max-height: 380px;
         overflow-x: auto;
-        flex-wrap: nowrap;
-        padding-bottom: 2px;
-        scrollbar-width: none;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
     }
 
-    .category-filters::-webkit-scrollbar,
-    .traveler-filters::-webkit-scrollbar {
+    .admin-table {
+        min-width: 560px;
+        font-size: 0.76rem;
+    }
+
+    .admin-countries-list {
+        max-height: 280px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* 2) Visiems įvesties laukeliams font-size: 16px (kad iOS ir Android nepriartintų ekrano) */
+    .admin-dashboard input,
+    .admin-dashboard select,
+    .admin-dashboard textarea,
+    .admin-field input,
+    .admin-field select,
+    .admin-field textarea,
+    .admin-country-form__input,
+    .admin-table-search,
+    .admin-table-select,
+    .admin-geocode-box__input,
+    .admin-login-card input {
+        font-size: 16px !important;
+    }
+
+    .admin-login-card {
+        width: 92% !important;
+        max-width: 360px !important;
+        padding: 1.25rem 1rem;
+    }
+}
+
+/* Ypatingai maži ekranai (pvz., iPhone SE 1st gen arba <= 380px) */
+@media (max-width: 380px) {
+    .top-bar__inner {
+        padding: 0.3rem 0.35rem;
+    }
+
+    .brand-section {
+        gap: 0.25rem;
+    }
+
+    .back-btn__text-short {
         display: none;
     }
 
-    .countries-stats-card {
-        padding: 1rem;
-        border-radius: 14px;
-        max-height: 92dvh;
+    .back-btn {
+        padding: 0.15rem 0.28rem;
     }
 
-    .countries-stats-card__header {
-        align-items: flex-start;
+    .brand-logo {
+        gap: 0.25rem;
     }
 
-    .countries-table th,
-    .countries-table td {
-        padding: 0.5rem 0.55rem;
+    .brand-logo__icon {
+        width: 22px;
+        height: 22px;
+        border-radius: 6px;
+    }
+
+    .brand-logo__icon svg {
+        width: 12px;
+        height: 12px;
+    }
+
+    .brand-logo__title {
+        font-size: 0.7rem;
+    }
+
+    .stats-bar {
+        padding: 0.12rem 0.28rem;
+        gap: 0.2rem;
+    }
+
+    .stat-item {
+        gap: 0.15rem;
+    }
+
+    .stat-item__value {
+        font-size: 0.72rem;
+    }
+
+    .stat-item__label {
+        font-size: 0.58rem;
+    }
+
+    .stat-divider {
+        font-size: 0.6rem;
+    }
+
+    .search-box {
+        flex: 0 0 74px;
+    }
+
+    .filter-chip {
+        padding: 0.18rem 0.44rem;
+        font-size: 0.66rem;
+    }
+
+    .traveler-chip {
+        padding: 0.18rem 0.42rem;
+        font-size: 0.66rem;
+    }
+
+    .mode-btn {
+        padding: 0.18rem 0.38rem;
+        font-size: 0.64rem;
     }
 }

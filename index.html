@@ -32,125 +32,134 @@
         <!-- Viršutinė moderni tamsi juosta -->
         <header class="top-bar" role="banner">
             <div class="top-bar__inner">
-                <!-- 1) Logotipas ir grįžimo mygtukas -->
-                <div class="brand-section">
-                    <a href="https://lisauskai.lt" class="back-btn" rel="noopener noreferrer" title="Grįžti į pagrindinį puslapį lisauskai.lt">
-                        <span class="back-btn__arrow" aria-hidden="true">←</span>
-                        <span>Grįžti į lisauskai.lt</span>
-                    </a>
+                <div class="top-bar__header-row">
+                    <!-- 1) Logotipas ir grįžimo mygtukas -->
+                    <div class="brand-section">
+                        <a href="https://lisauskai.lt" class="back-btn" rel="noopener noreferrer" title="Grįžti į pagrindinį puslapį lisauskai.lt">
+                            <span class="back-btn__arrow" aria-hidden="true">←</span>
+                            <span class="back-btn__text-full">Grįžti į lisauskai.lt</span>
+                            <span class="back-btn__text-short">lisauskai.lt</span>
+                        </a>
 
-                    <div class="brand-divider" aria-hidden="true"></div>
+                        <div class="brand-divider" aria-hidden="true"></div>
 
-                    <a href="#" class="brand-logo" id="resetMapBtn" title="Atstatyti žemėlapio vaizdą">
-                        <span class="brand-logo__icon" aria-hidden="true">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
-                            </svg>
-                        </span>
-                        <div class="brand-logo__text">
-                            <span class="brand-logo__title">Lisauskų kelionės</span>
-                            <span class="brand-logo__subtitle">map.lisauskai.lt</span>
-                        </div>
-                    </a>
-                </div>
-
-                <!-- 2) Statistikos skaitikliai (Šalys | Vietos | Vlogai) -->
-                <div class="stats-bar" aria-label="Kelionių statistika">
-                    <button type="button" class="stat-item stat-item--clickable" id="openCountriesStatsBtn" title="Peržiūrėti šalių sąrašą" aria-label="Peržiūrėti šalių sąrašą">
-                        <span class="stat-item__value-row">
-                            <span class="stat-item__value" id="statCountries">0</span>
-                            <svg class="stat-item__icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"></path>
-                            </svg>
-                        </span>
-                        <span class="stat-item__label">Šalys</span>
-                    </button>
-                    <span class="stat-divider" aria-hidden="true">|</span>
-                    <div class="stat-item">
-                        <span class="stat-item__value" id="statPlaces">0</span>
-                        <span class="stat-item__label">Vietos</span>
+                        <a href="#" class="brand-logo" id="resetMapBtn" title="Atstatyti žemėlapio vaizdą">
+                            <span class="brand-logo__icon" aria-hidden="true">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+                                </svg>
+                            </span>
+                            <div class="brand-logo__text">
+                                <span class="brand-logo__title">Lisauskų kelionės</span>
+                                <span class="brand-logo__subtitle">map.lisauskai.lt</span>
+                            </div>
+                        </a>
                     </div>
-                    <span class="stat-divider" aria-hidden="true">|</span>
-                    <div class="stat-item">
-                        <span class="stat-item__value" id="statVlogs">0</span>
-                        <span class="stat-item__label">Vlogai</span>
+
+                    <!-- 2) Statistikos skaitikliai (Šalys | Vietos | Vlogai) -->
+                    <div class="stats-bar" aria-label="Kelionių statistika">
+                        <button type="button" class="stat-item stat-item--clickable" id="openCountriesStatsBtn" title="Peržiūrėti šalių sąrašą" aria-label="Peržiūrėti šalių sąrašą">
+                            <span class="stat-item__value-row">
+                                <span class="stat-item__value" id="statCountries">0</span>
+                                <svg class="stat-item__icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"></path>
+                                </svg>
+                            </span>
+                            <span class="stat-item__label">Šalys</span>
+                        </button>
+                        <span class="stat-divider" aria-hidden="true">|</span>
+                        <div class="stat-item">
+                            <span class="stat-item__value" id="statPlaces">0</span>
+                            <span class="stat-item__label">Vietos</span>
+                        </div>
+                        <span class="stat-divider" aria-hidden="true">|</span>
+                        <div class="stat-item">
+                            <span class="stat-item__value" id="statVlogs">0</span>
+                            <span class="stat-item__label">Vlogai</span>
+                        </div>
                     </div>
                 </div>
 
                 <!-- 3) Paieškos laukelis ir kategorijų filtrai -->
                 <div class="controls-section">
-                    <div class="search-box">
-                        <svg class="search-box__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <circle cx="11" cy="11" r="8"></circle>
-                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                        </svg>
-                        <input
-                            type="search"
-                            id="searchInput"
-                            class="search-box__input"
-                            placeholder="Ieškoti vietos ar šalies..."
-                            aria-label="Ieškoti vietos, šalies ar vlogo"
-                            autocomplete="off"
-                        />
-                        <button type="button" id="clearSearchBtn" class="search-box__clear" aria-label="Išvalyti paiešką" hidden>
-                            ✕
-                        </button>
+                    <div class="controls-row controls-row--categories">
+                        <div class="search-box">
+                            <svg class="search-box__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                            <input
+                                type="search"
+                                id="searchInput"
+                                class="search-box__input"
+                                placeholder="Ieškoti vietos ar šalies..."
+                                aria-label="Ieškoti vietos, šalies ar vlogo"
+                                autocomplete="off"
+                            />
+                            <button type="button" id="clearSearchBtn" class="search-box__clear" aria-label="Išvalyti paiešką" hidden>
+                                ✕
+                            </button>
+                        </div>
+
+                        <nav class="category-filters" aria-label="Kelionių kategorijų filtrai" id="categoryFilters">
+                            <button type="button" class="filter-chip is-active" data-category="Visos">
+                                <span class="filter-chip__dot filter-chip__dot--all"></span>
+                                Visos
+                            </button>
+                            <button type="button" class="filter-chip" data-category="Kruizas">
+                                <span class="filter-chip__dot filter-chip__dot--cruise"></span>
+                                Kruizas
+                            </button>
+                            <button type="button" class="filter-chip" data-category="Keltas">
+                                <span class="filter-chip__dot filter-chip__dot--ferry"></span>
+                                Keltas
+                            </button>
+                            <button type="button" class="filter-chip" data-category="Automobiliu">
+                                <span class="filter-chip__dot filter-chip__dot--car"></span>
+                                Automobiliu
+                            </button>
+                            <button type="button" class="filter-chip" data-category="Autobusu">
+                                <span class="filter-chip__dot filter-chip__dot--bus"></span>
+                                Autobusu
+                            </button>
+                            <button type="button" class="filter-chip" data-category="Lėktuvu">
+                                <span class="filter-chip__dot filter-chip__dot--plane"></span>
+                                Lėktuvu
+                            </button>
+                            <button type="button" class="filter-chip" data-category="Lietuva">
+                                <span class="filter-chip__dot filter-chip__dot--lt"></span>
+                                Lietuva
+                            </button>
+                        </nav>
                     </div>
 
-                    <nav class="category-filters" aria-label="Kelionių kategorijų filtrai" id="categoryFilters">
-                        <button type="button" class="filter-chip is-active" data-category="Visos">
-                            <span class="filter-chip__dot filter-chip__dot--all"></span>
-                            Visos
-                        </button>
-                        <button type="button" class="filter-chip" data-category="Kruizas">
-                            <span class="filter-chip__dot filter-chip__dot--cruise"></span>
-                            Kruizas
-                        </button>
-                        <button type="button" class="filter-chip" data-category="Keltas">
-                            <span class="filter-chip__dot filter-chip__dot--ferry"></span>
-                            Keltas
-                        </button>
-                        <button type="button" class="filter-chip" data-category="Automobiliu">
-                            <span class="filter-chip__dot filter-chip__dot--car"></span>
-                            Automobiliu
-                        </button>
-                        <button type="button" class="filter-chip" data-category="Autobusu">
-                            <span class="filter-chip__dot filter-chip__dot--bus"></span>
-                            Autobusu
-                        </button>
-                        <button type="button" class="filter-chip" data-category="Lėktuvu">
-                            <span class="filter-chip__dot filter-chip__dot--plane"></span>
-                            Lėktuvu
-                        </button>
-                        <button type="button" class="filter-chip" data-category="Lietuva">
-                            <span class="filter-chip__dot filter-chip__dot--lt"></span>
-                            Lietuva
-                        </button>
-                    </nav>
+                    <div class="controls-divider controls-divider--section" aria-hidden="true"></div>
 
-                    <div class="controls-divider" aria-hidden="true"></div>
+                    <div class="controls-row controls-row--travelers">
+                        <!-- Filtravimas pagal šeimos narį -->
+                        <nav class="traveler-filters" aria-label="Filtravimas pagal šeimos narį" id="travelerFilters">
+                            <span class="traveler-filters__label">Keliautojas:</span>
+                            <button type="button" class="traveler-chip is-active" data-traveler="Visi">Visi</button>
+                            <button type="button" class="traveler-chip" data-traveler="Tomas">Tomas</button>
+                            <button type="button" class="traveler-chip" data-traveler="Sandra">Sandra</button>
+                            <button type="button" class="traveler-chip" data-traveler="Lukas">Lukas</button>
+                            <button type="button" class="traveler-chip" data-traveler="Linas">Linas</button>
+                        </nav>
 
-                    <!-- Filtravimas pagal šeimos narį -->
-                    <nav class="traveler-filters" aria-label="Filtravimas pagal šeimos narį" id="travelerFilters">
-                        <span class="traveler-filters__label">Keliautojas:</span>
-                        <button type="button" class="traveler-chip is-active" data-traveler="Visi">Visi</button>
-                        <button type="button" class="traveler-chip" data-traveler="Tomas">Tomas</button>
-                        <button type="button" class="traveler-chip" data-traveler="Sandra">Sandra</button>
-                        <button type="button" class="traveler-chip" data-traveler="Lukas">Lukas</button>
-                        <button type="button" class="traveler-chip" data-traveler="Linas">Linas</button>
-                    </nav>
+                        <div class="controls-divider controls-divider--travelers" aria-hidden="true"></div>
 
-                    <div class="controls-divider" aria-hidden="true"></div>
-
-                    <!-- Žemėlapio režimo perjungiklis: Detalus žemėlapis / Tik šalys -->
-                    <div class="map-mode-switcher" role="group" aria-label="Žemėlapio vaizdo režimas" id="mapModeSwitcher">
-                        <button type="button" class="mode-btn is-active" data-mode="detailed">
-                            Detalus žemėlapis
-                        </button>
-                        <button type="button" class="mode-btn" data-mode="countries">
-                            Tik šalys
-                        </button>
+                        <!-- Žemėlapio režimo perjungiklis: Detalus žemėlapis / Tik šalys -->
+                        <div class="map-mode-switcher" role="group" aria-label="Žemėlapio vaizdo režimas" id="mapModeSwitcher">
+                            <button type="button" class="mode-btn is-active" data-mode="detailed">
+                                <span class="mode-btn__label-full">Detalus žemėlapis</span>
+                                <span class="mode-btn__label-short">Detalus</span>
+                            </button>
+                            <button type="button" class="mode-btn" data-mode="countries">
+                                <span class="mode-btn__label-full">Tik šalys</span>
+                                <span class="mode-btn__label-short">Šalys</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -216,6 +225,28 @@
                         </button>
                     </div>
 
+                    <!-- Greito keliautojo pasirinkimo mygtukai viršuje („Visi“ | „Tomas“ | „Sandra“ | „Lukas“ | „Linas“) -->
+                    <div class="modal-traveler-bar" id="modalTravelerFilters" role="group" aria-label="Keliautojo pasirinkimas šalių statistikoje">
+                        <span class="modal-traveler-bar__label">Keliautojas:</span>
+                        <div class="modal-traveler-bar__chips">
+                            <button type="button" class="modal-traveler-chip is-active" data-modal-traveler="Visi">
+                                👨‍👩‍👦‍👦 Visi
+                            </button>
+                            <button type="button" class="modal-traveler-chip" data-modal-traveler="Tomas">
+                                👨 Tomas
+                            </button>
+                            <button type="button" class="modal-traveler-chip" data-modal-traveler="Sandra">
+                                👩 Sandra
+                            </button>
+                            <button type="button" class="modal-traveler-chip" data-modal-traveler="Lukas">
+                                👦 Lukas
+                            </button>
+                            <button type="button" class="modal-traveler-chip" data-modal-traveler="Linas">
+                                👶 Linas
+                            </button>
+                        </div>
+                    </div>
+
                     <!-- „Europos iššūkis“ blokas su progreso juosta (Progress bar) -->
                     <div class="europe-challenge-card">
                         <div class="europe-challenge-card__header">
@@ -249,15 +280,18 @@
 
                     <!-- Tab 1: Aplankytos šalys (narių lentelė) -->
                     <div class="countries-tab-content is-active" id="visitedTabContent" role="tabpanel" aria-labelledby="tabVisitedCountries">
+                        <div class="countries-tab-note" id="visitedTabNote">
+                            Lisauskų šeima iš viso aplankė <strong>30</strong> šalių (iš jų <strong>27</strong> Europoje).
+                        </div>
                         <div class="countries-table-wrap">
                             <table class="countries-table">
                                 <thead>
                                     <tr>
                                         <th class="countries-table__col-country">Šalis</th>
-                                        <th class="countries-table__col-member">Tomas</th>
-                                        <th class="countries-table__col-member">Sandra</th>
-                                        <th class="countries-table__col-member">Lukas</th>
-                                        <th class="countries-table__col-member">Linas</th>
+                                        <th class="countries-table__col-member" data-col-member="Tomas">Tomas</th>
+                                        <th class="countries-table__col-member" data-col-member="Sandra">Sandra</th>
+                                        <th class="countries-table__col-member" data-col-member="Lukas">Lukas</th>
+                                        <th class="countries-table__col-member" data-col-member="Linas">Linas</th>
                                     </tr>
                                 </thead>
                                 <tbody id="visitedCountriesTableBody">
@@ -269,6 +303,9 @@
 
                     <!-- Tab 2: Dar neaplankytos Europos šalys -->
                     <div class="countries-tab-content" id="missingTabContent" role="tabpanel" aria-labelledby="tabMissingCountries" hidden>
+                        <div class="countries-tab-note" id="missingTabNote">
+                            Europos šalys, kuriose dar nebuvo visa šeima (liko <strong>19</strong>):
+                        </div>
                         <div class="countries-table-wrap">
                             <table class="countries-table">
                                 <thead>
@@ -342,31 +379,39 @@
                         </div>
 
                         <div class="admin-dashboard__toolbar">
-                            <input type="file" id="importHtmlFileInput" accept=".html,.htm" hidden>
-                            <button type="button" id="importHtmlBtn" class="admin-btn admin-btn--secondary" title="Automatiškai nuskaityti miestus, aprašymus ir YouTube nuorodas iš seno HTML failo">
-                                📥 Importuoti iš HTML
-                            </button>
-                            <button type="button" id="pickCoordsOnMapBtn" class="admin-btn admin-btn--secondary" title="Laikinai paslėpti langą ir paspausti ant žemėlapio">
-                                📍 Parinkti koordinates žemėlapyje
-                            </button>
-                            <button type="button" id="downloadJsonBtn" class="admin-btn admin-btn--primary">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                    <polyline points="7 10 12 15 17 10"></polyline>
-                                    <line x1="12" y1="15" x2="12" y2="3"></line>
-                                </svg>
-                                <span>Atsisiųsti keliones.json</span>
-                            </button>
-                            <button type="button" id="copyJsonBtn" class="admin-btn admin-btn--secondary">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                                </svg>
-                                <span id="copyJsonBtnText">Kopijuoti JSON</span>
-                            </button>
-                            <button type="button" id="adminLogoutBtn" class="admin-btn admin-btn--ghost" title="Atsijungti iš Admin sesijos">
-                                Atsijungti
-                            </button>
+                            <!-- Pagrindiniai JSON eksporto veiksmai (viršuje ir pilno pločio mobiliajame) -->
+                            <div class="admin-dashboard__primary-actions">
+                                <button type="button" id="downloadJsonBtn" class="admin-btn admin-btn--primary">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                        <polyline points="7 10 12 15 17 10"></polyline>
+                                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                                    </svg>
+                                    <span>Atsisiųsti keliones.json</span>
+                                </button>
+                                <button type="button" id="copyJsonBtn" class="admin-btn admin-btn--secondary">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                    <span id="copyJsonBtnText">Kopijuoti JSON</span>
+                                </button>
+                            </div>
+
+                            <!-- Pagalbiniai mygtukai -->
+                            <div class="admin-dashboard__secondary-actions">
+                                <input type="file" id="importHtmlFileInput" accept=".html,.htm" hidden>
+                                <button type="button" id="importHtmlBtn" class="admin-btn admin-btn--secondary" title="Automatiškai nuskaityti miestus, aprašymus ir YouTube nuorodas iš seno HTML failo">
+                                    📥 Importuoti iš HTML
+                                </button>
+                                <button type="button" id="pickCoordsOnMapBtn" class="admin-btn admin-btn--secondary" title="Laikinai paslėpti langą ir paspausti ant žemėlapio">
+                                    📍 Parinkti koordinates žemėlapyje
+                                </button>
+                                <button type="button" id="adminLogoutBtn" class="admin-btn admin-btn--ghost" title="Atsijungti iš Admin sesijos">
+                                    Atsijungti
+                                </button>
+                            </div>
+
                             <button type="button" id="adminCloseBtn" class="admin-panel__close" aria-label="Uždaryti administravimo langą">
                                 ✕
                             </button>
