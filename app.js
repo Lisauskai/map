@@ -1206,11 +1206,11 @@ const FALLBACK_DATA = {
             title: "Perlinių danielių parkas",
             country: "Lietuva",
             countryCode: 'LT',
-            lat: 55.5256,
-            lng: 25.1026,
+            lat: 54.8889,
+            lng: 24.1258,
             date: '2025-06-15',
             category: 'Lietuva',
-            description: "Trumpa išvyka į gamtą pasigrožėti perlinių danielių parko gyventojais ir susipažinti su šiais grakščiais gyvūnais iš arti.",
+            description: "Trumpa išvyka į gamtą pasigrožėti perlinių danielių parko gyventojais ir susipažinti su šiais grakščiais gyvūnais iš arti (Karčiupis, Kaišiadorių r.).",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: [
                 {
@@ -1745,15 +1745,27 @@ function extractYouTubeVideoId(rawUrl) {
 }
 
 /**
- * Grąžina vietos keliautojų (šeimos narių) sąrašą
+ * Grąžina vietos keliautojų (šeimos narių) sąrašą.
+ * Užtikrina, kad šeimos kelionėse Lukas ir Linas visada būtų priskirti kartu:
+ * jei vietoje nurodytas Lukas arba Linas, automatiškai priskiriami abu broliai.
  */
 function getPlaceTravelers(place) {
     if (!place || !Array.isArray(place.travelers)) {
         return [...DEFAULT_TRAVELERS];
     }
-    return place.travelers
+    const travelers = place.travelers
         .map((name) => String(name || '').trim())
         .filter(Boolean);
+
+    const hasLukas = travelers.includes('Lukas');
+    const hasLinas = travelers.includes('Linas');
+    if (hasLukas && !hasLinas) {
+        travelers.push('Linas');
+    } else if (hasLinas && !hasLukas) {
+        travelers.push('Lukas');
+    }
+
+    return travelers;
 }
 
 /**
@@ -2597,7 +2609,18 @@ function createVideosButtonsHtml(place) {
         })
         .join('');
 
-    return `<div class="popup-card__videos">${cardsHtml}</div>`;
+    const headerHtml = validVideos.length > 1
+        ? `<div class="popup-card__videos-header">Vaizdo įrašai (${validVideos.length}):</div>`
+        : '';
+
+    return `
+        <div class="popup-card__videos-wrapper">
+            ${headerHtml}
+            <div class="popup-card__videos">
+                ${cardsHtml}
+            </div>
+        </div>
+    `;
 }
 
 /**
@@ -2646,27 +2669,27 @@ function createPopupHtml(place) {
 
 /**
  * Nustato keliautojus konkrečiam video įrašui.
- * Jei video turi lauką `travelers` (pvz. išsaugotą admin formoje ar faile), naudojamas jis.
- * Jei ne, pagal video pavadinimo raktažodžius atpažįstami konkretūs vaikai (Lukas / Linas) arba tėvai,
- * o numatytuoju atveju paveldima visa vietos keliautojų sudėtis.
+ * 1) Jei video turi lauką `travelers` (pvz. išsaugotą admin formoje ar faile), naudojamas jis,
+ *    užtikrinant, kad šeimos kelionėse Lukas ir Linas visada būtų kartu.
+ * 2) Numatytuoju atveju video paveldi visus vietos keliautojus (getPlaceTravelers(place)).
+ *    Kadangi Lukas ir Linas visur keliavo kartu su šeima, visi tos vietos video įrašai
+ *    priskiriami abiem vaikams vienodai.
  * @param {Object} video
  * @param {Object} place
  * @returns {string[]}
  */
 function getVideoTravelers(video, place) {
     if (Array.isArray(video.travelers) && video.travelers.length > 0) {
-        return video.travelers;
+        const travelers = [...video.travelers];
+        const hasLukas = travelers.includes('Lukas');
+        const hasLinas = travelers.includes('Linas');
+        if (hasLukas && !hasLinas) travelers.push('Linas');
+        if (hasLinas && !hasLukas) travelers.push('Lukas');
+        return travelers;
     }
-    const title = String(video.title || '');
-    if (/dagilėl|drugelių|pirmok/i.test(title)) {
-        return ['Tomas', 'Sandra', 'Linas'];
-    }
-    if (/boružiuk|luko nardymas/i.test(title)) {
-        return ['Tomas', 'Sandra', 'Lukas'];
-    }
-    if (/giedrės ir urtės/i.test(title)) {
-        return ['Tomas', 'Sandra'];
-    }
+
+    // Visose vietose ir video įrašuose, kur keliauta kartu su šeima,
+    // video įrašai priskiriami vienodai visiems tos vietos keliautojams
     return getPlaceTravelers(place);
 }
 
@@ -2709,25 +2732,18 @@ function updateStats(filteredPlaces = getFilteredPlaces()) {
 
     const totalPlaces = filteredPlaces.length;
 
-    let totalVlogs = 0;
-    if (isUnfiltered) {
-        totalVlogs = state.places.reduce(
-            (sum, item) => sum + getValidVideos(item).length,
-            0
-        );
-    } else {
-        totalVlogs = filteredPlaces.reduce((sum, place) => {
-            const validVideos = getValidVideos(place);
-            if (state.activeTraveler === 'Visi') {
-                return sum + validVideos.length;
-            }
-            const travelerVideos = validVideos.filter((v) => {
-                const vTravelers = getVideoTravelers(v, place);
-                return vTravelers.includes(state.activeTraveler);
-            });
-            return sum + travelerVideos.length;
-        }, 0);
-    }
+    // Vlogų skaičius: skaičiuojame tiksliai toms vietoms priskirtus video pagal tą patį filtrą, kaip ir žemėlapio smeigtukai
+    const totalVlogs = filteredPlaces.reduce((sum, place) => {
+        const validVideos = getValidVideos(place);
+        if (state.activeTraveler === 'Visi') {
+            return sum + validVideos.length;
+        }
+        const travelerVideos = validVideos.filter((v) => {
+            const vTravelers = getVideoTravelers(v, place);
+            return vTravelers.includes(state.activeTraveler);
+        });
+        return sum + travelerVideos.length;
+    }, 0);
 
     statCountriesEl.textContent = countriesCount;
     statPlacesEl.textContent = totalPlaces;
@@ -2832,7 +2848,8 @@ function renderMap({ fitBounds = true, isSearch = false } = {}) {
         const coords = [place.lat, place.lng];
         const marker = L.marker(coords, {
             icon: createCategoryIcon(place.category),
-            title: place.title
+            title: place.title,
+            draggable: isAdminAuthenticated()
         });
 
         marker.bindPopup(createPopupHtml(place), {
@@ -2840,9 +2857,53 @@ function renderMap({ fitBounds = true, isSearch = false } = {}) {
             closeButton: true
         });
 
-        // Paspaudus ant smeigtuko sklandžiai centruojame
+        let wasDragged = false;
+
+        marker.on('dragstart', () => {
+            wasDragged = true;
+        });
+
+        marker.on('dragend', () => {
+            const newLatLng = marker.getLatLng();
+            const newLat = Number(newLatLng.lat.toFixed(4));
+            const newLng = Number(newLatLng.lng.toFixed(4));
+
+            // Atnaujiname vietos koordinates atmintyje
+            place.lat = newLat;
+            place.lng = newLng;
+
+            const matchedPlace = state.places.find((p) => p.id === place.id);
+            if (matchedPlace) {
+                matchedPlace.lat = newLat;
+                matchedPlace.lng = newLng;
+            }
+
+            // Jei ši vieta šiuo metu redaguojama admin formoje, atnaujiname laukelius
+            if (state.editingPlaceId === place.id) {
+                if (placeLatInputEl) placeLatInputEl.value = newLat;
+                if (placeLngInputEl) placeLngInputEl.value = newLng;
+            }
+
+            // Atnaujiname iššokančio lango turinį
+            marker.setPopupContent(createPopupHtml(place));
+
+            // Jei atidaryta admin lentelė, atnaujiname ją
+            if (typeof renderAdminPlacesTable === 'function' && adminDashboardModalEl && !adminDashboardModalEl.hidden) {
+                renderAdminPlacesTable();
+            }
+
+            // Parodome informacinį pranešimą
+            showAdminToast('Koordinatės atnaujintos! Nepamirškite atsisiųsti keliones.json');
+
+            setTimeout(() => {
+                wasDragged = false;
+            }, 150);
+        });
+
+        // Paspaudus ant smeigtuko sklandžiai centruojame (jei nebuvo ką tik pertemptas)
         marker.on('click', () => {
-            map.flyTo(coords, Math.max(map.getZoom(), 7), {
+            if (wasDragged) return;
+            map.flyTo([place.lat, place.lng], Math.max(map.getZoom(), 7), {
                 duration: 0.65
             });
         });
@@ -2927,6 +2988,57 @@ function isAdminAuthenticated() {
     }
 }
 
+let adminToastTimeout = null;
+
+/**
+ * Parodo trumpą pranešimą (toast) ekrano apačioje
+ * @param {string} message
+ */
+function showAdminToast(message) {
+    let toast = document.getElementById('adminToast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'adminToast';
+        toast.className = 'admin-toast';
+        toast.setAttribute('role', 'status');
+        toast.setAttribute('aria-live', 'polite');
+        toast.innerHTML = `
+            <span class="admin-toast__icon">📍</span>
+            <span class="admin-toast__message" id="adminToastMessage"></span>
+        `;
+        document.body.appendChild(toast);
+    }
+    const msgEl = toast.querySelector('#adminToastMessage') || toast;
+    msgEl.textContent = message;
+    toast.classList.add('is-visible');
+
+    if (adminToastTimeout) {
+        clearTimeout(adminToastTimeout);
+    }
+    adminToastTimeout = setTimeout(() => {
+        toast.classList.remove('is-visible');
+    }, 4000);
+}
+window.showAdminToast = showAdminToast;
+
+/**
+ * Įjungia arba išjungia visų žemėlapio smeigtukų perstūmimą pele
+ * @param {boolean} enable
+ */
+function updateMarkersDraggableState(enable) {
+    if (!markersByPlaceId) return;
+    markersByPlaceId.forEach((marker) => {
+        if (marker && marker.dragging) {
+            if (enable) {
+                marker.dragging.enable();
+            } else {
+                marker.dragging.disable();
+            }
+        }
+    });
+}
+window.updateMarkersDraggableState = updateMarkersDraggableState;
+
 /**
  * Išsaugo arba išvalo administravimo sesiją sessionStorage
  */
@@ -2940,6 +3052,7 @@ function setAdminAuthenticated(isAuthenticated) {
     } catch {
         // Ignoruojame, jei sessionStorage neprieinamas
     }
+    updateMarkersDraggableState(Boolean(isAuthenticated));
 }
 
 /**
@@ -3375,7 +3488,12 @@ function getCountryTravelers(iso2) {
         typeof state.countryTravelers === 'object' &&
         Array.isArray(state.countryTravelers[upper])
     ) {
-        return state.countryTravelers[upper];
+        const travelers = [...state.countryTravelers[upper]];
+        const hasLukas = travelers.includes('Lukas');
+        const hasLinas = travelers.includes('Linas');
+        if (hasLukas && !hasLinas) travelers.push('Linas');
+        if (hasLinas && !hasLukas) travelers.push('Lukas');
+        return travelers;
     }
 
     // 2) Automatiškai imame narius iš tos šalies vietų (places)
@@ -4768,7 +4886,7 @@ const LEGACY_HTML_KNOWN_LOCATIONS = [
     { match: /kurtuvėn|targių oz|juodlės|svilės|vainagių|pageluvio/i, title: 'Kurtuvėnų regioninis parkas', country: 'Lietuva', iso2: 'LT', lat: 55.8267, lng: 23.0475, category: 'Lietuva' },
     { match: /ventos-dubysos|ventos–dubysos|bubių|bubiai/i, title: 'Bubiai (Ventos–Dubysos perkasas)', country: 'Lietuva', iso2: 'LT', lat: 55.8542, lng: 23.1361, category: 'Lietuva' },
     { match: /plungė/i, title: 'Plungė', country: 'Lietuva', iso2: 'LT', lat: 55.9114, lng: 21.8442, category: 'Lietuva' },
-    { match: /perlinių danielių/i, title: 'Perlinių danielių parkas', country: 'Lietuva', iso2: 'LT', lat: 55.5256, lng: 25.1026, category: 'Lietuva' },
+    { match: /perlinių danielių/i, title: 'Perlinių danielių parkas', country: 'Lietuva', iso2: 'LT', lat: 54.8889, lng: 24.1258, category: 'Lietuva' },
     { match: /dagilėl|šiaul|boružiuk|drugelių|pirmokų|giedrės/i, title: 'Šiauliai', country: 'Lietuva', iso2: 'LT', lat: 55.9349, lng: 23.3137, category: 'Lietuva' }
 ];
 

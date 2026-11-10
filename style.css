@@ -829,13 +829,55 @@ body {
     margin-bottom: 0;
 }
 
+.popup-card__videos-wrapper {
+    margin-top: 0.2rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.popup-card__videos-header {
+    font-size: 0.74rem;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.45rem;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
 .popup-card__videos {
     display: flex;
     flex-direction: column;
     gap: 0.7rem;
-    max-height: 310px;
+    max-height: 250px;
     overflow-y: auto;
-    padding-right: 2px;
+    padding-right: 6px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(56, 189, 248, 0.55) rgba(15, 23, 42, 0.7);
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+}
+
+/* Stilinga slankjuostė video sąrašo konteineriui tamsiame fone */
+.popup-card__videos::-webkit-scrollbar {
+    width: 6px;
+}
+
+.popup-card__videos::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.7);
+    border-radius: 999px;
+}
+
+.popup-card__videos::-webkit-scrollbar-thumb {
+    background: rgba(56, 189, 248, 0.55);
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.popup-card__videos::-webkit-scrollbar-thumb:hover {
+    background: rgba(56, 189, 248, 0.85);
 }
 
 .popup-video-card {
@@ -845,6 +887,7 @@ body {
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    flex-shrink: 0;
 }
 
 .popup-video-card__thumb-link {
@@ -1070,6 +1113,62 @@ body {
     color: #f8fafc;
     font-size: 0.84rem;
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+}
+
+/* Plaukiojantis pranešimas (Toast) pvz. atnaujinus koordinates */
+.admin-toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    z-index: 9999;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.75rem 1.35rem;
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(16, 185, 129, 0.65);
+    border-radius: var(--radius-pill, 9999px);
+    box-shadow: 0 14px 35px -5px rgba(0, 0, 0, 0.6), 0 0 18px rgba(16, 185, 129, 0.25);
+    color: #f8fafc;
+    font-size: 0.88rem;
+    font-weight: 500;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
+    max-width: 90vw;
+    text-align: center;
+}
+
+.admin-toast.is-visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+}
+
+.admin-toast__icon {
+    font-size: 1.15rem;
+    flex-shrink: 0;
+}
+
+.admin-toast__message {
+    color: #f1f5f9;
+    line-height: 1.4;
+}
+
+/* Smeigtukų pelės žymeklis, kai įjungtas Admin režimas (perstumiama) */
+.leaflet-marker-draggable,
+.leaflet-marker-draggable .custom-pin {
+    cursor: grab !important;
+}
+
+.leaflet-marker-draggable:active,
+.leaflet-marker-draggable:active .custom-pin {
+    cursor: grabbing !important;
 }
 
 /* Modalinių langų fonas */
@@ -3599,5 +3698,13 @@ body {
     .mode-btn {
         padding: 0.18rem 0.38rem;
         font-size: 0.64rem;
+    }
+
+    .admin-toast {
+        bottom: 16px;
+        font-size: 0.8rem;
+        padding: 0.6rem 1rem;
+        width: max-content;
+        max-width: 92vw;
     }
 }
