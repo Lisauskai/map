@@ -29,7 +29,8 @@
     "BY",
     "RU",
     "LU",
-    "UA"
+    "UA",
+    "TR"
   ],
   "countryTravelers": {
     "VA": [
@@ -1485,6 +1486,22 @@
       "category": "Autobusu",
       "description": "Sportinės varžybos",
       "travelers": [
+        "Sandra"
+      ],
+      "videos": []
+    },
+    {
+      "id": 63,
+      "title": "Marmaris",
+      "country": "Turkija",
+      "countryCode": "TR",
+      "lat": 36.8523,
+      "lng": 28.2743,
+      "date": "2012-09-16",
+      "category": "Lėktuvu",
+      "description": "Atostogos Turkijoje, Raftingas.",
+      "travelers": [
+        "Tomas",
         "Sandra"
       ],
       "videos": []
