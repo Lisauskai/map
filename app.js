@@ -12,14 +12,135 @@ const WORLD_GEOJSON_URLS = [
 // Standartinis šeimos narių sąrašas
 const DEFAULT_TRAVELERS = ['Tomas', 'Sandra', 'Lukas', 'Linas'];
 
-// 46 Europos šalių ISO-2 kodai Europos šalių skaičiavimui
+// 47 Europos šalių ISO-2 kodai Europos šalių skaičiavimui
 const EUROPEAN_COUNTRIES = [
     "AL", "AD", "AT", "BY", "BE", "BA", "BG", "HR", "CY", "CZ",
     "DK", "EE", "FI", "FR", "DE", "GR", "HU", "IS", "IE", "IT",
     "XK", "LV", "LI", "LT", "LU", "MT", "MD", "MC", "ME", "NL",
-    "MK", "NO", "PL", "PT", "RO", "SM", "RS", "SK", "SI", "ES",
-    "SE", "CH", "UA", "GB", "VA", "TR"
+    "MK", "NO", "PL", "PT", "RO", "RU", "SM", "RS", "SK", "SI",
+    "ES", "SE", "CH", "UA", "GB", "VA", "TR"
 ];
+
+// Afrikos šalių ISO-2 kodai
+const AFRICA_COUNTRIES = new Set([
+    'DZ', 'AO', 'BJ', 'BW', 'BF', 'BI', 'CV', 'CM', 'CF', 'TD',
+    'KM', 'CG', 'CD', 'CI', 'DJ', 'EG', 'GQ', 'ER', 'SZ', 'ET',
+    'GA', 'GM', 'GH', 'GN', 'GW', 'KE', 'LS', 'LR', 'LY', 'MG',
+    'MW', 'ML', 'MR', 'MU', 'YT', 'MA', 'MZ', 'NA', 'NE', 'NG',
+    'RE', 'RW', 'SH', 'ST', 'SN', 'SC', 'SL', 'SO', 'ZA', 'SS',
+    'SD', 'TZ', 'TG', 'TN', 'UG', 'EH', 'ZM', 'ZW'
+]);
+
+// Azijos šalių ISO-2 kodai (Europa apima RU, TR, CY)
+const ASIA_COUNTRIES = new Set([
+    'AF', 'AM', 'AZ', 'BH', 'BD', 'BT', 'BN', 'KH', 'CN', 'GE',
+    'HK', 'IN', 'ID', 'IR', 'IQ', 'IL', 'JP', 'JO', 'KZ', 'KW',
+    'KG', 'LA', 'LB', 'MO', 'MY', 'MV', 'MN', 'MM', 'NP', 'KP',
+    'OM', 'PK', 'PS', 'PH', 'QA', 'SA', 'SG', 'KR', 'LK', 'SY',
+    'TW', 'TJ', 'TH', 'TL', 'TM', 'AE', 'UZ', 'VN', 'YE'
+]);
+
+// Šiaurės Amerikos šalių ISO-2 kodai (JAV, Kanada, Meksika, Karibai, Centrinė Amerika)
+const NORTH_AMERICA_COUNTRIES = new Set([
+    'US', 'CA', 'MX',
+    'AI', 'AG', 'AW', 'BS', 'BB', 'BZ', 'BM', 'BQ', 'VG', 'KY',
+    'CR', 'CU', 'CW', 'DM', 'DO', 'SV', 'GL', 'GD', 'GP', 'GT',
+    'HT', 'HN', 'JM', 'MQ', 'MS', 'NI', 'PA', 'PR', 'BL', 'KN',
+    'LC', 'MF', 'PM', 'VC', 'SX', 'TT', 'TC', 'VI'
+]);
+
+// Pietų Amerikos šalių ISO-2 kodai
+const SOUTH_AMERICA_COUNTRIES = new Set([
+    'AR', 'BO', 'BR', 'CL', 'CO', 'EC', 'FK', 'GF', 'GY', 'PY',
+    'PE', 'SR', 'UY', 'VE'
+]);
+
+// Australijos ir Okeanijos šalių ISO-2 kodai
+const OCEANIA_COUNTRIES = new Set([
+    'AS', 'AU', 'CK', 'FJ', 'PF', 'GU', 'KI', 'MH', 'FM', 'NR',
+    'NC', 'NZ', 'NU', 'NF', 'MP', 'PW', 'PG', 'PN', 'WS', 'SB',
+    'TK', 'TO', 'TV', 'VU', 'WF'
+]);
+
+/**
+ * Grąžina žemyno pavadinimą lietuvių kalba pagal šalies ISO-2 kodą:
+ * 1) Jei kodas yra EUROPEAN_COUNTRIES (47 šalys, įskaitant RU, TR, CY) -> „Europa“
+ * 2) Egiptas (EG), Marokas (MA), Tunisas (TN), Libija (LY), Pietų Afrika (ZA) ir kitos Afrikos šalys -> „Afrika“
+ * 3) Izraelis (IL), JAE (AE), Sakartvelas (GE), Armėnija (AM), Azerbaidžanas (AZ), Kazachstanas (KZ), Tailandas (TH), Japonija (JP), Kinija (CN) ir kitos Azijos šalys -> „Azija“
+ * 4) JAV (US), Kanada (CA), Meksika (MX) ir Karibų/Centrinės Amerikos šalys -> „Šiaurės Amerika“
+ * 5) Brazilija (BR), Argentina (AR), Čilė (CL), Peru (PE), Kolumbija (CO) ir kt. -> „Pietų Amerika“
+ * 6) Australija (AU), Naujoji Zelandija (NZ) ir kt. -> „Australija ir Okeanija“
+ * @param {string} isoCode - Šalies ISO-2 kodas (pvz. 'LT', 'EG', 'IL', 'US', 'BR', 'AU')
+ * @returns {string} Žemyno pavadinimas lietuvių kalba
+ */
+function getContinentName(isoCode) {
+    if (!isoCode || typeof isoCode !== 'string') return '';
+    const code = isoCode.trim().toUpperCase();
+    if (!code) return '';
+
+    // 1) Europos šalys (47 Europos iššūkio šalys pagal EUROPEAN_COUNTRIES, įskaitant RU, TR, CY)
+    if (EUROPEAN_COUNTRIES.includes(code)) {
+        return 'Europa';
+    }
+
+    // 2) Afrika
+    if (AFRICA_COUNTRIES.has(code)) {
+        return 'Afrika';
+    }
+
+    // 3) Azija
+    if (ASIA_COUNTRIES.has(code)) {
+        return 'Azija';
+    }
+
+    // 4) Šiaurės Amerika (JAV, Kanada, Meksika, Karibai ir Centrinė Amerika)
+    if (NORTH_AMERICA_COUNTRIES.has(code)) {
+        return 'Šiaurės Amerika';
+    }
+
+    // 5) Pietų Amerika
+    if (SOUTH_AMERICA_COUNTRIES.has(code)) {
+        return 'Pietų Amerika';
+    }
+
+    // 6) Australija ir Okeanija
+    if (OCEANIA_COUNTRIES.has(code)) {
+        return 'Australija ir Okeanija';
+    }
+
+    // Antarktida (jei kada nors prireiktų)
+    if (code === 'AQ') {
+        return 'Antarktida';
+    }
+
+    return 'Kita';
+}
+
+/**
+ * Grąžina CSS modifikatoriaus klasę žemyno žymai (badge)
+ * @param {string} continentName - Žemyno pavadinimas
+ * @returns {string} CSS klasė
+ */
+function getContinentBadgeClass(continentName) {
+    switch (continentName) {
+        case 'Europa':
+            return 'country-cell__badge-tag--eu country-cell__badge-tag--europe';
+        case 'Afrika':
+            return 'country-cell__badge-tag--africa';
+        case 'Azija':
+            return 'country-cell__badge-tag--asia';
+        case 'Šiaurės Amerika':
+            return 'country-cell__badge-tag--north-america';
+        case 'Pietų Amerika':
+            return 'country-cell__badge-tag--south-america';
+        case 'Australija ir Okeanija':
+            return 'country-cell__badge-tag--oceania';
+        case 'Antarktida':
+            return 'country-cell__badge-tag--antarctica';
+        default:
+            return 'country-cell__badge-tag--other';
+    }
+}
 
 // Naršyklės Intl.DisplayNames API šalių ISO-2 kodų vertimui į lietuvių kalbą
 const regionDisplayNamesLt =
@@ -77,7 +198,29 @@ const COUNTRY_NAMES_LT = {
     TR: 'Turkija',
     IL: 'Izraelis',
     EG: 'Egiptas',
-    RU: 'Rusija'
+    RU: 'Rusija',
+    MA: 'Marokas',
+    TN: 'Tunisas',
+    LY: 'Libija',
+    ZA: 'Pietų Afrika',
+    AE: 'Jungtiniai Arabų Emyratai',
+    GE: 'Sakartvelas',
+    AM: 'Armėnija',
+    AZ: 'Azerbaidžanas',
+    KZ: 'Kazachstanas',
+    TH: 'Tailandas',
+    JP: 'Japonija',
+    CN: 'Kinija',
+    US: 'Jungtinės Amerikos Valstijos',
+    CA: 'Kanada',
+    MX: 'Meksika',
+    BR: 'Brazilija',
+    AR: 'Argentina',
+    CL: 'Čilė',
+    PE: 'Peru',
+    CO: 'Kolumbija',
+    AU: 'Australija',
+    NZ: 'Naujoji Zelandija'
 };
 
 // Pagalbinis ISO-3 -> ISO-2 žemėlapis (kai kuriuose GeoJSON šaltiniuose, pvz. Prancūzijai ar Norvegijai, ISO_A2 būna "-99")
@@ -121,6 +264,7 @@ const ISO3_TO_ISO2 = {
     BGR: 'BG',
     UKR: 'UA',
     BLR: 'BY',
+    RUS: 'RU',
     MDA: 'MD',
     TUR: 'TR',
     CYP: 'CY',
@@ -148,7 +292,12 @@ const FALLBACK_DATA = {
         'BE', 'NL', 'AT', 'HU', 'SI', 'SM', 'BY', 'RU', 'LU', 'UA'
     ],
     countryTravelers: {
-        VA: ['Tomas', 'Sandra', 'Lukas', 'Linas']
+        VA: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
+        IL: ['Tomas'],
+        EG: ['Tomas'],
+        CZ: ['Tomas', 'Sandra'],
+        SK: ['Tomas', 'Sandra'],
+        RU: ['Tomas', 'Sandra']
     },
     places: [
         {
@@ -426,7 +575,7 @@ const FALLBACK_DATA = {
             date: '2026-06-14',
             category: 'Lėktuvu',
             description: "Atostogos karo fone: kontrastingi Tel Avivo kvartalai, Jafos senamiestis, požeminės slėptuvės ir skubus išvykimas autobusu per Eilatą link Egipto sienos.",
-            travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
+            travelers: ['Tomas'],
             videos: [
                 {
                     title: "Tel Avivas: Atostogos karo fone ir pabėgimas namo",
@@ -444,7 +593,7 @@ const FALLBACK_DATA = {
             date: '2026-06-16',
             category: 'Lėktuvu',
             description: "Naktinė kelionė per Sinajaus pusiasalio kalnus iš Eilato į Šarm el Šeichą: Koptų bažnyčia, Senasis turgus, Raudonosios jūros pakrantė ir skrydis namo.",
-            travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
+            travelers: ['Tomas'],
             videos: [
                 {
                     title: "Kelionė per Egiptą ir Šarm el Šeicho kontrastai",
@@ -480,7 +629,7 @@ const FALLBACK_DATA = {
             date: '2025-07-15',
             category: 'Automobiliu',
             description: "14 km plaukimas mediniais plaustais Dunajeco upe su vietiniais guraliais, Trijų Karūnų ir Sokolicos kalnų panoramos bei tradicinė vakaronė „Chata Pieniny“.",
-            travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
+            travelers: ['Tomas', 'Sandra'],
             videos: [
                 {
                     title: "Slovakija, Pieninų nacionalinis parkas | Plaustais per Dunajeco upę",
@@ -498,7 +647,7 @@ const FALLBACK_DATA = {
             date: '2025-07-16',
             category: 'Automobiliu',
             description: "Vienas lankomiausių urvų Slovakijoje su įspūdingais kalcito dariniais ir požeminiais kriokliais: 1370 m apžvalginis maršrutas ir 874 laipteliai.",
-            travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
+            travelers: ['Tomas', 'Sandra'],
             videos: [
                 {
                     title: "Belianskos urvas (Belianska jaskyňa), Slovakija",
@@ -516,7 +665,7 @@ const FALLBACK_DATA = {
             date: '2025-07-17',
             category: 'Automobiliu',
             description: "Žygis pėsčiomis Aukštuosiuose Tatruose nuo Skalnaté Pleso (1751 m) iki kalnų trobelės „Zamkovského chata“, Mala Studena slėnio kriokliai ir nusileidimas funikulieriumi iš Hrebienok.",
-            travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
+            travelers: ['Tomas', 'Sandra'],
             videos: [
                 {
                     title: "Slovakija, Aukštieji Tatrai: Skalnaté Pleso, Zamkovského, Hrebienok",
@@ -534,7 +683,7 @@ const FALLBACK_DATA = {
             date: '2024-07-20',
             category: 'Automobiliu',
             description: "Pažintis su Slovakijos sostine Bratislava: pasivaikščiojimas po jaukų senamiestį, Dunojaus pakrantę ir Bratislavos pilies apylinkes.",
-            travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
+            travelers: ['Tomas', 'Sandra'],
             videos: [
                 {
                     title: "Bratislava, Slovakija",
@@ -1093,7 +1242,7 @@ const FALLBACK_DATA = {
             date: '2023-09-25',
             category: 'Automobiliu',
             description: "Šimto bokštų miestas: Karolio tiltas, Prahos pilis, Senamiesčio aikštė ir astronominis laikrodis.",
-            travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
+            travelers: ['Tomas', 'Sandra'],
             videos: []
         },
         {
@@ -1106,7 +1255,7 @@ const FALLBACK_DATA = {
             date: '2023-09-27',
             category: 'Automobiliu',
             description: "Futuristinis Ještedo televizijos bokštas ir viešbutis kalno viršūnėje su kvapą gniaužiančia panorama.",
-            travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
+            travelers: ['Tomas', 'Sandra'],
             videos: []
         },
         {
@@ -1491,6 +1640,8 @@ const countryLabelsLayer = L.layerGroup().addTo(map);
 const markersLayer = L.layerGroup().addTo(map);
 const markersByPlaceId = new Map();
 window.markersByPlaceId = markersByPlaceId;
+window.map = map;
+window.markersLayer = markersLayer;
 let adminPickMarker = null;
 
 /**
@@ -1722,11 +1873,14 @@ function getValidVideos(place) {
 }
 
 /**
- * Išgauna patikimą ISO-2 šalies kodą iš GeoJSON objekto savybių
+ * Išgauna patikimą ISO-2 šalies kodą iš GeoJSON objekto savybių:
+ * 3) Užtikrina, kad Rusija (RU) būtų teisingai atpažįstama tiek pagal ISO_A2 === 'RU',
+ *    tiek pagal ADM0_A3 === 'RUS', tiek pagal name === 'Russia'.
  */
 function getCountryIso2(feature) {
     const props = (feature && feature.properties) || {};
 
+    // 1. Tiesioginis ISO-2 patikrinimas (įskaitant ISO_A2 === 'RU')
     const candidates = [
         props.ISO_A2_EH,
         props.ISO_A2,
@@ -1743,6 +1897,7 @@ function getCountryIso2(feature) {
         }
     }
 
+    // 2. ISO-3 patikrinimas (įskaitant ADM0_A3 === 'RUS')
     const iso3Candidates = [
         props.ADM0_A3,
         props.ISO_A3,
@@ -1752,8 +1907,39 @@ function getCountryIso2(feature) {
         props.SU_A3
     ];
     for (const iso3 of iso3Candidates) {
-        if (typeof iso3 === 'string' && ISO3_TO_ISO2[iso3.trim().toUpperCase()]) {
-            return ISO3_TO_ISO2[iso3.trim().toUpperCase()];
+        if (typeof iso3 === 'string' && iso3.trim()) {
+            const cleanIso3 = iso3.trim().toUpperCase();
+            if (cleanIso3 === 'RUS') return 'RU';
+            if (ISO3_TO_ISO2[cleanIso3]) {
+                return ISO3_TO_ISO2[cleanIso3];
+            }
+        }
+    }
+
+    // 3. Pavadinimo patikrinimas (name === 'Russia' ir kiti sinonimai)
+    const nameCandidates = [
+        props.name,
+        props.NAME,
+        props.name_en,
+        props.NAME_EN,
+        props.ADMIN,
+        props.admin,
+        props.SOVEREIGNT,
+        props.sovereignt,
+        props.BRK_NAME,
+        props.formal_en
+    ];
+    for (const name of nameCandidates) {
+        if (typeof name === 'string' && name.trim()) {
+            const cleanName = name.trim().toLowerCase();
+            if (
+                cleanName === 'russia' ||
+                cleanName === 'russian federation' ||
+                cleanName === 'rusija' ||
+                cleanName === 'rossiya'
+            ) {
+                return 'RU';
+            }
         }
     }
 
@@ -1896,7 +2082,8 @@ function hasPlaceInPolygon(polygonCoords, places) {
  * išfiltruoja užjūrio teritorijas už Europos/Viduržemio jūros ribų (ilguma < -11 arba platuma < 25),
  * nebent tame poligone yra realus kelionės smeigtukas iš „places“ sąrašo.
  */
-function shouldKeepPolygonPart(polygonCoords, places) {
+function shouldKeepPolygonPart(polygonCoords, places, iso2 = '') {
+    if (iso2 === 'RU') return true;
     const outerRing = polygonCoords && polygonCoords[0];
     if (!Array.isArray(outerRing) || outerRing.length === 0) return false;
 
@@ -1930,6 +2117,12 @@ function prepareFilteredGeoJson(rawGeoJson, visitedSet, places) {
 
             const iso2 = getCountryIso2(feature);
             const isVisited = visitedSet.has(iso2);
+
+            // 3) Užtikriname, kad Rusija (RU) nebūtų blokuojama ar karpoma dėl užjūrio teritorijų filtro:
+            // išlaikome pilną jos teritoriją
+            if (iso2 === 'RU') {
+                return feature;
+            }
 
             // Užjūrio teritorijas filtruojame aplankytoms Europos/Viduržemio šalims (arba kai bent viena dalis yra Europoje)
             const hasPartInEurope = geom.coordinates.some((polyCoords) => {
@@ -2212,18 +2405,33 @@ function setMapMode(mode) {
         btn.classList.toggle('is-active', btn.dataset.mode === state.mapMode);
     });
 
-    // Paslepiame arba parodome pagrindinį plytelių sluoksnį
+    // 1) Kai vartotojas įjungia režimą „Tik šalys“, visiškai paslepiame visus
+    // miestų ir kelionių smeigtukus / piktogramas (nuimame smeigtukų sluoksnį nuo žemėlapio ir išvalome),
+    // kad matytųsi TIK švarūs šalių kontūrai ir šalių pavadinimai.
     if (state.mapMode === 'countries') {
         if (map.hasLayer(baseTileLayer)) {
             map.removeLayer(baseTileLayer);
         }
+        if (map.hasLayer(markersLayer)) {
+            map.removeLayer(markersLayer);
+        }
+        markersLayer.clearLayers();
+        markersByPlaceId.clear();
+        map.closePopup();
         mapContainerEl.classList.add('map--countries-only');
     } else {
         if (!map.hasLayer(baseTileLayer)) {
             baseTileLayer.addTo(map);
             baseTileLayer.bringToBack();
         }
+        if (!map.hasLayer(markersLayer)) {
+            map.addLayer(markersLayer);
+        }
         mapContainerEl.classList.remove('map--countries-only');
+
+        // 2) Kai vartotojas grįžta į režimą „Detalus žemėlapis“, vėl atvaizduojame smeigtukus
+        // (atsižvelgiant į tuo metu pasirinktą keliautojo ir kategorijos filtrą)
+        renderMap({ fitBounds: false, isSearch: false });
     }
 
     renderCountriesLayer();
@@ -2531,23 +2739,51 @@ function updateStats(filteredPlaces = getFilteredPlaces()) {
  */
 function getFilteredPlaces() {
     const normalizedQuery = normalizeText(state.searchQuery);
+    const isSpecificTraveler = state.activeTraveler && state.activeTraveler !== 'Visi';
+
+    // Jei pasirinktas konkretus keliautojas, iš anksto apskaičiuojame jo aplankytų šalių aibę (ISO-2 kodais)
+    const travelerVisitedSet = isSpecificTraveler
+        ? new Set(
+              getVisitedCountriesByTraveler(state.activeTraveler).map((c) =>
+                  String(c).trim().toUpperCase()
+              )
+          )
+        : null;
 
     return state.places.filter((place) => {
+        // 1. Kategorijos filtras
         const matchesCategory =
             state.activeCategory === 'Visos' || place.category === state.activeCategory;
         if (!matchesCategory) return false;
 
-        const travelers = getPlaceTravelers(place);
-        const matchesTraveler =
-            state.activeTraveler === 'Visi' || travelers.includes(state.activeTraveler);
-        if (!matchesTraveler) return false;
+        // 2. Keliautojo filtras: tašką rodome TIK TADA, kai tenkinamos ABI sąlygos
+        if (isSpecificTraveler) {
+            // Sąlyga a: Keliautojas yra įtrauktas į to taško place.travelers masyvą
+            const travelers = getPlaceTravelers(place);
+            if (!travelers.includes(state.activeTraveler)) {
+                return false;
+            }
 
+            // Sąlyga b: To taško šalis yra grąžinama getVisitedCountriesByTraveler(selectedTraveler) sąraše
+            // (t. y. jei narys nebuvo toje šalyje pagal countryTravelers, jokie tos šalies smeigtukai jam negali būti rodomi)
+            const placeCountryIso2 =
+                (place.countryCode && /^[A-Z]{2}$/i.test(String(place.countryCode).trim()))
+                    ? String(place.countryCode).trim().toUpperCase()
+                    : resolvePlaceCountryCode(place);
+
+            if (!placeCountryIso2 || !travelerVisitedSet.has(placeCountryIso2)) {
+                return false;
+            }
+        }
+
+        // 3. Paieškos filtras
         if (!normalizedQuery) return true;
 
         const videoTitles = getValidVideos(place)
             .map((v) => v.title)
             .join(' ');
 
+        const travelers = getPlaceTravelers(place);
         const searchableText = normalizeText(
             `${place.title} ${place.country} ${place.category} ${place.description} ${place.date || ''} ${travelers.join(' ')} ${videoTitles}`
         );
@@ -2556,14 +2792,32 @@ function getFilteredPlaces() {
 }
 
 /**
- * Atvaizduoja smeigtukus žemėlapyje ir sklandžiai priartina (flyTo / flyToBounds)
+ * 1) Atvaizduoja smeigtukus žemėlapyje ir sklandžiai priartina (flyTo / flyToBounds).
+ * Prieš piešiant smeigtukus, visiškai išvalo esamą smeigtukų sluoksnį (markersLayer.clearLayers()).
  */
 function renderMap({ fitBounds = true, isSearch = false } = {}) {
-    const filtered = getFilteredPlaces();
-
+    // 1) Prieš piešiant smeigtukus, visiškai išvalome esamą smeigtukų sluoksnį
     markersLayer.clearLayers();
     markersByPlaceId.clear();
+
+    const filtered = getFilteredPlaces();
     updateStats(filtered);
+
+    // 1) Kai įjungtas režimas „Tik šalys“, visiškai paslepiame visus smeigtukus
+    // (nuimame sluoksnį nuo žemėlapio ir nepiešiame jokių taškų), kad matytųsi TIK švarūs šalių kontūrai ir pavadinimai
+    if (state.mapMode === 'countries') {
+        if (map.hasLayer(markersLayer)) {
+            map.removeLayer(markersLayer);
+        }
+        map.closePopup();
+        emptyStateEl.hidden = true;
+        return;
+    }
+
+    // 2) Režime „Detalus žemėlapis“ užtikriname, kad smeigtukų sluoksnis būtų žemėlapyje
+    if (!map.hasLayer(markersLayer)) {
+        map.addLayer(markersLayer);
+    }
 
     if (filtered.length === 0) {
         emptyStateEl.hidden = false;
@@ -2974,7 +3228,7 @@ function findIso2ByCountryName(countryName) {
 
     if (state.cachedWorldGeoJson && Array.isArray(state.cachedWorldGeoJson.features)) {
         for (const feature of state.cachedWorldGeoJson.features) {
-            const code = getFeatureIsoCode(feature);
+            const code = getCountryIso2(feature);
             if (/^[A-Z]{2}$/.test(code)) {
                 const ltName = normalizeText(getCountryDisplayName(feature, code));
                 if (ltName === target) {
@@ -3189,9 +3443,9 @@ function getVisitedCountriesByTraveler(traveler) {
 
 /**
  * Apskaičiuoja Europos šalių lankomumo statistiką:
- * - total: iš viso Europos šalių (46)
+ * - total: iš viso Europos šalių (47)
  * - visited: kiek iš jų jau aplankyta (pagal pasirinktą keliautoją arba bendrai)
- * - missing: kiek Europos šalių dar trūksta aplankyti (46 - aplankyta)
+ * - missing: kiek Europos šalių dar trūksta aplankyti (47 - aplankyta)
  * - percentage: procentinė išraiška skaičiumi (pvz. 59)
  * - percentageFormatted: procentinė išraiška tekstu (pvz. '59%')
  * - visitedCountries: aplankytų Europos šalių ISO-2 kodų sąrašas
@@ -3233,6 +3487,7 @@ function getEuropeStats(traveler = 'Visi') {
 
 // Eksportuojame globaliai, kad būtų prieinama visame kode ir konsolėje
 window.state = state;
+window.markersLayer = markersLayer;
 window.EUROPEAN_COUNTRIES = EUROPEAN_COUNTRIES;
 window.getEuropeStats = getEuropeStats;
 window.getVisitedCountriesByTraveler = getVisitedCountriesByTraveler;
@@ -3240,6 +3495,15 @@ window.getCountryTravelers = getCountryTravelers;
 window.resolvePlaceCountryCode = resolvePlaceCountryCode;
 window.findCountryIso2ByCoordinates = findCountryIso2ByCoordinates;
 window.generateKelionesJsonString = generateKelionesJsonString;
+window.syncCountryMemberWithPlaces = syncCountryMemberWithPlaces;
+window.renderAdminPlacesTable = renderAdminPlacesTable;
+window.getFilteredPlaces = getFilteredPlaces;
+window.renderMap = renderMap;
+window.setMapMode = setMapMode;
+window.getCountryIso2 = getCountryIso2;
+window.prepareFilteredGeoJson = prepareFilteredGeoJson;
+window.getContinentName = getContinentName;
+window.getContinentBadgeClass = getContinentBadgeClass;
 
 /**
  * Konvertuoja ISO-2 šalies kodą į vėliavos emodžį (pvz., LT -> 🇱🇹)
@@ -3375,10 +3639,9 @@ function renderCountriesStatsModal() {
         const countryRowsHtml = sortedVisited.map((iso2) => {
             const countryName = getCountryDisplayName(null, iso2);
             const flag = getCountryFlagEmoji(iso2);
-            const isEurope = EUROPEAN_COUNTRIES.includes(iso2);
-            const regionBadgeHtml = isEurope
-                ? '<span class="country-cell__badge-tag country-cell__badge-tag--eu" title="Europos šalis">Europa</span>'
-                : '<span class="country-cell__badge-tag country-cell__badge-tag--other" title="Kita pasaulio šalis">Kita</span>';
+            const continent = getContinentName(iso2);
+            const badgeModifier = getContinentBadgeClass(continent);
+            const regionBadgeHtml = `<span class="country-cell__badge-tag ${badgeModifier}" title="${escapeHtml(continent)}">${escapeHtml(continent)}</span>`;
 
             const memberCellsHtml = memberStats.map((m) => {
                 const hasVisited = m.visitedList.includes(iso2);
@@ -3444,7 +3707,7 @@ function renderCountriesStatsModal() {
         missingCountriesTableBodyEl.innerHTML = missingRowsHtml || `
             <tr>
                 <td colspan="3" style="text-align: center; color: #34d399; padding: 1.5rem;">
-                    🎉 Sveikiname! ${isAll ? 'Visos 46 Europos šalys jau aplankytos!' : `${escapeHtml(currentTraveler)} jau aplankė visas 46 Europos šalis!`}
+                    🎉 Sveikiname! ${isAll ? 'Visos 47 Europos šalys jau aplankytos!' : `${escapeHtml(currentTraveler)} jau aplankė visas 47 Europos šalis!`}
                 </td>
             </tr>
         `;
@@ -3872,6 +4135,13 @@ function renderAdminPanel() {
         .join('');
 
     // 2) Plačios esamų taškų lentelės atvaizdavimas
+    renderAdminPlacesTable();
+}
+
+/**
+ * 2) Atvaizduoja esamų vietų (places) lentelę Admin panelėje
+ */
+function renderAdminPlacesTable() {
     const filteredPlaces = getAdminFilteredPlaces();
     adminPlacesCountEl.textContent = `${filteredPlaces.length} / ${state.places.length}`;
 
@@ -3936,6 +4206,44 @@ function renderAdminPanel() {
             `;
         })
         .join('');
+}
+
+/**
+ * 3) Sinchronizuoja konkrečios šalies taškų (places) keliautojus su šalies keliautojais:
+ * kai prie šalies nuimama arba uždedama nario varnelė, automatiškai prideda arba pašalina
+ * tą narį ir visuose tos šalies taškuose (places).
+ * @param {string} countryCode - 2 raidžių šalies ISO kodas
+ * @param {string} member - keliautojo vardas ('Tomas', 'Sandra', 'Lukas', 'Linas')
+ * @param {boolean} isAdded - true, jei narys pridedamas; false, jei pašalinamas
+ */
+function syncCountryMemberWithPlaces(countryCode, member, isAdded) {
+    if (!countryCode || !member || !Array.isArray(state.places)) return;
+
+    const upperCountry = String(countryCode).trim().toUpperCase();
+
+    state.places.forEach((place) => {
+        const placeIso =
+            (place.countryCode && /^[A-Z]{2}$/i.test(String(place.countryCode).trim()))
+                ? String(place.countryCode).trim().toUpperCase()
+                : resolvePlaceCountryCode(place);
+
+        if (placeIso === upperCountry) {
+            const currentTravelers = getPlaceTravelers(place);
+            const travelerSet = new Set(currentTravelers);
+            if (isAdded) {
+                travelerSet.add(member);
+            } else {
+                travelerSet.delete(member);
+            }
+            // Išlaikome tvarkingą DEFAULT_TRAVELERS eiliškumą
+            place.travelers = DEFAULT_TRAVELERS.filter((t) => travelerSet.has(t));
+
+            // Jei šiuo metu šis taškas yra redaguojamas Admin formoje, atnaujiname ir formos varneles
+            if (state.editingPlaceId === place.id) {
+                setAdminTravelerCheckboxes(place.travelers);
+            }
+        }
+    });
 }
 
 /**
@@ -4356,6 +4664,9 @@ adminCountriesListEl.addEventListener('change', (event) => {
     const row = input.closest('.admin-country-row');
     if (!row) return;
 
+    const member = String(input.value || '').trim();
+    const isChecked = Boolean(input.checked);
+
     const checkedBoxes = row.querySelectorAll('.admin-country-member-input:checked');
     const selectedMembers = Array.from(checkedBoxes).map((cb) => cb.value);
 
@@ -4365,7 +4676,17 @@ adminCountriesListEl.addEventListener('change', (event) => {
 
     state.countryTravelers[countryCode] = selectedMembers;
 
-    // Sinchronizuojame žemėlapio sluoksnius, skaitiklius ir šalių modalą
+    // 3) Admin panelėje: kai prie šalies (countryTravelers) nuimama arba uždedama nario varnelė,
+    // automatiškai sinchronizuojame (pridedame arba pašaliname) tą narį ir visuose tos šalies taškuose (places)
+    syncCountryMemberWithPlaces(countryCode, member, isChecked);
+
+    // Sinchronizuojame Admin taškų lentelę (kad iškart matytųsi atnaujintos keliautojų varnelės)
+    renderAdminPlacesTable();
+
+    // 1) Išvalome ir atnaujiname žemėlapio smeigtukus
+    renderMap({ fitBounds: false, isSearch: false });
+
+    // Sinchronizuojame GeoJSON šalių sluoksnį, viršutinės juostos skaitiklius ir šalių modalą
     updateCountriesLayerStyle(state.activeTraveler);
     updateStats(getFilteredPlaces());
     renderCountriesStatsModal();
@@ -4737,8 +5058,10 @@ travelerFiltersEl.addEventListener('click', (event) => {
     state.activeTraveler = nextTraveler;
     setActiveTravelerButton(nextTraveler);
 
-    // 1) Išfiltruojame smeigtukus (markers) žemėlapyje ir atnaujiname skaitiklius
-    renderMap({ fitBounds: true, isSearch: false });
+    // 1) Išfiltruojame smeigtukus (markers) žemėlapyje ir atnaujiname skaitiklius.
+    // 3) Jei vartotojas būdamas „Tik šalys“ režime keičia keliautoją, renderMap išvalo smeigtukus ir jų nerodo,
+    // o updateCountriesLayerStyle perspalvina tik šalis.
+    renderMap({ fitBounds: state.mapMode !== 'countries', isSearch: false });
 
     // 2) Iškviečiame GeoJSON sluoksnio stiliaus atnaujinimą (geoJsonLayer.setStyle(...))
     // Žemėlapyje (tiek „Detaliame“, tiek „Tik šalys“ režime) užspalviname TIK tas šalis,

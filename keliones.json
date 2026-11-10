@@ -51,6 +51,10 @@
     "SK": [
       "Tomas",
       "Sandra"
+    ],
+    "RU": [
+      "Tomas",
+      "Sandra"
     ]
   },
   "places": [
@@ -395,10 +399,7 @@
       "category": "Lėktuvu",
       "description": "Atostogos karo fone: kontrastingi Tel Avivo kvartalai, Jafos senamiestis, požeminės slėptuvės ir skubus išvykimas autobusu per Eilatą link Egipto sienos.",
       "travelers": [
-        "Tomas",
-        "Sandra",
-        "Lukas",
-        "Linas"
+        "Tomas"
       ],
       "videos": [
         {
@@ -418,10 +419,7 @@
       "category": "Lėktuvu",
       "description": "Naktinė kelionė per Sinajaus pusiasalio kalnus iš Eilato į Šarm el Šeichą: Koptų bažnyčia, Senasis turgus, Raudonosios jūros pakrantė ir skrydis namo.",
       "travelers": [
-        "Tomas",
-        "Sandra",
-        "Lukas",
-        "Linas"
+        "Tomas"
       ],
       "videos": [
         {
@@ -465,9 +463,7 @@
       "description": "14 km plaukimas mediniais plaustais Dunajeco upe su vietiniais guraliais, Trijų Karūnų ir Sokolicos kalnų panoramos bei tradicinė vakaronė „Chata Pieniny“.",
       "travelers": [
         "Tomas",
-        "Sandra",
-        "Lukas",
-        "Linas"
+        "Sandra"
       ],
       "videos": [
         {
@@ -488,9 +484,7 @@
       "description": "Vienas lankomiausių urvų Slovakijoje su įspūdingais kalcito dariniais ir požeminiais kriokliais: 1370 m apžvalginis maršrutas ir 874 laipteliai.",
       "travelers": [
         "Tomas",
-        "Sandra",
-        "Lukas",
-        "Linas"
+        "Sandra"
       ],
       "videos": [
         {
@@ -511,9 +505,7 @@
       "description": "Žygis pėsčiomis Aukštuosiuose Tatruose nuo Skalnaté Pleso (1751 m) iki kalnų trobelės „Zamkovského chata“, Mala Studena slėnio kriokliai ir nusileidimas funikulieriumi iš Hrebienok.",
       "travelers": [
         "Tomas",
-        "Sandra",
-        "Lukas",
-        "Linas"
+        "Sandra"
       ],
       "videos": [
         {
@@ -534,9 +526,7 @@
       "description": "Pažintis su Slovakijos sostine Bratislava: pasivaikščiojimas po jaukų senamiestį, Dunojaus pakrantę ir Bratislavos pilies apylinkes.",
       "travelers": [
         "Tomas",
-        "Sandra",
-        "Lukas",
-        "Linas"
+        "Sandra"
       ],
       "videos": [
         {
@@ -1218,9 +1208,7 @@
       "description": "Šimto bokštų miestas: Karolio tiltas, Prahos pilis, Senamiesčio aikštė ir astronominis laikrodis.",
       "travelers": [
         "Tomas",
-        "Sandra",
-        "Lukas",
-        "Linas"
+        "Sandra"
       ],
       "videos": []
     },
@@ -1236,9 +1224,7 @@
       "description": "Futuristinis Ještedo televizijos bokštas ir viešbutis kalno viršūnėje su kvapą gniaužiančia panorama.",
       "travelers": [
         "Tomas",
-        "Sandra",
-        "Lukas",
-        "Linas"
+        "Sandra"
       ],
       "videos": []
     },

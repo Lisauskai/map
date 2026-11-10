@@ -528,6 +528,13 @@ body {
     background-color: #cfe8fc;
 }
 
+/* 1) Režime „Tik šalys“ visiškai paslepiame visus smeigtukus ir iššokančius langus */
+#map.map--countries-only .leaflet-marker-pane,
+#map.map--countries-only .leaflet-shadow-pane,
+#map.map--countries-only .leaflet-popup-pane {
+    display: none !important;
+}
+
 /* Švelnus kolorito subalansavimas Esri World Street Map plytelėms */
 #map .leaflet-tile-pane {
     filter: saturate(0.92) contrast(0.98) brightness(1.01);
@@ -1604,27 +1611,75 @@ body {
     text-transform: uppercase;
 }
 
-/* Žyma „Europa“ arba „Kita“ */
+/* Žyma pagal žemyną („Europa“, „Afrika“, „Azija“, „Šiaurės Amerika“, „Pietų Amerika“, „Australija ir Okeanija“) */
 .country-cell__badge-tag {
     font-size: 0.64rem;
     font-weight: 700;
     border-radius: 4px;
-    padding: 0.1rem 0.38rem;
+    padding: 0.1rem 0.42rem;
     text-transform: uppercase;
     letter-spacing: 0.03em;
     line-height: 1.2;
+    white-space: nowrap;
+    display: inline-block;
+    flex-shrink: 0;
 }
 
-.country-cell__badge-tag--eu {
+/* Europa - melsva / dangaus */
+.country-cell__badge-tag--eu,
+.country-cell__badge-tag--europe {
     background: rgba(56, 189, 248, 0.16);
     color: #38bdf8;
     border: 1px solid rgba(56, 189, 248, 0.35);
 }
 
-.country-cell__badge-tag--other {
+/* Afrika - šilta gintarinė / auksinė */
+.country-cell__badge-tag--africa {
     background: rgba(245, 158, 11, 0.16);
     color: #fbbf24;
     border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+/* Azija - violetinė / purpurinė */
+.country-cell__badge-tag--asia {
+    background: rgba(168, 85, 247, 0.16);
+    color: #c084fc;
+    border: 1px solid rgba(168, 85, 247, 0.35);
+}
+
+/* Šiaurės Amerika - smaragdinė / žalia */
+.country-cell__badge-tag--north-america {
+    background: rgba(16, 185, 129, 0.16);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+/* Pietų Amerika - turkio / melsvai žalia */
+.country-cell__badge-tag--south-america {
+    background: rgba(20, 184, 166, 0.16);
+    color: #2dd4bf;
+    border: 1px solid rgba(20, 184, 166, 0.35);
+}
+
+/* Australija ir Okeanija - rožinė / fuksija */
+.country-cell__badge-tag--oceania {
+    background: rgba(236, 72, 153, 0.16);
+    color: #f472b6;
+    border: 1px solid rgba(236, 72, 153, 0.35);
+}
+
+/* Antarktida - ledo melsva */
+.country-cell__badge-tag--antarctica {
+    background: rgba(224, 242, 254, 0.16);
+    color: #bae6fd;
+    border: 1px solid rgba(224, 242, 254, 0.35);
+}
+
+/* Atsarginė žyma */
+.country-cell__badge-tag--other {
+    background: rgba(148, 163, 184, 0.16);
+    color: #94a3b8;
+    border: 1px solid rgba(148, 163, 184, 0.35);
 }
 
 .country-cell__index {
@@ -3164,6 +3219,7 @@ body {
     .country-cell__badge-tag {
         font-size: 0.58rem;
         padding: 0.06rem 0.3rem;
+        white-space: nowrap;
     }
 
     .member-summary__total {
