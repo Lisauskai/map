@@ -1868,7 +1868,7 @@ window.extractTimestampFromUrl = extractTimestampFromUrl;
  *   ištraukia tikslų 11 simbolių videoId.
  * - Jei nurodyta laiko žyma (timestamp lauke arba pačiame URL), konvertuoja ją į sekundes (pvz., "03:45" -> 225, "120" -> 120).
  * - Visada sugeneruoja švarų standartinį adresą: https://www.youtube.com/watch?v=${videoId}
- *   (o jei sekundės > 0, prideda &t=${seconds}s, pvz.: https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=225s).
+ *   (o jei sekundės > 0, prideda &t=${seconds}, pvz.: https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=225).
  *
  * @param {string} url - Bet koks YouTube URL arba video ID
  * @param {string|number} [timestamp] - Pasirinktinė laiko žyma
@@ -1878,7 +1878,17 @@ function buildYoutubeWatchUrl(url, timestamp) {
     if (!url || typeof url !== 'string') return '';
     const videoId = extractYouTubeVideoId(url);
     if (!videoId) {
-        return getValidHttpUrl(url) || '';
+        let fallbackUrl = getValidHttpUrl(url) || '';
+        if (fallbackUrl) {
+            try {
+                const u = new URL(fallbackUrl);
+                u.searchParams.delete('app');
+                fallbackUrl = u.toString();
+            } catch {
+                fallbackUrl = fallbackUrl.replace(/[?&]app=[^&#]*/gi, '');
+            }
+        }
+        return fallbackUrl;
     }
 
     let seconds = 0;
@@ -1889,7 +1899,7 @@ function buildYoutubeWatchUrl(url, timestamp) {
     }
 
     if (seconds > 0) {
-        return `https://www.youtube.com/watch?v=${videoId}&t=${seconds}s`;
+        return `https://www.youtube.com/watch?v=${videoId}&t=${seconds}`;
     }
     return `https://www.youtube.com/watch?v=${videoId}`;
 }
