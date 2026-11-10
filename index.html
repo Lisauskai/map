@@ -57,10 +57,15 @@
 
                 <!-- 2) Statistikos skaitikliai (Šalys | Vietos | Vlogai) -->
                 <div class="stats-bar" aria-label="Kelionių statistika">
-                    <div class="stat-item">
-                        <span class="stat-item__value" id="statCountries">0</span>
+                    <button type="button" class="stat-item stat-item--clickable" id="openCountriesStatsBtn" title="Peržiūrėti šalių sąrašą" aria-label="Peržiūrėti šalių sąrašą">
+                        <span class="stat-item__value-row">
+                            <span class="stat-item__value" id="statCountries">0</span>
+                            <svg class="stat-item__icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"></path>
+                            </svg>
+                        </span>
                         <span class="stat-item__label">Šalys</span>
-                    </div>
+                    </button>
                     <span class="stat-divider" aria-hidden="true">|</span>
                     <div class="stat-item">
                         <span class="stat-item__value" id="statPlaces">0</span>
@@ -185,6 +190,100 @@
                     <button type="button" id="returnToAdminBtn" class="admin-btn admin-btn--primary">
                         Grįžti į Admin langą
                     </button>
+                </div>
+            </div>
+
+            <!-- Šalių statistikos ir Europos iššūkio modalinis langas -->
+            <div id="countriesStatsModal" class="admin-modal-overlay countries-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="countriesStatsTitle" hidden>
+                <div class="countries-stats-card">
+                    <!-- Modalinė antraštė -->
+                    <div class="countries-stats-card__header">
+                        <div class="countries-stats-card__title-group">
+                            <div class="countries-stats-card__icon" aria-hidden="true">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="2" y1="12" x2="22" y2="12"></line>
+                                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h2 id="countriesStatsTitle" class="countries-stats-card__title">Šalių statistika ir Europos iššūkis</h2>
+                                <p class="countries-stats-card__subtitle">Lisauskų šeimos aplankytos šalys ir Europos iššūkio progresas</p>
+                            </div>
+                        </div>
+                        <button type="button" id="closeCountriesStatsBtn" class="countries-stats-card__close" aria-label="Uždaryti langą">
+                            ✕
+                        </button>
+                    </div>
+
+                    <!-- „Europos iššūkis“ blokas su progreso juosta (Progress bar) -->
+                    <div class="europe-challenge-card">
+                        <div class="europe-challenge-card__header">
+                            <div class="europe-challenge-card__badge">
+                                <span class="europe-challenge-card__badge-icon">🇪🇺</span>
+                                <span class="europe-challenge-card__badge-title">Europos iššūkis</span>
+                            </div>
+                            <span class="europe-challenge-card__percent" id="europeProgressPercent">0%</span>
+                        </div>
+                        <p class="europe-challenge-card__text" id="europeChallengeText">
+                            Aplankyta <strong>0</strong> iš <strong>46</strong> Europos šalių (<strong>0%</strong>) – dar liko aplankyti <strong>46</strong> šalių!
+                        </p>
+                        <div class="europe-progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="europeProgressBar">
+                            <div class="europe-progress-bar__fill" id="europeProgressFill" style="width: 0%;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Perjungimo mygtukai (Tabs) -->
+                    <div class="countries-tabs" role="tablist" aria-label="Šalių sąrašo skirtukai">
+                        <button type="button" class="countries-tab is-active" id="tabVisitedCountries" role="tab" aria-selected="true" data-tab="visited">
+                            <span class="countries-tab__icon">🌍</span>
+                            <span>Aplankytos šalys (narių lentelė)</span>
+                            <span class="countries-tab__badge" id="visitedCountriesCountBadge">0</span>
+                        </button>
+                        <button type="button" class="countries-tab" id="tabMissingCountries" role="tab" aria-selected="false" data-tab="missing">
+                            <span class="countries-tab__icon">🎯</span>
+                            <span>Dar neaplankytos Europos šalys</span>
+                            <span class="countries-tab__badge countries-tab__badge--missing" id="missingCountriesCountBadge">0</span>
+                        </button>
+                    </div>
+
+                    <!-- Tab 1: Aplankytos šalys (narių lentelė) -->
+                    <div class="countries-tab-content is-active" id="visitedTabContent" role="tabpanel" aria-labelledby="tabVisitedCountries">
+                        <div class="countries-table-wrap">
+                            <table class="countries-table">
+                                <thead>
+                                    <tr>
+                                        <th class="countries-table__col-country">Šalis</th>
+                                        <th class="countries-table__col-member">Tomas</th>
+                                        <th class="countries-table__col-member">Sandra</th>
+                                        <th class="countries-table__col-member">Lukas</th>
+                                        <th class="countries-table__col-member">Linas</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="visitedCountriesTableBody">
+                                    <!-- Šalių eilutės bus sugeneruotos dinamiškai -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Tab 2: Dar neaplankytos Europos šalys -->
+                    <div class="countries-tab-content" id="missingTabContent" role="tabpanel" aria-labelledby="tabMissingCountries" hidden>
+                        <div class="countries-table-wrap">
+                            <table class="countries-table">
+                                <thead>
+                                    <tr>
+                                        <th class="countries-table__col-country">Šalis</th>
+                                        <th class="countries-table__col-status">Būsena</th>
+                                        <th class="countries-table__col-code">ISO-2 kodas</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="missingCountriesTableBody">
+                                    <!-- Neaplankytų Europos šalių eilutės bus sugeneruotos dinamiškai -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -411,6 +510,7 @@
                             <!-- Aplankytų šalių (visitedCountries) valdymas -->
                             <section class="admin-section">
                                 <h3 class="admin-section__heading">Aplankytos šalys (visitedCountries)</h3>
+                                <p class="admin-section__subheading">Pažymėkite varnelėmis (T, S, Lu, Li), kurie šeimos nariai lankėsi kiekvienoje šalyje:</p>
                                 <form id="countryForm" class="admin-country-form">
                                     <input
                                         type="text"
@@ -422,7 +522,7 @@
                                     >
                                     <button type="submit" class="admin-btn admin-btn--secondary">Pridėti šalį</button>
                                 </form>
-                                <div id="adminCountriesList" class="admin-countries-list" aria-label="Aplankytų šalių ISO kodai"></div>
+                                <div id="adminCountriesList" class="admin-countries-list" aria-label="Aplankytų šalių sąrašas su keliautojų varnelėmis"></div>
                             </section>
                         </div>
 

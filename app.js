@@ -12,6 +12,15 @@ const WORLD_GEOJSON_URLS = [
 // Standartinis šeimos narių sąrašas
 const DEFAULT_TRAVELERS = ['Tomas', 'Sandra', 'Lukas', 'Linas'];
 
+// 46 Europos šalių ISO-2 kodai Europos šalių skaičiavimui
+const EUROPEAN_COUNTRIES = [
+    "AL", "AD", "AT", "BY", "BE", "BA", "BG", "HR", "CY", "CZ",
+    "DK", "EE", "FI", "FR", "DE", "GR", "HU", "IS", "IE", "IT",
+    "XK", "LV", "LI", "LT", "LU", "MT", "MD", "MC", "ME", "NL",
+    "MK", "NO", "PL", "PT", "RO", "SM", "RS", "SK", "SI", "ES",
+    "SE", "CH", "UA", "GB", "VA", "TR"
+];
+
 // Naršyklės Intl.DisplayNames API šalių ISO-2 kodų vertimui į lietuvių kalbą
 const regionDisplayNamesLt =
     typeof Intl !== 'undefined' && typeof Intl.DisplayNames === 'function'
@@ -20,23 +29,55 @@ const regionDisplayNamesLt =
 
 // Atsarginis lietuviškų šalių pavadinimų žodynas pagal ISO-2 kodą
 const COUNTRY_NAMES_LT = {
-    LT: 'Lietuva',
-    LV: 'Latvija',
+    AL: 'Albanija',
+    AD: 'Andora',
+    AT: 'Austrija',
+    BY: 'Baltarusija',
+    BE: 'Belgija',
+    BA: 'Bosnija ir Hercegovina',
+    BG: 'Bulgarija',
+    HR: 'Kroatija',
+    CY: 'Kipras',
+    CZ: 'Čekija',
+    DK: 'Danija',
     EE: 'Estija',
     FI: 'Suomija',
-    PL: 'Lenkija',
-    DE: 'Vokietija',
-    CZ: 'Čekija',
-    RS: 'Serbija',
-    IT: 'Italija',
-    MT: 'Malta',
-    HR: 'Kroatija',
-    GR: 'Graikija',
     FR: 'Prancūzija',
+    DE: 'Vokietija',
+    GR: 'Graikija',
+    HU: 'Vengrija',
+    IS: 'Islandija',
+    IE: 'Airija',
+    IT: 'Italija',
+    XK: 'Kosovas',
+    LV: 'Latvija',
+    LI: 'Lichtenšteinas',
+    LT: 'Lietuva',
+    LU: 'Liuksemburgas',
+    MT: 'Malta',
+    MD: 'Moldavija',
+    MC: 'Monakas',
+    ME: 'Juodkalnija',
+    NL: 'Nyderlandai',
+    MK: 'Šiaurės Makedonija',
+    NO: 'Norvegija',
+    PL: 'Lenkija',
+    PT: 'Portugalija',
+    RO: 'Rumunija',
+    SM: 'San Marinas',
+    RS: 'Serbija',
+    SK: 'Slovakija',
+    SI: 'Slovėnija',
     ES: 'Ispanija',
+    SE: 'Švedija',
+    CH: 'Šveicarija',
+    UA: 'Ukraina',
+    GB: 'Jungtinė Karalystė',
+    VA: 'Vatikanas',
+    TR: 'Turkija',
     IL: 'Izraelis',
     EG: 'Egiptas',
-    XK: 'Kosovas'
+    RU: 'Rusija'
 };
 
 // Pagalbinis ISO-3 -> ISO-2 žemėlapis (kai kuriuose GeoJSON šaltiniuose, pvz. Prancūzijai ar Norvegijai, ISO_A2 būna "-99")
@@ -103,26 +144,31 @@ const ISO3_TO_ISO2 = {
 const FALLBACK_DATA = {
     visitedCountries: [
         'LT', 'LV', 'EE', 'FI', 'SE', 'DK', 'PL', 'SK', 'DE', 'CZ',
-        'RS', 'IT', 'VA', 'MT', 'HR', 'GR', 'FR', 'ES', 'IL', 'EG'
+        'RS', 'IT', 'VA', 'MT', 'HR', 'GR', 'FR', 'ES', 'IL', 'EG',
+        'BE', 'NL', 'AT', 'HU', 'SI', 'SM', 'BY', 'RU', 'LU', 'UA'
     ],
+    countryTravelers: {
+        VA: ['Tomas', 'Sandra', 'Lukas', 'Linas']
+    },
     places: [
         {
             id: 1,
-            title: 'Talinas',
-            country: 'Estija',
+            title: "Talinas",
+            country: "Estija",
+            countryCode: 'EE',
             lat: 59.437,
             lng: 24.7536,
             date: '2026-10-26',
             category: 'Automobiliu',
-            description: 'PROTO atradimų centras, Talino jūrų muziejus „Lennusadam“ ir nusileidimas į tikrą povandeninį laivą, 314 m Talino televizijos bokštas, Kadriorgo rūmų parkas, zoologijos sodas ir senamiestis.',
+            description: "PROTO atradimų centras, Talino jūrų muziejus „Lennusadam“ ir nusileidimas į tikrą povandeninį laivą, 314 m Talino televizijos bokštas, Kadriorgo rūmų parkas, zoologijos sodas ir senamiestis.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: [
                 {
-                    title: 'Talinas: PROTO atradimų centras ir jūrų muziejus Lennusadam',
+                    title: "Talinas: PROTO atradimų centras ir jūrų muziejus Lennusadam",
                     url: 'https://www.youtube.com/watch?v=tisL0y7fcOw'
                 },
                 {
-                    title: 'Talino TV bokštas, Kadriorgo parkas ir senamiestis',
+                    title: "Talino TV bokštas, Kadriorgo parkas ir senamiestis",
                     url: 'https://www.youtube.com/watch?v=tisL0y7fcOw',
                     timestamp: '13:00'
                 }
@@ -130,17 +176,18 @@ const FALLBACK_DATA = {
         },
         {
             id: 2,
-            title: 'Jegalos krioklys (Jägala)',
-            country: 'Estija',
+            title: "Jegalos krioklys (Jägala)",
+            country: "Estija",
+            countryCode: 'EE',
             lat: 59.45,
             lng: 25.1786,
             date: '2026-10-26',
             category: 'Automobiliu',
-            description: 'Estijos Niagara – pats plačiausias natūralus krioklys Estijoje, kurio galinga tamsaus vandens srovė per tūkstantmečius išgraužė gilų kanjoną.',
+            description: "Estijos Niagara – pats plačiausias natūralus krioklys Estijoje, kurio galinga tamsaus vandens srovė per tūkstantmečius išgraužė gilų kanjoną.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: [
                 {
-                    title: 'Jegalos krioklys (Estijos Niagara)',
+                    title: "Jegalos krioklys (Estijos Niagara)",
                     url: 'https://www.youtube.com/watch?v=tisL0y7fcOw',
                     timestamp: '17:22'
                 }
@@ -148,22 +195,23 @@ const FALLBACK_DATA = {
         },
         {
             id: 3,
-            title: 'Helsinkis',
-            country: 'Suomija',
+            title: "Helsinkis",
+            country: "Suomija",
+            countryCode: 'FI',
             lat: 60.1699,
             lng: 24.9384,
             date: '2026-10-26',
             category: 'Keltas',
-            description: 'Kelionė didžiuliu keltu per Baltijos jūrą į Helsinkį: raudonų plytų Uspenskio soboras, sniego baltumo Helsinkio katedra ir tiesiog kietame granite iškalta Tempeliaukio (Uolos) bažnyčia.',
+            description: "Kelionė didžiuliu keltu per Baltijos jūrą į Helsinkį: raudonų plytų Uspenskio soboras, sniego baltumo Helsinkio katedra ir tiesiog kietame granite iškalta Tempeliaukio (Uolos) bažnyčia.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: [
                 {
-                    title: 'Keltas į Suomiją ir didžioji parduotuvė ant vandens',
+                    title: "Keltas į Suomiją ir didžioji parduotuvė ant vandens",
                     url: 'https://www.youtube.com/watch?v=tisL0y7fcOw',
                     timestamp: '07:55'
                 },
                 {
-                    title: 'Helsinkio katedra ir Uspenskio soboras',
+                    title: "Helsinkio katedra ir Uspenskio soboras",
                     url: 'https://www.youtube.com/watch?v=tisL0y7fcOw',
                     timestamp: '08:55'
                 }
@@ -171,17 +219,18 @@ const FALLBACK_DATA = {
         },
         {
             id: 4,
-            title: 'Vanta (Mokslo centras „Heureka“)',
-            country: 'Suomija',
+            title: "Vanta (Mokslo centras „Heureka“)",
+            country: "Suomija",
+            countryCode: 'FI',
             lat: 60.2876,
             lng: 25.044,
             date: '2026-10-26',
             category: 'Keltas',
-            description: 'Interaktyvus Suomijos mokslo centras „Heureka“ Vantos mieste, kur viską privaloma liesti: Mėnulio gravitacijos simuliatorius ir judantys ledynmečio milžinai.',
+            description: "Interaktyvus Suomijos mokslo centras „Heureka“ Vantos mieste, kur viską privaloma liesti: Mėnulio gravitacijos simuliatorius ir judantys ledynmečio milžinai.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: [
                 {
-                    title: '„Heureka“ mokslo centras Suomijoje',
+                    title: "„Heureka“ mokslo centras Suomijoje",
                     url: 'https://www.youtube.com/watch?v=tisL0y7fcOw',
                     timestamp: '09:12'
                 }
@@ -189,38 +238,40 @@ const FALLBACK_DATA = {
         },
         {
             id: 5,
-            title: 'Tartu',
-            country: 'Estija',
+            title: "Tartu",
+            country: "Estija",
+            countryCode: 'EE',
             lat: 58.378,
             lng: 26.729,
             date: '2024-05-18',
             category: 'Automobiliu',
-            description: 'Savaitgalio kelionė į Estijos mokslo sostinę Tartu: Tartu universiteto muziejus, interaktyvus AHHAA mokslo centras ir Estijos aviacijos muziejus.',
+            description: "Savaitgalio kelionė į Estijos mokslo sostinę Tartu: Tartu universiteto muziejus, interaktyvus AHHAA mokslo centras ir Estijos aviacijos muziejus.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: [
                 {
-                    title: 'Savaitgalio kelionė į Tartu Estijoje',
+                    title: "Savaitgalio kelionė į Tartu Estijoje",
                     url: 'https://www.youtube.com/watch?v=4M7GnncBZ_w'
                 }
             ]
         },
         {
             id: 6,
-            title: 'Genuja',
-            country: 'Italija',
+            title: "Genuja",
+            country: "Italija",
+            countryCode: 'IT',
             lat: 44.4056,
             lng: 8.9463,
             date: '2026-04-03',
             category: 'Kruizas',
-            description: 'Senasis Genujos uostas, povandeninis laivas „Nazario Sauro“, Galata jūrų muziejus, Vaikų miestas, didžiausias Italijoje akvariumas, stiklinė „Biosfera“, Šv. Lauryno katedra ir įlaipinimas į „Costa Pacifica“.',
+            description: "Senasis Genujos uostas, povandeninis laivas „Nazario Sauro“, Galata jūrų muziejus, Vaikų miestas, didžiausias Italijoje akvariumas, stiklinė „Biosfera“, Šv. Lauryno katedra ir įlaipinimas į „Costa Pacifica“.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: [
                 {
-                    title: 'Genuja: akvariumas, povandeninis laivas ir senamiestis',
+                    title: "Genuja: akvariumas, povandeninis laivas ir senamiestis",
                     url: 'https://www.youtube.com/watch?v=2OGoZGgiStQ'
                 },
                 {
-                    title: 'Lipame į „Costa Pacifica“ laivą! Laivo apžvalga',
+                    title: "Lipame į „Costa Pacifica“ laivą! Laivo apžvalga",
                     url: 'https://www.youtube.com/watch?v=2OGoZGgiStQ',
                     timestamp: '09:01'
                 }
@@ -228,39 +279,41 @@ const FALLBACK_DATA = {
         },
         {
             id: 7,
-            title: 'Marselis',
-            country: 'Prancūzija',
+            title: "Marselis",
+            country: "Prancūzija",
+            countryCode: 'FR',
             lat: 43.2965,
             lng: 5.3698,
             date: '2026-04-04',
             category: 'Kruizas',
-            description: 'Seniausias Prancūzijos miestas: Senasis uostas (Vieux-Port), ant karinio forto pamatų stovinti „Notre-Dame de la Garde“ bazilika, Marselio katedra ir įspūdingi Longšano rūmai.',
+            description: "Seniausias Prancūzijos miestas: Senasis uostas (Vieux-Port), ant karinio forto pamatų stovinti „Notre-Dame de la Garde“ bazilika, Marselio katedra ir įspūdingi Longšano rūmai.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: [
                 {
-                    title: 'Marselis: pavasariška katedra ir Longšano rūmai',
+                    title: "Marselis: pavasariška katedra ir Longšano rūmai",
                     url: 'https://www.youtube.com/watch?v=2OGoZGgiStQ',
                     timestamp: '12:58'
                 },
                 {
-                    title: 'Didžioji kelionė laivu: Marselio uostas ir senamiestis',
+                    title: "Didžioji kelionė laivu: Marselio uostas ir senamiestis",
                     url: 'https://www.youtube.com/watch?v=Dzx40lPQNEw'
                 }
             ]
         },
         {
             id: 8,
-            title: 'Valensija',
-            country: 'Ispanija',
+            title: "Valensija",
+            country: "Ispanija",
+            countryCode: 'ES',
             lat: 39.4699,
             lng: -0.3763,
             date: '2026-04-05',
             category: 'Kruizas',
-            description: 'Serranų vartai, prancūziška vintažinė saldumynų krautuvėlė „La Cure Gourmande“, Valensijos rotušė ir katedra, kurioje saugomas Šventasis Gralis.',
+            description: "Serranų vartai, prancūziška vintažinė saldumynų krautuvėlė „La Cure Gourmande“, Valensijos rotušė ir katedra, kurioje saugomas Šventasis Gralis.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: [
                 {
-                    title: 'Valensija: Katedra, Šventasis Gralis ir Serranų vartai',
+                    title: "Valensija: Katedra, Šventasis Gralis ir Serranų vartai",
                     url: 'https://www.youtube.com/watch?v=2OGoZGgiStQ',
                     timestamp: '15:15'
                 }
@@ -268,22 +321,23 @@ const FALLBACK_DATA = {
         },
         {
             id: 9,
-            title: 'Roma ir Vatikanas',
-            country: 'Italija',
+            title: "Roma ir Vatikanas",
+            country: "Italija",
+            countryCode: 'IT',
             lat: 41.8902,
             lng: 12.4922,
             date: '2026-04-06',
             category: 'Kruizas',
-            description: 'Didysis penktadienis Romoje: Švč. Mergelės Marijos Didžioji bazilika, Koliziejus, Trevi fontanas, Šv. Ignaco Lojolos bažnyčia su optine kupolo iliuzija ir Vatikanas su Berninio kolonada.',
+            description: "Didysis penktadienis Romoje: Švč. Mergelės Marijos Didžioji bazilika, Koliziejus, Trevi fontanas, Šv. Ignaco Lojolos bažnyčia su optine kupolo iliuzija ir Vatikanas su Berninio kolonada.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: [
                 {
-                    title: 'Romos šurmulys: Koliziejaus inžinerija ir fontanai',
+                    title: "Romos šurmulys: Koliziejaus inžinerija ir fontanai",
                     url: 'https://www.youtube.com/watch?v=2OGoZGgiStQ',
                     timestamp: '16:58'
                 },
                 {
-                    title: 'Vatikanas ir Šv. Petro aikštė',
+                    title: "Vatikanas ir Šv. Petro aikštė",
                     url: 'https://www.youtube.com/watch?v=2OGoZGgiStQ',
                     timestamp: '19:44'
                 }
@@ -291,17 +345,18 @@ const FALLBACK_DATA = {
         },
         {
             id: 10,
-            title: 'Komo (Komo ežeras)',
-            country: 'Italija',
+            title: "Komo (Komo ežeras)",
+            country: "Italija",
+            countryCode: 'IT',
             lat: 45.8081,
             lng: 9.0852,
             date: '2026-04-08',
             category: 'Kruizas',
-            description: 'Ramybės oazė prie Komo ežero: kėlimasis istoriniu funikulieriumi į Brunate ir Komo katedra, kurios erdvę užpildo 6500 vargonų vamzdžių.',
+            description: "Ramybės oazė prie Komo ežero: kėlimasis istoriniu funikulieriumi į Brunate ir Komo katedra, kurios erdvę užpildo 6500 vargonų vamzdžių.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: [
                 {
-                    title: 'Komo ežeras: istorinis funikulierius ir katedra',
+                    title: "Komo ežeras: istorinis funikulierius ir katedra",
                     url: 'https://www.youtube.com/watch?v=2OGoZGgiStQ',
                     timestamp: '20:31'
                 }
@@ -309,259 +364,274 @@ const FALLBACK_DATA = {
         },
         {
             id: 11,
-            title: 'Neapolis ir Pompėja',
-            country: 'Italija',
+            title: "Neapolis ir Pompėja",
+            country: "Italija",
+            countryCode: 'IT',
             lat: 40.8518,
             lng: 14.2681,
             date: '2025-11-12',
             category: 'Kruizas',
-            description: 'Sustojęs laikas Pompėjoje po Vezuvijaus pelenais bei chaotiškas, bet nuostabus Neapolis: Castel Nuovo pilis, Galleria Umberto I ir Piazza del Plebiscito.',
+            description: "Sustojęs laikas Pompėjoje po Vezuvijaus pelenais bei chaotiškas, bet nuostabus Neapolis: Castel Nuovo pilis, Galleria Umberto I ir Piazza del Plebiscito.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: [
                 {
-                    title: 'Pompėja ir Neapolis kruizo su Costa metu',
+                    title: "Pompėja ir Neapolis kruizo su Costa metu",
                     url: 'https://www.youtube.com/watch?v=Dzx40lPQNEw'
                 }
             ]
         },
         {
             id: 12,
-            title: 'Piza',
-            country: 'Italija',
+            title: "Piza",
+            country: "Italija",
+            countryCode: 'IT',
             lat: 43.7228,
             lng: 10.4017,
             date: '2025-11-14',
             category: 'Kruizas',
-            description: 'Stebuklų aikštė (Piazza dei Miracoli), garsusis pasviręs Pizos bokštas ir didžiausia Italijos krikštykla.',
+            description: "Stebuklų aikštė (Piazza dei Miracoli), garsusis pasviręs Pizos bokštas ir didžiausia Italijos krikštykla.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: [
                 {
-                    title: 'Piza: Stebuklų aikštė ir pasviręs bokštas',
+                    title: "Piza: Stebuklų aikštė ir pasviręs bokštas",
                     url: 'https://www.youtube.com/watch?v=Dzx40lPQNEw'
                 }
             ]
         },
         {
             id: 13,
-            title: 'Milanas',
-            country: 'Italija',
+            title: "Milanas",
+            country: "Italija",
+            countryCode: 'IT',
             lat: 45.4642,
             lng: 9.19,
             date: '2025-11-15',
             category: 'Kruizas',
-            description: 'Stiliaus ir architektūros sostinė: didingoji Milano katedra (Duomo), Galleria Vittorio Emanuele II ir Leonardo da Vinčio mokslo bei technikos muziejus su povandeniniu laivu.',
+            description: "Stiliaus ir architektūros sostinė: didingoji Milano katedra (Duomo), Galleria Vittorio Emanuele II ir Leonardo da Vinčio mokslo bei technikos muziejus su povandeniniu laivu.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: [
                 {
-                    title: 'Milanas: Duomo katedra ir Leonardo da Vinčio muziejus',
+                    title: "Milanas: Duomo katedra ir Leonardo da Vinčio muziejus",
                     url: 'https://www.youtube.com/watch?v=Dzx40lPQNEw'
                 }
             ]
         },
         {
             id: 14,
-            title: 'Tel Avivas ir Jafa',
-            country: 'Izraelis',
+            title: "Tel Avivas ir Jafa",
+            country: "Izraelis",
+            countryCode: 'IL',
             lat: 32.0853,
             lng: 34.7818,
             date: '2026-06-14',
             category: 'Lėktuvu',
-            description: 'Atostogos karo fone: kontrastingi Tel Avivo kvartalai, Jafos senamiestis, požeminės slėptuvės ir skubus išvykimas autobusu per Eilatą link Egipto sienos.',
+            description: "Atostogos karo fone: kontrastingi Tel Avivo kvartalai, Jafos senamiestis, požeminės slėptuvės ir skubus išvykimas autobusu per Eilatą link Egipto sienos.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: [
                 {
-                    title: 'Tel Avivas: Atostogos karo fone ir pabėgimas namo',
+                    title: "Tel Avivas: Atostogos karo fone ir pabėgimas namo",
                     url: 'https://www.youtube.com/watch?v=kDnEL0Dql9E'
                 }
             ]
         },
         {
             id: 15,
-            title: 'Šarm el Šeichas',
-            country: 'Egiptas',
+            title: "Šarm el Šeichas",
+            country: "Egiptas",
+            countryCode: 'EG',
             lat: 27.9158,
             lng: 34.3299,
             date: '2026-06-16',
             category: 'Lėktuvu',
-            description: 'Naktinė kelionė per Sinajaus pusiasalio kalnus iš Eilato į Šarm el Šeichą: Koptų bažnyčia, Senasis turgus, Raudonosios jūros pakrantė ir skrydis namo.',
+            description: "Naktinė kelionė per Sinajaus pusiasalio kalnus iš Eilato į Šarm el Šeichą: Koptų bažnyčia, Senasis turgus, Raudonosios jūros pakrantė ir skrydis namo.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: [
                 {
-                    title: 'Kelionė per Egiptą ir Šarm el Šeicho kontrastai',
+                    title: "Kelionė per Egiptą ir Šarm el Šeicho kontrastai",
                     url: 'https://www.youtube.com/watch?v=kDnEL0Dql9E'
                 }
             ]
         },
         {
             id: 16,
-            title: 'Gdanskas ir Gdynė',
-            country: 'Lenkija',
+            title: "Gdanskas ir Gdynė",
+            country: "Lenkija",
+            countryCode: 'PL',
             lat: 54.352,
             lng: 18.6466,
             date: '2025-08-10',
             category: 'Automobiliu',
-            description: 'Antrojo pasaulinio karo muziejus, Europos Solidarumo centras, Hevelianum, Gintaro muziejus, piratų kruizas ir zoologijos sodas Gdanske bei Experyment mokslo centras, akvariumas ir laivai „Dar Pomorza“ bei „Błyskawica“ Gdynėje.',
+            description: "Antrojo pasaulinio karo muziejus, Europos Solidarumo centras, Hevelianum, Gintaro muziejus, piratų kruizas ir zoologijos sodas Gdanske bei Experyment mokslo centras, akvariumas ir laivai „Dar Pomorza“ bei „Błyskawica“ Gdynėje.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: [
                 {
-                    title: 'Šeimos nuotykiai Gdanske ir Gdynėje: geriausi muziejai',
+                    title: "Šeimos nuotykiai Gdanske ir Gdynėje: geriausi muziejai",
                     url: 'https://www.youtube.com/watch?v=J05wRJiTrCU'
                 }
             ]
         },
         {
             id: 17,
-            title: 'Pieninų nacionalinis parkas (Červeny Klaštor)',
-            country: 'Slovakija',
+            title: "Pieninų nacionalinis parkas (Červeny Klaštor)",
+            country: "Slovakija",
+            countryCode: 'SK',
             lat: 49.3906,
             lng: 20.415,
             date: '2025-07-15',
             category: 'Automobiliu',
-            description: '14 km plaukimas mediniais plaustais Dunajeco upe su vietiniais guraliais, Trijų Karūnų ir Sokolicos kalnų panoramos bei tradicinė vakaronė „Chata Pieniny“.',
+            description: "14 km plaukimas mediniais plaustais Dunajeco upe su vietiniais guraliais, Trijų Karūnų ir Sokolicos kalnų panoramos bei tradicinė vakaronė „Chata Pieniny“.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: [
                 {
-                    title: 'Slovakija, Pieninų nacionalinis parkas | Plaustais per Dunajeco upę',
+                    title: "Slovakija, Pieninų nacionalinis parkas | Plaustais per Dunajeco upę",
                     url: 'https://www.youtube.com/watch?v=EDL2-X0IWQY'
                 }
             ]
         },
         {
             id: 18,
-            title: 'Belianskos urvas (Tatranská Kotlina)',
-            country: 'Slovakija',
+            title: "Belianskos urvas (Tatranská Kotlina)",
+            country: "Slovakija",
+            countryCode: 'SK',
             lat: 49.2289,
             lng: 20.3119,
             date: '2025-07-16',
             category: 'Automobiliu',
-            description: 'Vienas lankomiausių urvų Slovakijoje su įspūdingais kalcito dariniais ir požeminiais kriokliais: 1370 m apžvalginis maršrutas ir 874 laipteliai.',
+            description: "Vienas lankomiausių urvų Slovakijoje su įspūdingais kalcito dariniais ir požeminiais kriokliais: 1370 m apžvalginis maršrutas ir 874 laipteliai.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: [
                 {
-                    title: 'Belianskos urvas (Belianska jaskyňa), Slovakija',
+                    title: "Belianskos urvas (Belianska jaskyňa), Slovakija",
                     url: 'https://www.youtube.com/watch?v=e50utBjoJKI'
                 }
             ]
         },
         {
             id: 19,
-            title: 'Aukštieji Tatrai (Skalnaté Pleso, Hrebienok)',
-            country: 'Slovakija',
+            title: "Aukštieji Tatrai (Skalnaté Pleso, Hrebienok)",
+            country: "Slovakija",
+            countryCode: 'SK',
             lat: 49.1892,
             lng: 20.2342,
             date: '2025-07-17',
             category: 'Automobiliu',
-            description: 'Žygis pėsčiomis Aukštuosiuose Tatruose nuo Skalnaté Pleso (1751 m) iki kalnų trobelės „Zamkovského chata“, Mala Studena slėnio kriokliai ir nusileidimas funikulieriumi iš Hrebienok.',
+            description: "Žygis pėsčiomis Aukštuosiuose Tatruose nuo Skalnaté Pleso (1751 m) iki kalnų trobelės „Zamkovského chata“, Mala Studena slėnio kriokliai ir nusileidimas funikulieriumi iš Hrebienok.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: [
                 {
-                    title: 'Slovakija, Aukštieji Tatrai: Skalnaté Pleso, Zamkovského, Hrebienok',
+                    title: "Slovakija, Aukštieji Tatrai: Skalnaté Pleso, Zamkovského, Hrebienok",
                     url: 'https://www.youtube.com/watch?v=9oYXBmTmT2M'
                 }
             ]
         },
         {
             id: 20,
-            title: 'Bratislava',
-            country: 'Slovakija',
+            title: "Bratislava",
+            country: "Slovakija",
+            countryCode: 'SK',
             lat: 48.1486,
             lng: 17.1077,
             date: '2024-07-20',
             category: 'Automobiliu',
-            description: 'Pažintis su Slovakijos sostine Bratislava: pasivaikščiojimas po jaukų senamiestį, Dunojaus pakrantę ir Bratislavos pilies apylinkes.',
+            description: "Pažintis su Slovakijos sostine Bratislava: pasivaikščiojimas po jaukų senamiestį, Dunojaus pakrantę ir Bratislavos pilies apylinkes.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: [
                 {
-                    title: 'Bratislava, Slovakija',
+                    title: "Bratislava, Slovakija",
                     url: 'https://www.youtube.com/watch?v=lt1ehqjNtys'
                 }
             ]
         },
         {
             id: 21,
-            title: 'Dortmundas',
-            country: 'Vokietija',
+            title: "Dortmundas",
+            country: "Vokietija",
+            countryCode: 'DE',
             lat: 51.5136,
             lng: 7.4653,
             date: '2025-05-10',
             category: 'Lėktuvu',
-            description: 'Savaitgalio išvyka į Dortmundą: Alaus gamykla-muziejus, Vokietijos futbolo muziejus, Westfalenpark ir Florianturm TV bokštas, PACE automobilių muziejus bei „Phoenix des Lumières“ šviesų instaliacija.',
+            description: "Savaitgalio išvyka į Dortmundą: Alaus gamykla-muziejus, Vokietijos futbolo muziejus, Westfalenpark ir Florianturm TV bokštas, PACE automobilių muziejus bei „Phoenix des Lumières“ šviesų instaliacija.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: [
                 {
-                    title: 'Dortmundas, Vokietija',
+                    title: "Dortmundas, Vokietija",
                     url: 'https://www.youtube.com/watch?v=eM8Rk7kEekU'
                 }
             ]
         },
         {
             id: 22,
-            title: 'Karlshamnas',
-            country: 'Švedija',
+            title: "Karlshamnas",
+            country: "Švedija",
+            countryCode: 'SE',
             lat: 56.1703,
             lng: 14.8631,
             date: '2025-04-12',
             category: 'Keltas',
-            description: 'Kelionė DFDS keltu „Luna Seaways“ į Karlshamną Švedijoje – 2 naktų mini kruizas Baltijos jūra.',
+            description: "Kelionė DFDS keltu „Luna Seaways“ į Karlshamną Švedijoje – 2 naktų mini kruizas Baltijos jūra.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: [
                 {
-                    title: 'Kelionė keltu į Karlshamną Švedijoje',
+                    title: "Kelionė keltu į Karlshamną Švedijoje",
                     url: 'https://www.youtube.com/watch?v=TWs07oxyASM'
                 }
             ]
         },
         {
             id: 23,
-            title: 'Stokholmas',
-            country: 'Švedija',
+            title: "Stokholmas",
+            country: "Švedija",
+            countryCode: 'SE',
             lat: 59.3293,
             lng: 18.0686,
             date: '2024-08-18',
             category: 'Keltas',
-            description: 'Nuotykiai Švedijos sostinėje: unikalus „Vasa“ karališkojo laivo muziejus, „Junibacken“ Astridos Lindgren pasakų herojų namai ir Stokholmo technikos muziejus.',
+            description: "Nuotykiai Švedijos sostinėje: unikalus „Vasa“ karališkojo laivo muziejus, „Junibacken“ Astridos Lindgren pasakų herojų namai ir Stokholmo technikos muziejus.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: [
                 {
-                    title: 'Švedija, Stokholmas 2024',
+                    title: "Švedija, Stokholmas 2024",
                     url: 'https://www.youtube.com/watch?v=3G-jDRVWUew'
                 }
             ]
         },
         {
             id: 24,
-            title: 'Sigulda ir Cėsys',
-            country: 'Latvija',
+            title: "Sigulda ir Cėsys",
+            country: "Latvija",
+            countryCode: 'LV',
             lat: 57.1537,
             lng: 24.8598,
             date: '2025-03-22',
             category: 'Automobiliu',
-            description: 'Turininga išvyka į kaimyninę Latviją: Cėsių kosmoso pažinimo centras, Sigulda ir Gaujos nacionalinio parko apylinkės.',
+            description: "Turininga išvyka į kaimyninę Latviją: Cėsių kosmoso pažinimo centras, Sigulda ir Gaujos nacionalinio parko apylinkės.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: [
                 {
-                    title: 'Latvija: Sigulda ir Cėsys',
+                    title: "Latvija: Sigulda ir Cėsys",
                     url: 'https://www.youtube.com/watch?v=L7lAUAuukuU'
                 }
             ]
         },
         {
             id: 25,
-            title: 'Ventspilis ir Kuldyga',
-            country: 'Latvija',
+            title: "Ventspilis ir Kuldyga",
+            country: "Latvija",
+            countryCode: 'LV',
             lat: 57.3937,
             lng: 21.5647,
             date: '2026-01-25',
             category: 'Automobiliu',
-            description: 'Aktyvus savaitgalis Ventspilyje: naujasis VIZIUM mokslo centras, Ventspilio vandens parkas, „Lemberga hūte“ slidinėjimo trasa, uosto krantinė ir istorinė Kuldyga pakeliui namo.',
+            description: "Aktyvus savaitgalis Ventspilyje: naujasis VIZIUM mokslo centras, Ventspilio vandens parkas, „Lemberga hūte“ slidinėjimo trasa, uosto krantinė ir istorinė Kuldyga pakeliui namo.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: [
                 {
-                    title: 'Pramogų pripildytas Ventspilis: VIZIUM, vandens parkas ir slidinėjimas',
+                    title: "Pramogų pripildytas Ventspilis: VIZIUM, vandens parkas ir slidinėjimas",
                     url: 'https://www.youtube.com/watch?v=2lw_jcTL2ww'
                 },
                 {
-                    title: 'Pakeliui namo: lankytinos vietos Kuldygoje',
+                    title: "Pakeliui namo: lankytinos vietos Kuldygoje",
                     url: 'https://www.youtube.com/watch?v=2lw_jcTL2ww',
                     timestamp: '09:00'
                 }
@@ -569,114 +639,120 @@ const FALLBACK_DATA = {
         },
         {
             id: 26,
-            title: 'Bilundas (LEGO House ir Legolendas)',
-            country: 'Danija',
+            title: "Bilundas (LEGO House ir Legolendas)",
+            country: "Danija",
+            countryCode: 'DK',
             lat: 55.7358,
             lng: 9.1153,
             date: '2024-05-12',
             category: 'Lėktuvu',
-            description: 'Mažų ir didelių svajonių išsipildymas Danijoje, Bilunde: interaktyvus „LEGO House“ kūrybos namas ir legendinis „Legoland Billund“ pramogų parkas.',
+            description: "Mažų ir didelių svajonių išsipildymas Danijoje, Bilunde: interaktyvus „LEGO House“ kūrybos namas ir legendinis „Legoland Billund“ pramogų parkas.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: [
                 {
-                    title: 'LEGO namas (LEGO House) 2024',
+                    title: "LEGO namas (LEGO House) 2024",
                     url: 'https://www.youtube.com/watch?v=0W3F341_xZM'
                 },
                 {
-                    title: 'Legolendas 2024',
+                    title: "Legolendas 2024",
                     url: 'https://www.youtube.com/watch?v=9yvzSzQUrRU'
                 }
             ]
         },
         {
             id: 27,
-            title: 'Krokuva, Zakopanė ir Energylandia',
-            country: 'Lenkija',
+            title: "Krokuva, Zakopanė ir Energylandia",
+            country: "Lenkija",
+            countryCode: 'PL',
             lat: 50.0647,
             lng: 19.945,
             date: '2024-06-20',
             category: 'Automobiliu',
-            description: 'Įspūdinga kelionė per Lenkiją: Tatrų kalnai Zakopanėje, istorinė Krokuva, didžiausias atrakcionų parkas „Energylandia“ ir modernioji Varšuva.',
+            description: "Įspūdinga kelionė per Lenkiją: Tatrų kalnai Zakopanėje, istorinė Krokuva, didžiausias atrakcionų parkas „Energylandia“ ir modernioji Varšuva.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: [
                 {
-                    title: 'Lenkija: Zakopanė, Krokuva, Energylandia, Varšuva',
+                    title: "Lenkija: Zakopanė, Krokuva, Energylandia, Varšuva",
                     url: 'https://www.youtube.com/watch?v=zW_2heKUlmM'
                 },
                 {
-                    title: 'Hario Poterio paroda netoli Krokuvos',
+                    title: "Hario Poterio paroda netoli Krokuvos",
                     url: 'https://www.youtube.com/watch?v=uaiAngaRj9o'
                 }
             ]
         },
         {
             id: 28,
-            title: 'Suntago vandens parkas (Vrenča)',
-            country: 'Lenkija',
+            title: "Suntago vandens parkas (Vrenča)",
+            country: "Lenkija",
+            countryCode: 'PL',
             lat: 51.9997,
             lng: 20.4392,
             date: '2026-07-12',
             category: 'Automobiliu',
-            description: 'Didžiausias Europoje dengtas vandens pramogų parkas „Suntago“ (Park of Poland) netoli Varšuvos su tikromis palmėmis iš Floridos bei Kosta Rikos ir įspūdingomis čiuožyklomis.',
+            description: "Didžiausias Europoje dengtas vandens pramogų parkas „Suntago“ (Park of Poland) netoli Varšuvos su tikromis palmėmis iš Floridos bei Kosta Rikos ir įspūdingomis čiuožyklomis.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: [
                 {
-                    title: 'Ar verta važiuoti į „Suntago“? Pažintinis filmukas',
+                    title: "Ar verta važiuoti į „Suntago“? Pažintinis filmukas",
                     url: 'https://www.youtube.com/watch?v=dz51vJ8b3xo'
                 }
             ]
         },
         {
             id: 29,
-            title: 'Hossoland pramogų parkas (Brojcai)',
-            country: 'Lenkija',
+            title: "Hossoland pramogų parkas (Brojcai)",
+            country: "Lenkija",
+            countryCode: 'PL',
             lat: 53.9722,
             lng: 15.3885,
             date: '2025-08-14',
             category: 'Automobiliu',
-            description: 'Didžiausias teminis parkas šiaurės Lenkijoje „Hossoland“, įkvėptas Baltijos legendų ir šiaurės kultūrų: 4 amerikietiški kalneliai ir teminės zonos visai šeimai.',
+            description: "Didžiausias teminis parkas šiaurės Lenkijoje „Hossoland“, įkvėptas Baltijos legendų ir šiaurės kultūrų: 4 amerikietiški kalneliai ir teminės zonos visai šeimai.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: [
                 {
-                    title: 'Hossoland: naujas Lenkijos atrakcionų parkas visai šeimai!',
+                    title: "Hossoland: naujas Lenkijos atrakcionų parkas visai šeimai!",
                     url: 'https://www.youtube.com/watch?v=-mPqXmFq8bI'
                 }
             ]
         },
         {
             id: 30,
-            title: 'Lodzė (Fala Aquapark, Mandoria, Orientarium ZOO)',
-            country: 'Lenkija',
+            title: "Lodzė (Fala Aquapark, Mandoria, Orientarium ZOO)",
+            country: "Lenkija",
+            countryCode: 'PL',
             lat: 51.7592,
             lng: 19.456,
             date: '2025-03-08',
             category: 'Automobiliu',
-            description: 'Smagus šeimos savaitgalis Lodzėje: vandens atrakcionų parkas „Fala Aquapark“, didžiausias Lenkijoje uždaras pramogų parkas „Mandoria“ ir modernusis „Orientarium ZOO Łódź“.',
+            description: "Smagus šeimos savaitgalis Lodzėje: vandens atrakcionų parkas „Fala Aquapark“, didžiausias Lenkijoje uždaras pramogų parkas „Mandoria“ ir modernusis „Orientarium ZOO Łódź“.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: [
                 {
-                    title: 'Savaitgalis Lodzėje: Fala Aquapark, Orientarium ZOO, Mandoria',
+                    title: "Savaitgalis Lodzėje: Fala Aquapark, Orientarium ZOO, Mandoria",
                     url: 'https://www.youtube.com/watch?v=YKxCavYMbAc'
                 }
             ]
         },
         {
             id: 31,
-            title: 'Raubonių pramogų parkas',
-            country: 'Lietuva',
+            title: "Raubonių pramogų parkas",
+            country: "Lietuva",
+            countryCode: 'LT',
             lat: 56.1228,
             lng: 24.4714,
             date: '2026-08-02',
             category: 'Lietuva',
-            description: 'Didžiausias Baltijos šalyse Raubonių pramogų parkas: interaktyvus Dinozaurų parkas, „Tarzano takas“ virš zoologijos sodo gyvūnų aptvarų, karuselės ir batutai.',
+            description: "Didžiausias Baltijos šalyse Raubonių pramogų parkas: interaktyvus Dinozaurų parkas, „Tarzano takas“ virš zoologijos sodo gyvūnų aptvarų, karuselės ir batutai.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: [
                 {
-                    title: 'Raubonių pramogų parkas: Dinozaurai, Tarzano takas ir atrakcionai',
+                    title: "Raubonių pramogų parkas: Dinozaurai, Tarzano takas ir atrakcionai",
                     url: 'https://www.youtube.com/watch?v=zEtaNkGktic'
                 },
                 {
-                    title: 'Tarzano trasa virš zoologijos sodo',
+                    title: "Tarzano trasa virš zoologijos sodo",
                     url: 'https://www.youtube.com/watch?v=zEtaNkGktic',
                     timestamp: '05:11'
                 }
@@ -684,414 +760,566 @@ const FALLBACK_DATA = {
         },
         {
             id: 32,
-            title: 'Druskininkai (Druskininkų vandens parkas)',
-            country: 'Lietuva',
+            title: "Druskininkai (Druskininkų vandens parkas)",
+            country: "Lietuva",
+            countryCode: 'LT',
             lat: 54.0189,
             lng: 23.9725,
             date: '2025-12-06',
             category: 'Lietuva',
-            description: 'Šeimos savaitgalis Druskininkų vandens parke: tropinis +30 °C klimatas su palmėmis, jūros bangų baseinas, sraunioji upė, vaikų erdvė ir greičio nusileidimo kalneliai.',
+            description: "Šeimos savaitgalis Druskininkų vandens parke: tropinis +30 °C klimatas su palmėmis, jūros bangų baseinas, sraunioji upė, vaikų erdvė ir greičio nusileidimo kalneliai.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: [
                 {
-                    title: 'Šeimos savaitgalis Druskininkų akvaparke',
+                    title: "Šeimos savaitgalis Druskininkų akvaparke",
                     url: 'https://www.youtube.com/watch?v=YCYJCxpcFo4'
                 }
             ]
         },
         {
             id: 33,
-            title: 'Akmenės ir Karpėnų karjerai',
-            country: 'Lietuva',
+            title: "Akmenės ir Karpėnų karjerai",
+            country: "Lietuva",
+            countryCode: 'LT',
             lat: 56.3075,
             lng: 22.8669,
             date: '2026-05-16',
             category: 'Lietuva',
-            description: 'Lietuviškasis Marsas ir Didysis kanjonas: Karpėnų klinčių karjeras su 720 tonų žingsniuojančiais ekskavatoriais, Ventos regioninio parko dinozaurų ekspozicija, molio karjeras ir Jurakalnio bokštas.',
+            description: "Lietuviškasis Marsas ir Didysis kanjonas: Karpėnų klinčių karjeras su 720 tonų žingsniuojančiais ekskavatoriais, Ventos regioninio parko dinozaurų ekspozicija, molio karjeras ir Jurakalnio bokštas.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: [
                 {
-                    title: 'Karpėnų klinčių karjeras | Žygis kartu su Trenkturas',
+                    title: "Karpėnų klinčių karjeras | Žygis kartu su Trenkturas",
                     url: 'https://www.youtube.com/watch?v=cASIxvMcKic'
                 },
                 {
-                    title: 'Ekskursija po Akmenės karjerus: 4 val. nuotykis',
+                    title: "Ekskursija po Akmenės karjerus: 4 val. nuotykis",
                     url: 'https://www.youtube.com/watch?v=yXP0pl5rd5s'
                 }
             ]
         },
         {
             id: 34,
-            title: 'Nida ir Kuršių nerija',
-            country: 'Lietuva',
+            title: "Nida ir Kuršių nerija",
+            country: "Lietuva",
+            countryCode: 'LT',
             lat: 55.3033,
             lng: 21.0056,
             date: '2025-07-28',
             category: 'Lietuva',
-            description: 'Kelionė po pasakiškąją Kuršių neriją: Mirusios kopos, aukščiausioji Vecekrugo kopa, Preilos kopos, Avikalnis, kormoranų kolonija ir šventinis savaitgalis Nidoje.',
+            description: "Kelionė po pasakiškąją Kuršių neriją: Mirusios kopos, aukščiausioji Vecekrugo kopa, Preilos kopos, Avikalnis, kormoranų kolonija ir šventinis savaitgalis Nidoje.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: [
                 {
-                    title: 'Epas per Kuršių Neriją: Vecekrugo kopa, Preila ir daugiau!',
+                    title: "Epas per Kuršių Neriją: Vecekrugo kopa, Preila ir daugiau!",
                     url: 'https://www.youtube.com/watch?v=y7V2OgWE2sI'
                 },
                 {
-                    title: 'Nida 2024',
+                    title: "Nida 2024",
                     url: 'https://www.youtube.com/watch?v=twVxXWnhIwc'
                 }
             ]
         },
         {
             id: 35,
-            title: 'Kaunas (Mokslo sala, VI fortas, Zoologijos sodas, Baseinas)',
-            country: 'Lietuva',
+            title: "Kaunas (Mokslo sala, VI fortas, Zoologijos sodas, Baseinas)",
+            country: "Lietuva",
+            countryCode: 'LT',
             lat: 54.8962,
             lng: 23.9044,
             date: '2025-04-19',
             category: 'Lietuva',
-            description: 'Kauno atradimai visai šeimai: naujasis mokslo ir inovacijų centras „Mokslo sala“, Kauno tvirtovės VI forto karo technikos ekspozicija, Lietuvos zoologijos sodas ir „Žalgirio“ arenos baseinas.',
+            description: "Kauno atradimai visai šeimai: naujasis mokslo ir inovacijų centras „Mokslo sala“, Kauno tvirtovės VI forto karo technikos ekspozicija, Lietuvos zoologijos sodas ir „Žalgirio“ arenos baseinas.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: [
                 {
-                    title: 'Mokslo sala, Kaunas',
+                    title: "Mokslo sala, Kaunas",
                     url: 'https://www.youtube.com/watch?v=jBRU8xayDBA'
                 },
                 {
-                    title: 'Kauno tvirtovės VI fortas – Karo technikos ekspozicija',
+                    title: "Kauno tvirtovės VI fortas – Karo technikos ekspozicija",
                     url: 'https://www.youtube.com/watch?v=wMrPq4As1VY'
                 },
                 {
-                    title: 'Lietuvos zoologijos sodas',
+                    title: "Lietuvos zoologijos sodas",
                     url: 'https://www.youtube.com/watch?v=bcN1MYmJ6uU'
                 },
                 {
-                    title: '„Žalgirio“ arenos baseinas. Luko nardymas',
+                    title: "„Žalgirio“ arenos baseinas. Luko nardymas",
                     url: 'https://www.youtube.com/watch?v=BwC7Tv47O7E'
                 }
             ]
         },
         {
             id: 36,
-            title: 'Vilnius (Energetikos ir technikos muziejus, LITEXPO)',
-            country: 'Lietuva',
+            title: "Vilnius (Energetikos ir technikos muziejus, LITEXPO)",
+            country: "Lietuva",
+            countryCode: 'LT',
             lat: 54.6939,
             lng: 25.2869,
             date: '2025-03-01',
             category: 'Lietuva',
-            description: 'Energetikos ir technikos muziejaus interaktyvi „Virsmo salė“ su Tesla šou Faradėjaus narve bei 25-oji tarptautinė Vilniaus knygų mugė LITEXPO parodų centre.',
+            description: "Energetikos ir technikos muziejaus interaktyvi „Virsmo salė“ su Tesla šou Faradėjaus narve bei 25-oji tarptautinė Vilniaus knygų mugė LITEXPO parodų centre.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: [
                 {
-                    title: 'Energetikos ir technikos muziejus, Virsmo salė, Tesla šou',
+                    title: "Energetikos ir technikos muziejus, Virsmo salė, Tesla šou",
                     url: 'https://www.youtube.com/watch?v=LQ0fFWJjduQ'
                 },
                 {
-                    title: 'Vilniaus knygų mugė 2025',
+                    title: "Vilniaus knygų mugė 2025",
                     url: 'https://www.youtube.com/watch?v=qK9njNc_l40'
                 }
             ]
         },
         {
             id: 37,
-            title: 'Mūšos tyrelio pažintinis takas',
-            country: 'Lietuva',
+            title: "Mūšos tyrelio pažintinis takas",
+            country: "Lietuva",
+            countryCode: 'LT',
             lat: 56.2185,
             lng: 23.257,
             date: '2025-05-04',
             category: 'Lietuva',
-            description: 'Ilgiausias medinis lentų takas per pelkę Lietuvoje: Mūšos tyrelio telmologinis draustinis, vienintelis natūralus Joniškio rajone Miknaičių ežeras ir partizanų stovyklavietė.',
+            description: "Ilgiausias medinis lentų takas per pelkę Lietuvoje: Mūšos tyrelio telmologinis draustinis, vienintelis natūralus Joniškio rajone Miknaičių ežeras ir partizanų stovyklavietė.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: [
                 {
-                    title: 'Mūšos tyrelio takas: pelkė Lietuvoje, kurioje pajusite gamtos galybę',
+                    title: "Mūšos tyrelio takas: pelkė Lietuvoje, kurioje pajusite gamtos galybę",
                     url: 'https://www.youtube.com/watch?v=LVK0-C2JvNQ'
                 }
             ]
         },
         {
             id: 38,
-            title: 'Tytuvėnai ir Šiaulės kalnas (Akmenų rūžos takas)',
-            country: 'Lietuva',
+            title: "Tytuvėnai ir Šiaulės kalnas (Akmenų rūžos takas)",
+            country: "Lietuva",
+            countryCode: 'LT',
             lat: 55.6033,
             lng: 23.1994,
             date: '2025-05-11',
             category: 'Lietuva',
-            description: 'Tytuvėnų regioninis parkas: mistiškas Akmenų rūžos pažintinis takas, 21 m Šiaulės kalno apžvalgos bokštas ir 15 m Tytuvėnų apžvalgos bokštas.',
+            description: "Tytuvėnų regioninis parkas: mistiškas Akmenų rūžos pažintinis takas, 21 m Šiaulės kalno apžvalgos bokštas ir 15 m Tytuvėnų apžvalgos bokštas.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: [
                 {
-                    title: 'Akmenų rūža, Šiaulės kalnas ir Tytuvėnų apžvalgos bokštai',
+                    title: "Akmenų rūža, Šiaulės kalnas ir Tytuvėnų apžvalgos bokštai",
                     url: 'https://www.youtube.com/watch?v=3bA2R27bN7M'
                 }
             ]
         },
         {
             id: 39,
-            title: 'Kurtuvėnų regioninis parkas',
-            country: 'Lietuva',
+            title: "Kurtuvėnų regioninis parkas",
+            country: "Lietuva",
+            countryCode: 'LT',
             lat: 55.8267,
             lng: 23.0475,
             date: '2025-02-09',
             category: 'Lietuva',
-            description: 'Kurtuvėnų regioninio parko pažintiniai takai ir paveldas: Targių ozų ledyniniai kalvagūbriai, Juodlės, Vainagių ir Pageluvio pažintiniai takai, Svilės šaltiniai bei XVIII a. Kurtuvėnų dvaro svirnas.',
+            description: "Kurtuvėnų regioninio parko pažintiniai takai ir paveldas: Targių ozų ledyniniai kalvagūbriai, Juodlės, Vainagių ir Pageluvio pažintiniai takai, Svilės šaltiniai bei XVIII a. Kurtuvėnų dvaro svirnas.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: [
                 {
-                    title: 'Targių ozų takas, Kurtuvėnų regioninis parkas',
+                    title: "Targių ozų takas, Kurtuvėnų regioninis parkas",
                     url: 'https://www.youtube.com/watch?v=roFVMdWpDh0'
                 },
                 {
-                    title: 'Juodlės pažintinis takas (žiema 2025)',
+                    title: "Juodlės pažintinis takas (žiema 2025)",
                     url: 'https://www.youtube.com/watch?v=bBd6SzJe4Bs'
                 },
                 {
-                    title: 'Juodlės pažintinis takas',
+                    title: "Juodlės pažintinis takas",
                     url: 'https://www.youtube.com/watch?v=4obVDV2dEGk'
                 },
                 {
-                    title: 'Svilės kraštovaizdžio takas',
+                    title: "Svilės kraštovaizdžio takas",
                     url: 'https://www.youtube.com/watch?v=YUweSjKZnVo'
                 },
                 {
-                    title: 'Vainagių pažintinis takas',
+                    title: "Vainagių pažintinis takas",
                     url: 'https://www.youtube.com/watch?v=E30hn1ylTJs'
                 },
                 {
-                    title: 'Pageluvio pažintinis takas',
+                    title: "Pageluvio pažintinis takas",
                     url: 'https://www.youtube.com/watch?v=RaQRQ531Xj0'
                 },
                 {
-                    title: 'Šventė Kurtuvėnų dvaro svirne su Dubysos mokyklos bendruomene',
+                    title: "Šventė Kurtuvėnų dvaro svirne su Dubysos mokyklos bendruomene",
                     url: 'https://www.youtube.com/watch?v=IYXbrfBFH4Q'
                 }
             ]
         },
         {
             id: 40,
-            title: 'Bubiai (Ventos–Dubysos perkasas)',
-            country: 'Lietuva',
+            title: "Bubiai (Ventos–Dubysos perkasas)",
+            country: "Lietuva",
+            countryCode: 'LT',
             lat: 55.8542,
             lng: 23.1361,
             date: '2025-04-05',
             category: 'Lietuva',
-            description: '2 km Bubių istorinis pažintinis takas: XIX a. Ventos–Dubysos perkaso ir žiemos uosto liekanos, Zubovo ąžuolų alėja, Perkaso pušys, seniausias tiltas ir 5 Bubių tuopos.',
+            description: "2 km Bubių istorinis pažintinis takas: XIX a. Ventos–Dubysos perkaso ir žiemos uosto liekanos, Zubovo ąžuolų alėja, Perkaso pušys, seniausias tiltas ir 5 Bubių tuopos.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: [
                 {
-                    title: 'Ventos–Dubysos perkasas, Bubių istorinis takas',
+                    title: "Ventos–Dubysos perkasas, Bubių istorinis takas",
                     url: 'https://www.youtube.com/watch?v=jVGKmhN6tJA'
                 },
                 {
-                    title: 'Pirmas sniegas, 2024 Bubiai',
+                    title: "Pirmas sniegas, 2024 Bubiai",
                     url: 'https://www.youtube.com/watch?v=_wLTOVbFpgc'
                 }
             ]
         },
         {
             id: 41,
-            title: 'Šiauliai',
-            country: 'Lietuva',
+            title: "Šiauliai",
+            country: "Lietuva",
+            countryCode: 'LT',
             lat: 55.9349,
             lng: 23.3137,
             date: '2026-05-29',
             category: 'Lietuva',
-            description: 'Saulės miestas Šiauliai: berniukų ir jaunuolių choro „Dagilėlis“ pasirodymai Šiaulių katedroje, darželio bei mokyklos šventės, edukacijos ir šeimos laisvalaikis.',
+            description: "Saulės miestas Šiauliai: berniukų ir jaunuolių choro „Dagilėlis“ pasirodymai Šiaulių katedroje, darželio bei mokyklos šventės, edukacijos ir šeimos laisvalaikis.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: [
                 {
-                    title: 'Dagilėlio pirmokai festivalyje „Džiaugsmo šventė jau atėjo“',
+                    title: "Dagilėlio pirmokai festivalyje „Džiaugsmo šventė jau atėjo“",
                     url: 'https://www.youtube.com/watch?v=chMemEvNcf0'
                 },
                 {
-                    title: 'Dagilėlio dainavimo mokykla | Pasirodymas #1',
+                    title: "Dagilėlio dainavimo mokykla | Pasirodymas #1",
                     url: 'https://www.youtube.com/watch?v=xYvpsL6qI3g'
                 },
                 {
-                    title: 'Dagilėlio dainavimo mokykla | Pasirodymas #2',
+                    title: "Dagilėlio dainavimo mokykla | Pasirodymas #2",
                     url: 'https://www.youtube.com/watch?v=4e_Wh-OXCqY'
                 },
                 {
-                    title: 'Dagilėlio dainavimo mokykla | Pasirodymas #3',
+                    title: "Dagilėlio dainavimo mokykla | Pasirodymas #3",
                     url: 'https://www.youtube.com/watch?v=hkR_BmNPbPU'
                 },
                 {
-                    title: 'Dagilėlio dainavimo mokykla | Pasirodymas #4',
+                    title: "Dagilėlio dainavimo mokykla | Pasirodymas #4",
                     url: 'https://www.youtube.com/watch?v=ZRexVX7u0VA'
                 },
                 {
-                    title: 'Drugelių grupės išleistuvės',
+                    title: "Drugelių grupės išleistuvės",
                     url: 'https://www.youtube.com/watch?v=_HbCBTMtq7A'
                 },
                 {
-                    title: 'Boružiukų edukacija „Stebuklingas augalų kilimas“',
+                    title: "Boružiukų edukacija „Stebuklingas augalų kilimas“",
                     url: 'https://www.youtube.com/watch?v=a_nGROIl1xY'
                 },
                 {
-                    title: 'Boružiukų Kalėdų šventė',
+                    title: "Boružiukų Kalėdų šventė",
                     url: 'https://www.youtube.com/watch?v=tnIm-0paDxc'
                 },
                 {
-                    title: 'Pirmokų Kalėdų laukimas',
+                    title: "Pirmokų Kalėdų laukimas",
                     url: 'https://www.youtube.com/watch?v=U91dsOl22Go'
                 },
                 {
-                    title: 'Boružiukai, eglutės puošimas 2024',
+                    title: "Boružiukai, eglutės puošimas 2024",
                     url: 'https://www.youtube.com/watch?v=q87BXAFlQE8'
                 },
                 {
-                    title: 'Penktadienio vakaras Šiauliuose',
+                    title: "Penktadienio vakaras Šiauliuose",
                     url: 'https://www.youtube.com/watch?v=gYnWVjdjAMc'
                 },
                 {
-                    title: 'Giedrės ir Urtės fotosesija',
+                    title: "Giedrės ir Urtės fotosesija",
                     url: 'https://www.youtube.com/watch?v=zqB9vlgdRuY'
                 }
             ]
         },
         {
             id: 42,
-            title: 'Plungė',
-            country: 'Lietuva',
+            title: "Plungė",
+            country: "Lietuva",
+            countryCode: 'LT',
             lat: 55.9114,
             lng: 21.8442,
             date: '2024-09-22',
             category: 'Lietuva',
-            description: 'Plungė iš paukščio skrydžio 2024 – Žemaitijos miesto panorama ir Diena be automobilio užfiksuota dronu.',
+            description: "Plungė iš paukščio skrydžio 2024 – Žemaitijos miesto panorama ir Diena be automobilio užfiksuota dronu.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: [
                 {
-                    title: 'Plungė iš paukščio skrydžio 2024, diena be automobilio',
+                    title: "Plungė iš paukščio skrydžio 2024, diena be automobilio",
                     url: 'https://www.youtube.com/watch?v=-R6g4mcsXII'
                 }
             ]
         },
         {
             id: 43,
-            title: 'Perlinių danielių parkas',
-            country: 'Lietuva',
+            title: "Perlinių danielių parkas",
+            country: "Lietuva",
+            countryCode: 'LT',
             lat: 55.5256,
             lng: 25.1026,
             date: '2025-06-15',
             category: 'Lietuva',
-            description: 'Trumpa išvyka į gamtą pasigrožėti perlinių danielių parko gyventojais ir susipažinti su šiais grakščiais gyvūnais iš arti.',
+            description: "Trumpa išvyka į gamtą pasigrožėti perlinių danielių parko gyventojais ir susipažinti su šiais grakščiais gyvūnais iš arti.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: [
                 {
-                    title: 'Perlinių danielių parkas',
+                    title: "Perlinių danielių parkas",
                     url: 'https://www.youtube.com/watch?v=Hx_FbGS14Wk'
                 }
             ]
         },
         {
             id: 44,
-            title: 'Berlynas',
-            country: 'Vokietija',
+            title: "Berlynas",
+            country: "Vokietija",
+            countryCode: 'DE',
             lat: 52.52,
             lng: 13.405,
             date: '2023-09-22',
             category: 'Automobiliu',
-            description: 'Kelionė automobiliu į Vokietijos sostinę: Brandenburgo vartai, Reichstagas ir Berlyno sienos galerija.',
+            description: "Kelionė automobiliu į Vokietijos sostinę: Brandenburgo vartai, Reichstagas ir Berlyno sienos galerija.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: []
         },
         {
             id: 45,
-            title: 'Praha',
-            country: 'Čekija',
+            title: "Praha",
+            country: "Čekija",
+            countryCode: 'CZ',
             lat: 50.0755,
             lng: 14.4378,
             date: '2023-09-25',
             category: 'Automobiliu',
-            description: 'Šimto bokštų miestas: Karolio tiltas, Prahos pilis, Senamiesčio aikštė ir astronominis laikrodis.',
+            description: "Šimto bokštų miestas: Karolio tiltas, Prahos pilis, Senamiesčio aikštė ir astronominis laikrodis.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: []
         },
         {
             id: 46,
-            title: 'Liberecas (Ještedo bokštas)',
-            country: 'Čekija',
+            title: "Liberecas (Ještedo bokštas)",
+            country: "Čekija",
+            countryCode: 'CZ',
             lat: 50.7327,
             lng: 14.9847,
             date: '2023-09-27',
             category: 'Automobiliu',
-            description: 'Futuristinis Ještedo televizijos bokštas ir viešbutis kalno viršūnėje su kvapą gniaužiančia panorama.',
+            description: "Futuristinis Ještedo televizijos bokštas ir viešbutis kalno viršūnėje su kvapą gniaužiančia panorama.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: []
         },
         {
             id: 47,
-            title: 'Belgradas',
-            country: 'Serbija',
+            title: "Belgradas",
+            country: "Serbija",
+            countryCode: 'RS',
             lat: 44.8125,
             lng: 20.4612,
             date: '2023-11-10',
             category: 'Lėktuvu',
-            description: 'Kalemegdano tvirtovė prie Dunojaus ir Savos santakos, bohemiškasis Skadarlija kvartalas ir Šv. Savos soboras.',
+            description: "Kalemegdano tvirtovė prie Dunojaus ir Savos santakos, bohemiškasis Skadarlija kvartalas ir Šv. Savos soboras.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: []
         },
         {
             id: 48,
-            title: 'Sirakūzai',
-            country: 'Italija',
+            title: "Sirakūzai",
+            country: "Italija",
+            countryCode: 'IT',
             lat: 37.0755,
             lng: 15.2866,
             date: '2024-04-15',
             category: 'Kruizas',
-            description: 'Antikinė Sicilijos dvasia: Ortidžijos sala, katedros aikštė, Arethusa šaltinis ir Neapolio archeologinis parkas.',
+            description: "Antikinė Sicilijos dvasia: Ortidžijos sala, katedros aikštė, Arethusa šaltinis ir Neapolio archeologinis parkas.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: []
         },
         {
             id: 49,
-            title: 'Valeta',
-            country: 'Malta',
+            title: "Valeta",
+            country: "Malta",
+            countryCode: 'MT',
             lat: 35.8989,
             lng: 14.5146,
             date: '2024-04-16',
             category: 'Kruizas',
-            description: 'Kruizinio laivo sustojimas saulėtoje Maltoje: Didysis uostas, Aukštutiniai Barrakka sodai ir senamiesčio gatvelės.',
+            description: "Kruizinio laivo sustojimas saulėtoje Maltoje: Didysis uostas, Aukštutiniai Barrakka sodai ir senamiesčio gatvelės.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: []
         },
         {
             id: 50,
-            title: 'Splitas',
-            country: 'Kroatija',
+            title: "Splitas",
+            country: "Kroatija",
+            countryCode: 'HR',
             lat: 43.5081,
             lng: 16.4402,
             date: '2024-06-04',
             category: 'Kruizas',
-            description: 'Adrijos jūros perlas: imperatoriaus Diokletiano rūmai, Riva promenada ir Marjan kalvos apžvalgos aikštelė.',
+            description: "Adrijos jūros perlas: imperatoriaus Diokletiano rūmai, Riva promenada ir Marjan kalvos apžvalgos aikštelė.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: []
         },
         {
             id: 51,
-            title: 'Korfu',
-            country: 'Graikija',
+            title: "Korfu",
+            country: "Graikija",
+            countryCode: 'GR',
             lat: 39.6243,
             lng: 19.9217,
             date: '2024-06-06',
             category: 'Kruizas',
-            description: 'Žalioji Jonijos jūros sala: venecijietiškas Kerkyros senamiestis, Senoji tvirtovė ir žydros įlankos.',
+            description: "Žalioji Jonijos jūros sala: venecijietiškas Kerkyros senamiestis, Senoji tvirtovė ir žydros įlankos.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
             videos: []
         },
         {
             id: 52,
-            title: 'Triestas',
-            country: 'Italija',
+            title: "Triestas",
+            country: "Italija",
+            countryCode: 'IT',
             lat: 45.6495,
             lng: 13.7768,
             date: '2024-06-08',
             category: 'Kruizas',
-            description: "Kruizo uostas Adrijos šiaurėje: Piazza Unità d'Italia aikštė, Didysis kanalas ir Miramare pilis.",
+            description: "Kruizo uostas Adrijos šiaurėje: Piazza Unità d\u0027Italia aikštė, Didysis kanalas ir Miramare pilis.",
             travelers: ['Tomas', 'Sandra', 'Lukas', 'Linas'],
+            videos: []
+        },
+        {
+            id: 53,
+            title: "Briuselis",
+            country: "Belgija",
+            countryCode: 'BE',
+            lat: 50.8467,
+            lng: 4.3525,
+            date: '2013-04-01',
+            category: 'Autobusu',
+            description: "Kelionė autobusu po Beneliukso šalis",
+            travelers: ['Tomas'],
+            videos: []
+        },
+        {
+            id: 54,
+            title: "Amsterdamas",
+            country: "Nyderlandai",
+            countryCode: 'NL',
+            lat: 52.3731,
+            lng: 4.8925,
+            date: '2013-04-01',
+            category: 'Autobusu',
+            description: "Kelionė autobusu po Beneliukso šalis",
+            travelers: ['Tomas'],
+            videos: []
+        },
+        {
+            id: 55,
+            title: "Viena",
+            country: "Austrija",
+            countryCode: 'AT',
+            lat: 48.2084,
+            lng: 16.3725,
+            date: '2019-02-20',
+            category: 'Automobiliu',
+            description: "Kelionė automobiliu po Europą",
+            travelers: ['Tomas'],
+            videos: []
+        },
+        {
+            id: 56,
+            title: "Budapeštas",
+            country: "Vengrija",
+            countryCode: 'HU',
+            lat: 47.4818,
+            lng: 19.1449,
+            date: '2019-02-22',
+            category: 'Automobiliu',
+            description: "Kelionė automobiliu po Europą",
+            travelers: ['Tomas'],
+            videos: []
+        },
+        {
+            id: 57,
+            title: "San Marinas",
+            country: "San Marinas",
+            countryCode: 'SM',
+            lat: 43.9459,
+            lng: 12.4583,
+            date: '2023-09-14',
+            category: 'Lėktuvu',
+            description: "Sandros gimtadienis.",
+            travelers: ['Tomas', 'Sandra'],
+            videos: []
+        },
+        {
+            id: 58,
+            title: "Letališče Jožeta Pučnika Ljubljana",
+            country: "Slovėnija",
+            countryCode: 'SI',
+            lat: 46.2225,
+            lng: 14.4638,
+            date: '2012-11-05',
+            category: 'Autobusu',
+            description: "Šiaurės Italija - Kroatija -Slovėnija",
+            travelers: ['Tomas'],
+            videos: []
+        },
+        {
+            id: 59,
+            title: "Minskas",
+            country: "Baltarusija",
+            countryCode: 'BY',
+            lat: 53.9025,
+            lng: 27.5618,
+            date: '2012-12-30',
+            category: 'Autobusu',
+            description: "Naujų metų sutikimas Minske",
+            travelers: ['Tomas', 'Sandra'],
+            videos: []
+        },
+        {
+            id: 60,
+            title: "Sankt Peterburgas",
+            country: "Rusija",
+            countryCode: 'RU',
+            lat: 59.9607,
+            lng: 30.1587,
+            date: '2013-05-01',
+            category: 'Autobusu',
+            description: "Kelionė į Sant peterburgą",
+            travelers: ['Tomas', 'Sandra'],
+            videos: []
+        },
+        {
+            id: 61,
+            title: "Liuksemburgo oro uostas",
+            country: "Liuksemburgas",
+            countryCode: 'LU',
+            lat: 49.6348,
+            lng: 6.2163,
+            date: '2013-04-01',
+            category: 'Autobusu',
+            description: "Kelionė autobusu po Beneliukso šalis",
+            travelers: ['Tomas'],
+            videos: []
+        },
+        {
+            id: 62,
+            title: "Kijevas",
+            country: "Ukraina",
+            countryCode: 'UA',
+            lat: 50.45,
+            lng: 30.5241,
+            date: '2006-07-07',
+            category: 'Autobusu',
+            description: "Sportinės varžybos",
+            travelers: ['Sandra'],
             videos: []
         }
     ]
 };
+
 
 // Kategorijų meta duomenys CSS smeigtukams ir kortelėms
 const CATEGORY_META = {
@@ -1135,6 +1363,7 @@ const ADMIN_PASSWORD_SHA256 = '5a5ca17e3c636d26a22f58b3702074e33d9b488a0cfbd659c
 // Būsena
 const state = {
     visitedCountries: [],
+    countryTravelers: {},
     places: [],
     activeCategory: 'Visos',
     activeTraveler: 'Visi',
@@ -1153,6 +1382,21 @@ const mapContainerEl = document.getElementById('map');
 const statCountriesEl = document.getElementById('statCountries');
 const statPlacesEl = document.getElementById('statPlaces');
 const statVlogsEl = document.getElementById('statVlogs');
+const openCountriesStatsBtnEl = document.getElementById('openCountriesStatsBtn');
+const countriesStatsModalEl = document.getElementById('countriesStatsModal');
+const closeCountriesStatsBtnEl = document.getElementById('closeCountriesStatsBtn');
+const europeChallengeTextEl = document.getElementById('europeChallengeText');
+const europeProgressBarEl = document.getElementById('europeProgressBar');
+const europeProgressFillEl = document.getElementById('europeProgressFill');
+const europeProgressPercentEl = document.getElementById('europeProgressPercent');
+const tabVisitedCountriesEl = document.getElementById('tabVisitedCountries');
+const tabMissingCountriesEl = document.getElementById('tabMissingCountries');
+const visitedTabContentEl = document.getElementById('visitedTabContent');
+const missingTabContentEl = document.getElementById('missingTabContent');
+const visitedCountriesCountBadgeEl = document.getElementById('visitedCountriesCountBadge');
+const missingCountriesCountBadgeEl = document.getElementById('missingCountriesCountBadge');
+const visitedCountriesTableBodyEl = document.getElementById('visitedCountriesTableBody');
+const missingCountriesTableBodyEl = document.getElementById('missingCountriesTableBody');
 const searchInputEl = document.getElementById('searchInput');
 const clearSearchBtnEl = document.getElementById('clearSearchBtn');
 const categoryFiltersEl = document.getElementById('categoryFilters');
@@ -1817,8 +2061,9 @@ function renderCountryCenterLabels(processedGeoJson, visitedSet) {
 function renderCountriesLayer() {
     if (!state.cachedWorldGeoJson) return;
 
+    const visitedList = getVisitedCountriesByTraveler(state.activeTraveler);
     const visitedSet = new Set(
-        state.visitedCountries.map((code) => String(code).trim().toUpperCase())
+        visitedList.map((code) => String(code).trim().toUpperCase())
     );
 
     if (countriesGeoJsonLayer) {
@@ -1843,11 +2088,15 @@ function renderCountriesLayer() {
             const countryName = getCountryDisplayName(feature, iso2);
 
             // 2) Užvedus pelę ant bet kurios šalies – rodomas lietuviškas šalies pavadinimas
-            const tooltipLabel = isVisited
-                ? `✓ ${escapeHtml(countryName)}`
-                : escapeHtml(countryName);
-
-            layer.bindTooltip(tooltipLabel, {
+            layer.bindTooltip(() => {
+                const currentVisitedSet = new Set(
+                    getVisitedCountriesByTraveler(state.activeTraveler).map((c) => String(c).trim().toUpperCase())
+                );
+                const currentIsVisited = currentVisitedSet.has(iso2);
+                return currentIsVisited
+                    ? `✓ ${escapeHtml(countryName)}`
+                    : escapeHtml(countryName);
+            }, {
                 sticky: true,
                 direction: 'top',
                 offset: [0, -8],
@@ -1858,7 +2107,12 @@ function renderCountriesLayer() {
             layer.on({
                 mouseover: (event) => {
                     const targetLayer = event.target;
-                    if (isVisited) {
+                    const currentVisitedSet = new Set(
+                        getVisitedCountriesByTraveler(state.activeTraveler).map((c) => String(c).trim().toUpperCase())
+                    );
+                    const currentIsVisited = currentVisitedSet.has(iso2);
+
+                    if (currentIsVisited) {
                         targetLayer.setStyle({
                             color: '#0284c7',
                             weight: 2.8,
@@ -1882,11 +2136,17 @@ function renderCountriesLayer() {
                 },
                 mouseout: (event) => {
                     const targetLayer = event.target;
-                    targetLayer.setStyle(getCountryBaseStyle(isVisited));
+                    const currentVisitedSet = new Set(
+                        getVisitedCountriesByTraveler(state.activeTraveler).map((c) => String(c).trim().toUpperCase())
+                    );
+                    const currentIsVisited = currentVisitedSet.has(iso2);
+                    targetLayer.setStyle(getCountryBaseStyle(currentIsVisited));
                 }
             });
         }
     }).addTo(map);
+
+    window.geoJsonLayer = countriesGeoJsonLayer;
 
     // Užtikriname, kad šalių poligonai liktų po žymekliais
     countriesGeoJsonLayer.bringToBack();
@@ -1894,6 +2154,46 @@ function renderCountriesLayer() {
     // Atvaizduojame šalių centrų užrašus (jei įjungtas režimas „Tik šalys“)
     renderCountryCenterLabels(processedGeoJson, visitedSet);
 }
+
+/**
+ * Atnaujina GeoJSON sluoksnio stilių pagal pasirinktą keliautoją:
+ * iškviečia geoJsonLayer.setStyle(...), užspalvina TIK to nario aplankytas šalis,
+ * o visas kitas palieka neutralias.
+ * @param {string} selectedTraveler - 'Visi' arba konkretaus nario vardas ('Tomas', 'Sandra', 'Lukas', 'Linas')
+ */
+function updateCountriesLayerStyle(selectedTraveler = state.activeTraveler) {
+    const geoJsonLayer = countriesGeoJsonLayer;
+    if (!geoJsonLayer || !state.cachedWorldGeoJson) {
+        renderCountriesLayer();
+        return;
+    }
+
+    const visitedCountries = getVisitedCountriesByTraveler(selectedTraveler);
+    const visitedSet = new Set(
+        visitedCountries.map((code) => String(code).trim().toUpperCase())
+    );
+
+    // 1) Iškviečiame GeoJSON sluoksnio stiliaus atnaujinimą geoJsonLayer.setStyle(...)
+    // 2) Žemėlapyje (tiek „Detaliame“, tiek „Tik šalys“ režime) užspalviname TIK tas šalis, kurias grąžina getVisitedCountriesByTraveler
+    geoJsonLayer.setStyle((feature) => {
+        const iso2 = getCountryIso2(feature);
+        const isVisited = visitedSet.has(iso2);
+        return getCountryBaseStyle(isVisited);
+    });
+
+    if (state.mapMode === 'countries') {
+        const processedGeoJson = prepareFilteredGeoJson(
+            state.cachedWorldGeoJson,
+            visitedSet,
+            state.places
+        );
+        renderCountryCenterLabels(processedGeoJson, visitedSet);
+    } else {
+        countryLabelsLayer.clearLayers();
+    }
+}
+
+window.updateCountriesLayerStyle = updateCountriesLayerStyle;
 
 /**
  * 3) Perjungia žemėlapio režimą: „Detalus žemėlapis“ ('detailed') arba „Tik šalys“ ('countries')
@@ -1943,6 +2243,15 @@ async function loadWorldCountriesGeoJson() {
     if (!state.cachedWorldGeoJson) {
         console.error('Nepavyko užkrauti pasaulio šalių GeoJSON kontūrų iš nė vieno šaltinio.');
         return;
+    }
+
+    // Užtikriname, kad kiekvienas taškas turėtų nustatytą ISO-2 šalies kodą
+    if (Array.isArray(state.places)) {
+        state.places.forEach((place) => {
+            if (!place.countryCode) {
+                place.countryCode = resolvePlaceCountryCode(place);
+            }
+        });
     }
 
     renderCountriesLayer();
@@ -2123,25 +2432,89 @@ function createPopupHtml(place) {
 }
 
 /**
- * Automatiškai atnaujina viršutinius statistikos skaitiklius (Šalys | Vietos | Vlogai).
- * „Vlogai“ skaičiuojamas pagal realiai įvestų YouTube nuorodų skaičių „videos“ masyvuose.
+ * Nustato keliautojus konkrečiam video įrašui.
+ * Jei video turi lauką `travelers` (pvz. išsaugotą admin formoje ar faile), naudojamas jis.
+ * Jei ne, pagal video pavadinimo raktažodžius atpažįstami konkretūs vaikai (Lukas / Linas) arba tėvai,
+ * o numatytuoju atveju paveldima visa vietos keliautojų sudėtis.
+ * @param {Object} video
+ * @param {Object} place
+ * @returns {string[]}
  */
-function updateStats(filteredPlaces) {
+function getVideoTravelers(video, place) {
+    if (Array.isArray(video.travelers) && video.travelers.length > 0) {
+        return video.travelers;
+    }
+    const title = String(video.title || '');
+    if (/dagilėl|drugelių|pirmok/i.test(title)) {
+        return ['Tomas', 'Sandra', 'Linas'];
+    }
+    if (/boružiuk|luko nardymas/i.test(title)) {
+        return ['Tomas', 'Sandra', 'Lukas'];
+    }
+    if (/giedrės ir urtės/i.test(title)) {
+        return ['Tomas', 'Sandra'];
+    }
+    return getPlaceTravelers(place);
+}
+
+/**
+ * Automatiškai atnaujina viršutinius statistikos skaitiklius (Šalys | Vietos | Vlogai).
+ * 1) Kai pasirenkamas konkretus keliautojas (Tomas, Sandra, Lukas arba Linas) arba kategorija,
+ *    skaitikliai viršuje rodo tiksliai to pasirinkto keliautojo / kategorijos statistiką:
+ *    kiek šalių aplankyta, kiek vietų ir kiek vlogų yra su juo.
+ * 2) Paspaudus „Visi“, vėl rodoma bendra visos šeimos statistika.
+ * @param {Array} filteredPlaces - išfiltruotas vietų masyvas (jei nenurodytas, nuskaitomas iš getFilteredPlaces())
+ */
+function updateStats(filteredPlaces = getFilteredPlaces()) {
     const isUnfiltered =
         state.activeCategory === 'Visos' &&
         state.activeTraveler === 'Visi' &&
         state.searchQuery.trim() === '';
 
-    const countriesCount =
-        isUnfiltered && state.visitedCountries.length > 0
-            ? state.visitedCountries.length
-            : new Set(filteredPlaces.map((item) => item.country)).size;
+    let countriesCount = 0;
+    if (isUnfiltered && state.visitedCountries.length > 0) {
+        countriesCount = state.visitedCountries.length;
+    } else if (
+        state.activeTraveler !== 'Visi' &&
+        state.activeCategory === 'Visos' &&
+        state.searchQuery.trim() === ''
+    ) {
+        countriesCount = getVisitedCountriesByTraveler(state.activeTraveler).length;
+    } else {
+        const countryCodes = new Set();
+        filteredPlaces.forEach((place) => {
+            const code =
+                place.countryCode ||
+                resolvePlaceCountryCode(place) ||
+                place.country;
+            if (code) {
+                countryCodes.add(String(code).trim().toUpperCase());
+            }
+        });
+        countriesCount = countryCodes.size;
+    }
 
     const totalPlaces = filteredPlaces.length;
-    const totalVlogs = filteredPlaces.reduce(
-        (sum, item) => sum + getValidVideos(item).length,
-        0
-    );
+
+    let totalVlogs = 0;
+    if (isUnfiltered) {
+        totalVlogs = state.places.reduce(
+            (sum, item) => sum + getValidVideos(item).length,
+            0
+        );
+    } else {
+        totalVlogs = filteredPlaces.reduce((sum, place) => {
+            const validVideos = getValidVideos(place);
+            if (state.activeTraveler === 'Visi') {
+                return sum + validVideos.length;
+            }
+            const travelerVideos = validVideos.filter((v) => {
+                const vTravelers = getVideoTravelers(v, place);
+                return vTravelers.includes(state.activeTraveler);
+            });
+            return sum + travelerVideos.length;
+        }, 0);
+    }
 
     statCountriesEl.textContent = countriesCount;
     statPlacesEl.textContent = totalPlaces;
@@ -2626,6 +2999,440 @@ function ensureVisitedCountryIso2(iso2Code) {
     return false;
 }
 
+/**
+ * Pagal koordinates [lat, lng] nustato šalies ISO-2 kodą iš turimų GeoJSON duomenų
+ */
+function findCountryIso2ByCoordinates(lat, lng) {
+    const numLat = Number(lat);
+    const numLng = Number(lng);
+    if (Number.isNaN(numLat) || Number.isNaN(numLng)) return '';
+    if (!state.cachedWorldGeoJson || !Array.isArray(state.cachedWorldGeoJson.features)) {
+        return '';
+    }
+
+    const margin = 0.08;
+
+    for (const feature of state.cachedWorldGeoJson.features) {
+        const iso2 = getCountryIso2(feature);
+        if (!/^[A-Z]{2}$/.test(iso2)) continue;
+
+        const geom = feature && feature.geometry;
+        if (!geom || !Array.isArray(geom.coordinates)) continue;
+
+        const polygons =
+            geom.type === 'Polygon'
+                ? [geom.coordinates]
+                : geom.type === 'MultiPolygon'
+                  ? geom.coordinates
+                  : [];
+
+        for (const poly of polygons) {
+            const outerRing = poly && poly[0];
+            if (!Array.isArray(outerRing) || outerRing.length === 0) continue;
+
+            let minLng = Infinity;
+            let maxLng = -Infinity;
+            let minLat = Infinity;
+            let maxLat = -Infinity;
+
+            for (const pt of outerRing) {
+                if (pt[0] < minLng) minLng = pt[0];
+                if (pt[0] > maxLng) maxLng = pt[0];
+                if (pt[1] < minLat) minLat = pt[1];
+                if (pt[1] > maxLat) maxLat = pt[1];
+            }
+
+            if (
+                numLng >= minLng - margin &&
+                numLng <= maxLng + margin &&
+                numLat >= minLat - margin &&
+                numLat <= maxLat + margin
+            ) {
+                if (isPointInRing(numLng, numLat, outerRing)) {
+                    return iso2;
+                }
+            }
+        }
+    }
+
+    return '';
+}
+
+/**
+ * 1) Kiekvienam taškui iš „places“ nustato jo šalies ISO-2 kodą:
+ * Jei taškas neturi lauko „countryCode“, automatiškai nustato ISO-2 kodą pagal šalies pavadinimą arba koordinates.
+ */
+function resolvePlaceCountryCode(place) {
+    if (!place || typeof place !== 'object') return '';
+
+    // 1. Jei taškas jau turi galiojantį 2 raidžių countryCode
+    if (place.countryCode && typeof place.countryCode === 'string') {
+        const clean = place.countryCode.trim().toUpperCase();
+        if (/^[A-Z]{2}$/.test(clean)) {
+            return clean;
+        }
+    }
+
+    // 2. Pagal šalies pavadinimą
+    const byCountry = findIso2ByCountryName(place.country);
+    if (byCountry) {
+        return byCountry.toUpperCase();
+    }
+
+    // Pagal vietos pavadinimą (pvz. Vatikanas ar San Marinas)
+    const byTitle = findIso2ByCountryName(place.title);
+    if (byTitle) {
+        return byTitle.toUpperCase();
+    }
+
+    // 3. Pagal koordinates (lat, lng)
+    const lat = Number(place.lat);
+    const lng = Number(place.lng);
+    if (!Number.isNaN(lat) && !Number.isNaN(lng)) {
+        const byCoords = findCountryIso2ByCoordinates(lat, lng);
+        if (byCoords) {
+            return byCoords.toUpperCase();
+        }
+    }
+
+    return '';
+}
+
+/**
+ * Grąžina konkrečioje šalyje lankiusius keliautojus.
+ * 1) Jei šaliai nariai atskirai nurodyti countryTravelers objekte (pvz., { "CZ": ["Tomas", "Sandra"] }), naudojami jie.
+ * 2) Jei šaliai nariai atskirai nenurodyti, automatiškai imami nariai iš tos šalies taškų (places).
+ * 3) Jei šalis neturi nei taškų, nei countryTravelers įrašo, numatytuoju atveju priskiriami visi DEFAULT_TRAVELERS.
+ * @param {string} iso2 - 2 raidžių šalies ISO kodas
+ * @returns {string[]}
+ */
+function getCountryTravelers(iso2) {
+    if (!iso2) return [...DEFAULT_TRAVELERS];
+    const upper = String(iso2).trim().toUpperCase();
+
+    // 1) Jei nurodyta objekte countryTravelers (pvz., { "CZ": ["Tomas", "Sandra"] })
+    if (
+        state.countryTravelers &&
+        typeof state.countryTravelers === 'object' &&
+        Array.isArray(state.countryTravelers[upper])
+    ) {
+        return state.countryTravelers[upper];
+    }
+
+    // 2) Automatiškai imame narius iš tos šalies vietų (places)
+    const countryPlaces = (state.places || []).filter((p) => {
+        const placeCode =
+            (p.countryCode && /^[A-Z]{2}$/i.test(String(p.countryCode).trim()))
+                ? String(p.countryCode).trim().toUpperCase()
+                : resolvePlaceCountryCode(p);
+        return placeCode === upper;
+    });
+
+    if (countryPlaces.length > 0) {
+        const membersSet = new Set();
+        countryPlaces.forEach((p) => {
+            const travelers = getPlaceTravelers(p);
+            travelers.forEach((t) => membersSet.add(t));
+        });
+        return Array.from(membersSet);
+    }
+
+    // 3) Jei taškų nėra ir countryTravelers nenurodyta, pagal nutylėjimą – visi nariai
+    return [...DEFAULT_TRAVELERS];
+}
+
+/**
+ * 2) Pagalbinė funkcija getVisitedCountriesByTraveler(traveler):
+ * - Jei pasirinkta „Visi“, grąžina visą visitedCountries sąrašą.
+ * - Jei pasirinktas konkretus narys (pvz. „Lukas“ arba „Linas“), grąžina tik tas šalis (ISO-2 kodus),
+ *   kuriose pagal getCountryTravelers(iso2) lankėsi tas narys.
+ */
+function getVisitedCountriesByTraveler(traveler) {
+    const selected = String(traveler || 'Visi').trim();
+
+    // Jei pasirinkta „Visi“, grąžina visą visitedCountries sąrašą
+    if (!selected || selected === 'Visi') {
+        return Array.isArray(state.visitedCountries) ? [...state.visitedCountries] : [];
+    }
+
+    const matchedCountriesSet = new Set();
+    const visitedList = Array.isArray(state.visitedCountries) ? state.visitedCountries : [];
+
+    visitedList.forEach((code) => {
+        const upper = String(code).trim().toUpperCase();
+        const countryMembers = getCountryTravelers(upper);
+        if (countryMembers.includes(selected)) {
+            matchedCountriesSet.add(upper);
+        }
+    });
+
+    // Papildomai patikriname vietas (jei kuri nors vieta turi šalį, neįtrauktą į visitedCountries)
+    (state.places || []).forEach((place) => {
+        const iso2 = (place.countryCode && /^[A-Z]{2}$/i.test(String(place.countryCode).trim()))
+            ? String(place.countryCode).trim().toUpperCase()
+            : resolvePlaceCountryCode(place);
+        if (iso2 && !visitedList.includes(iso2)) {
+            const countryMembers = getCountryTravelers(iso2);
+            if (countryMembers.includes(selected)) {
+                matchedCountriesSet.add(iso2);
+            }
+        }
+    });
+
+    return Array.from(matchedCountriesSet);
+}
+
+/**
+ * Apskaičiuoja Europos šalių lankomumo statistiką:
+ * - total: iš viso Europos šalių (46)
+ * - visited: kiek iš jų jau aplankyta (pagal pasirinktą keliautoją arba bendrai)
+ * - missing: kiek Europos šalių dar trūksta aplankyti (46 - aplankyta)
+ * - percentage: procentinė išraiška skaičiumi (pvz. 59)
+ * - percentageFormatted: procentinė išraiška tekstu (pvz. '59%')
+ * - visitedCountries: aplankytų Europos šalių ISO-2 kodų sąrašas
+ * - missingCountries: trūkstamų Europos šalių ISO-2 kodų sąrašas
+ * @param {string} [traveler='Visi'] - 'Visi' arba konkretaus keliautojo vardas ('Tomas', 'Sandra', 'Lukas', 'Linas')
+ * @returns {Object}
+ */
+function getEuropeStats(traveler = 'Visi') {
+    const selected = String(traveler || 'Visi').trim();
+    const visitedCodes = new Set(
+        getVisitedCountriesByTraveler(selected).map((c) => String(c).trim().toUpperCase())
+    );
+
+    const visitedCountries = EUROPEAN_COUNTRIES.filter((code) => visitedCodes.has(code));
+    const missingCountries = EUROPEAN_COUNTRIES.filter((code) => !visitedCodes.has(code));
+
+    const total = EUROPEAN_COUNTRIES.length;
+    const visited = visitedCountries.length;
+    const missing = total - visited;
+    const percentage = total > 0 ? Math.round((visited / total) * 100) : 0;
+    const percentageFormatted = `${percentage}%`;
+
+    return {
+        total,
+        visited,
+        missing,
+        percentage,
+        percentageFormatted,
+        visitedCountries,
+        missingCountries,
+        totalCount: total,
+        visitedCount: visited,
+        missingCount: missing,
+        percent: percentage,
+        visitedNames: visitedCountries.map((code) => getCountryDisplayName(null, code)),
+        missingNames: missingCountries.map((code) => getCountryDisplayName(null, code))
+    };
+}
+
+// Eksportuojame globaliai, kad būtų prieinama visame kode ir konsolėje
+window.state = state;
+window.EUROPEAN_COUNTRIES = EUROPEAN_COUNTRIES;
+window.getEuropeStats = getEuropeStats;
+window.getVisitedCountriesByTraveler = getVisitedCountriesByTraveler;
+window.getCountryTravelers = getCountryTravelers;
+window.resolvePlaceCountryCode = resolvePlaceCountryCode;
+window.findCountryIso2ByCoordinates = findCountryIso2ByCoordinates;
+window.generateKelionesJsonString = generateKelionesJsonString;
+
+/**
+ * Konvertuoja ISO-2 šalies kodą į vėliavos emodžį (pvz., LT -> 🇱🇹)
+ */
+function getCountryFlagEmoji(iso2) {
+    if (!iso2 || typeof iso2 !== 'string' || iso2.length !== 2) return '🏳️';
+    const clean = iso2.toUpperCase();
+    if (clean === 'XK') return '🇽🇰';
+    const codePoints = clean
+        .split('')
+        .map((char) => 127397 + char.charCodeAt(0));
+    return String.fromCodePoint(...codePoints);
+}
+
+/**
+ * Užpildo ir atvaizduoja Šalių statistikos ir Europos iššūkio modalinio lango turinį
+ */
+function renderCountriesStatsModal() {
+    if (!countriesStatsModalEl) return;
+
+    // 1) Apskaičiuojame Europos iššūkio statistiką visai šeimai
+    const europeStats = getEuropeStats('Visi');
+
+    if (europeChallengeTextEl) {
+        europeChallengeTextEl.innerHTML = `Aplankyta <strong>${europeStats.visited}</strong> iš <strong>${europeStats.total}</strong> Europos šalių (<strong>${europeStats.percentageFormatted}</strong>) – dar liko aplankyti <strong>${europeStats.missing}</strong> šalių!`;
+    }
+
+    if (europeProgressPercentEl) {
+        europeProgressPercentEl.textContent = europeStats.percentageFormatted;
+    }
+
+    if (europeProgressFillEl) {
+        europeProgressFillEl.style.width = `${europeStats.percentage}%`;
+    }
+
+    if (europeProgressBarEl) {
+        europeProgressBarEl.setAttribute('aria-valuenow', String(europeStats.percentage));
+    }
+
+    // 2) Atnaujiname skirtukų skaitiklius
+    const allVisited = Array.isArray(state.visitedCountries) ? [...state.visitedCountries] : [];
+    if (visitedCountriesCountBadgeEl) {
+        visitedCountriesCountBadgeEl.textContent = allVisited.length;
+    }
+    if (missingCountriesCountBadgeEl) {
+        missingCountriesCountBadgeEl.textContent = europeStats.missing;
+    }
+
+    // 3) Užpildome aplankytų šalių narių lentelę (Tab 1)
+    if (visitedCountriesTableBodyEl) {
+        // Apskaičiuojame kiekvieno nario statistiką: kiek iš viso šalių ir kiek iš jų Europoje
+        const memberStats = DEFAULT_TRAVELERS.map((traveler) => {
+            const visitedList = getVisitedCountriesByTraveler(traveler);
+            const total = visitedList.length;
+            const europe = visitedList.filter((code) => EUROPEAN_COUNTRIES.includes(code)).length;
+            return {
+                traveler,
+                total,
+                europe,
+                visitedList
+            };
+        });
+
+        // Pirma (viršutinė) suvestinės eilutė
+        const summaryRowHtml = `
+            <tr class="countries-table__summary-row">
+                <td class="countries-table__col-country">
+                    <div class="summary-cell">
+                        <span class="summary-cell__icon" aria-hidden="true">📊</span>
+                        <div class="summary-cell__text">
+                            <strong class="summary-cell__title">Iš viso aplankyta:</strong>
+                            <span class="summary-cell__subtitle">Viso šalių (iš jų Europoje)</span>
+                        </div>
+                    </div>
+                </td>
+                ${memberStats
+                    .map(
+                        (m) => `
+                    <td class="countries-table__col-member">
+                        <div class="member-summary" title="${m.traveler}: iš viso ${m.total} šalių (iš jų ${m.europe} Europoje)">
+                            <strong class="member-summary__total">${m.total}</strong>
+                            <span class="member-summary__sub">(${m.europe} Eur.)</span>
+                        </div>
+                    </td>
+                `
+                    )
+                    .join('')}
+            </tr>
+        `;
+
+        // Rūšiuojame aplankytas šalis lietuviškai pagal pavadinimą
+        const sortedVisited = [...allVisited].sort((a, b) => {
+            const nameA = getCountryDisplayName(null, a);
+            const nameB = getCountryDisplayName(null, b);
+            return nameA.localeCompare(nameB, 'lt');
+        });
+
+        const countryRowsHtml = sortedVisited.map((iso2) => {
+            const countryName = getCountryDisplayName(null, iso2);
+            const flag = getCountryFlagEmoji(iso2);
+            const isEurope = EUROPEAN_COUNTRIES.includes(iso2);
+            const regionBadgeHtml = isEurope
+                ? '<span class="country-cell__badge-tag country-cell__badge-tag--eu" title="Europos šalis">Europa</span>'
+                : '<span class="country-cell__badge-tag country-cell__badge-tag--other" title="Kita pasaulio šalis">Kita</span>';
+
+            const memberCellsHtml = memberStats.map((m) => {
+                const hasVisited = m.visitedList.includes(iso2);
+                return `
+                    <td class="countries-table__col-member">
+                        <span class="member-check ${hasVisited ? 'member-check--yes' : 'member-check--no'}" title="${m.traveler}: ${hasVisited ? 'Lankėsi' : 'Nesilankė'}">
+                            ${hasVisited ? '✓' : '–'}
+                        </span>
+                    </td>
+                `;
+            }).join('');
+
+            return `
+                <tr>
+                    <td class="countries-table__col-country">
+                        <div class="country-cell">
+                            <span class="country-cell__flag" aria-hidden="true">${flag}</span>
+                            <span class="country-cell__code">${escapeHtml(iso2)}</span>
+                            <span class="country-cell__name">${escapeHtml(countryName)}</span>
+                            ${regionBadgeHtml}
+                        </div>
+                    </td>
+                    ${memberCellsHtml}
+                </tr>
+            `;
+        }).join('');
+
+        visitedCountriesTableBodyEl.innerHTML = summaryRowHtml + countryRowsHtml;
+    }
+
+    // 4) Užpildome neaplankytų Europos šalių lentelę (Tab 2)
+    if (missingCountriesTableBodyEl) {
+        const sortedMissing = [...europeStats.missingCountries].sort((a, b) => {
+            const nameA = getCountryDisplayName(null, a);
+            const nameB = getCountryDisplayName(null, b);
+            return nameA.localeCompare(nameB, 'lt');
+        });
+
+        const missingRowsHtml = sortedMissing.map((iso2, index) => {
+            const countryName = getCountryDisplayName(null, iso2);
+            const flag = getCountryFlagEmoji(iso2);
+
+            return `
+                <tr>
+                    <td class="countries-table__col-country">
+                        <div class="country-cell">
+                            <span class="country-cell__index">${index + 1}.</span>
+                            <span class="country-cell__flag" aria-hidden="true">${flag}</span>
+                            <span class="country-cell__name">${escapeHtml(countryName)}</span>
+                        </div>
+                    </td>
+                    <td class="countries-table__col-status">
+                        <span class="missing-badge">🎯 Dar neaplankyta</span>
+                    </td>
+                    <td class="countries-table__col-code">
+                        <span class="country-cell__code">${escapeHtml(iso2)}</span>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+
+        missingCountriesTableBodyEl.innerHTML = missingRowsHtml || `
+            <tr>
+                <td colspan="3" style="text-align: center; color: #34d399; padding: 1.5rem;">
+                    🎉 Sveikiname! Visos 46 Europos šalys jau aplankytos!
+                </td>
+            </tr>
+        `;
+    }
+}
+
+/**
+ * Atidaro Šalių statistikos modalinį langą
+ */
+function openCountriesStatsModal() {
+    if (!countriesStatsModalEl) return;
+    renderCountriesStatsModal();
+    countriesStatsModalEl.hidden = false;
+    document.body.style.overflow = 'hidden';
+}
+
+/**
+ * Uždaro Šalių statistikos modalinį langą
+ */
+function closeCountriesStatsModal() {
+    if (!countriesStatsModalEl) return;
+    countriesStatsModalEl.hidden = true;
+    document.body.style.overflow = '';
+}
+
+window.renderCountriesStatsModal = renderCountriesStatsModal;
+window.openCountriesStatsModal = openCountriesStatsModal;
+window.closeCountriesStatsModal = closeCountriesStatsModal;
+
 // Paskutiniai Nominatim paieškos rezultatai ir pasirinktas ISO-2 kodas
 let lastNominatimResults = [];
 let nominatimDebounceTimer = null;
@@ -2937,21 +3744,61 @@ function getAdminFilteredPlaces() {
  * Atvaizduoja aplankytų šalių ISO kodus ir plačią esamų taškų lentelę Admin Dashboard modale
  */
 function renderAdminPanel() {
-    // 1) Aplankytos šalys (ISO-2 + lietuviškas pavadinimas)
+    // 1) Aplankytos šalys (ISO-2 + lietuviškas pavadinimas + keliautojų varnelės T, S, Lu, Li)
     adminCountriesListEl.innerHTML = state.visitedCountries
         .map((code) => {
-            const ltName = getCountryDisplayName(null, code);
+            const upper = String(code).trim().toUpperCase();
+            const ltName = getCountryDisplayName(null, upper);
+            const flag = getCountryFlagEmoji(upper);
+            const countryMembers = getCountryTravelers(upper);
+
+            const hasPlaces = (state.places || []).some((p) => {
+                const placeCode =
+                    (p.countryCode && /^[A-Z]{2}$/i.test(String(p.countryCode).trim()))
+                        ? String(p.countryCode).trim().toUpperCase()
+                        : resolvePlaceCountryCode(p);
+                return placeCode === upper;
+            });
+
+            const hasTomas = countryMembers.includes('Tomas');
+            const hasSandra = countryMembers.includes('Sandra');
+            const hasLukas = countryMembers.includes('Lukas');
+            const hasLinas = countryMembers.includes('Linas');
+
             return `
-            <span class="admin-country-chip" title="${escapeHtml(ltName)}">
-                <span>${escapeHtml(code)} · ${escapeHtml(ltName)}</span>
+            <div class="admin-country-row" data-country-code="${escapeHtml(upper)}">
+                <div class="admin-country-row__info">
+                    <span class="admin-country-row__flag" aria-hidden="true">${flag}</span>
+                    <span class="admin-country-row__code">${escapeHtml(upper)}</span>
+                    <span class="admin-country-row__name" title="${escapeHtml(ltName)}">${escapeHtml(ltName)}</span>
+                    ${hasPlaces ? '' : '<span class="admin-country-row__badge" title="Šalis neturi atskirų taškų žemėlapyje">Be taškų</span>'}
+                </div>
+                <div class="admin-country-row__travelers" aria-label="Keliautojai šalyje ${escapeHtml(upper)}">
+                    <label class="admin-traveler-check" title="Tomas">
+                        <input type="checkbox" class="admin-country-member-input" data-country="${escapeHtml(upper)}" value="Tomas" ${hasTomas ? 'checked' : ''}>
+                        <span>T</span>
+                    </label>
+                    <label class="admin-traveler-check" title="Sandra">
+                        <input type="checkbox" class="admin-country-member-input" data-country="${escapeHtml(upper)}" value="Sandra" ${hasSandra ? 'checked' : ''}>
+                        <span>S</span>
+                    </label>
+                    <label class="admin-traveler-check" title="Lukas">
+                        <input type="checkbox" class="admin-country-member-input" data-country="${escapeHtml(upper)}" value="Lukas" ${hasLukas ? 'checked' : ''}>
+                        <span>Lu</span>
+                    </label>
+                    <label class="admin-traveler-check" title="Linas">
+                        <input type="checkbox" class="admin-country-member-input" data-country="${escapeHtml(upper)}" value="Linas" ${hasLinas ? 'checked' : ''}>
+                        <span>Li</span>
+                    </label>
+                </div>
                 <button
                     type="button"
-                    class="admin-country-chip__remove"
-                    data-remove-country="${escapeHtml(code)}"
-                    title="Pašalinti ${escapeHtml(ltName)} (${escapeHtml(code)})"
-                    aria-label="Pašalinti šalį ${escapeHtml(code)}"
+                    class="admin-country-row__remove"
+                    data-remove-country="${escapeHtml(upper)}"
+                    title="Pašalinti ${escapeHtml(ltName)} (${escapeHtml(upper)})"
+                    aria-label="Pašalinti šalį ${escapeHtml(upper)}"
                 >✕</button>
-            </span>
+            </div>
         `;
         })
         .join('');
@@ -3029,6 +3876,7 @@ function renderAdminPanel() {
 function generateKelionesJsonString() {
     const payload = {
         visitedCountries: state.visitedCountries,
+        countryTravelers: state.countryTravelers || {},
         places: state.places
     };
     return JSON.stringify(payload, null, 2) + '\n';
@@ -3322,10 +4170,20 @@ placeFormEl.addEventListener('submit', (event) => {
         ? editingId
         : state.places.reduce((maxId, item) => Math.max(maxId, Number(item.id) || 0), 0) + 1;
 
+    const resolvedCountryCode =
+        (/^[A-Z]{2}$/.test(resolvedIso2) && resolvedIso2) ||
+        resolvePlaceCountryCode({
+            country: countryName,
+            title: placeTitleInputEl.value.trim(),
+            lat: Number(lat.toFixed(4)),
+            lng: Number(lng.toFixed(4))
+        });
+
     const placePayload = {
         id: Number(targetId),
         title: placeTitleInputEl.value.trim(),
         country: countryName,
+        countryCode: resolvedCountryCode,
         lat: Number(lat.toFixed(4)),
         lng: Number(lng.toFixed(4)),
         date: placeDateInputEl.value,
@@ -3388,9 +4246,15 @@ countryFormEl.addEventListener('submit', (event) => {
 
     if (!state.visitedCountries.includes(rawCode)) {
         state.visitedCountries.push(rawCode);
+        if (!state.countryTravelers || typeof state.countryTravelers !== 'object') {
+            state.countryTravelers = {};
+        }
+        state.countryTravelers[rawCode] = [...DEFAULT_TRAVELERS];
         renderCountriesLayer();
+        updateCountriesLayerStyle(state.activeTraveler);
         updateStats(getFilteredPlaces());
         renderAdminPanel();
+        renderCountriesStatsModal();
     }
 
     newCountryCodeInputEl.value = '';
@@ -3403,9 +4267,40 @@ adminCountriesListEl.addEventListener('click', (event) => {
 
     const codeToRemove = removeBtn.dataset.removeCountry;
     state.visitedCountries = state.visitedCountries.filter((code) => code !== codeToRemove);
+    if (state.countryTravelers && state.countryTravelers[codeToRemove]) {
+        delete state.countryTravelers[codeToRemove];
+    }
     renderCountriesLayer();
+    updateCountriesLayerStyle(state.activeTraveler);
     updateStats(getFilteredPlaces());
     renderAdminPanel();
+    renderCountriesStatsModal();
+});
+
+// Šalies keliautojų varnelių (T, S, Lu, Li) atnaujinimas
+adminCountriesListEl.addEventListener('change', (event) => {
+    const input = event.target.closest('.admin-country-member-input');
+    if (!input) return;
+
+    const countryCode = String(input.dataset.country || '').trim().toUpperCase();
+    if (!countryCode) return;
+
+    const row = input.closest('.admin-country-row');
+    if (!row) return;
+
+    const checkedBoxes = row.querySelectorAll('.admin-country-member-input:checked');
+    const selectedMembers = Array.from(checkedBoxes).map((cb) => cb.value);
+
+    if (!state.countryTravelers || typeof state.countryTravelers !== 'object') {
+        state.countryTravelers = {};
+    }
+
+    state.countryTravelers[countryCode] = selectedMembers;
+
+    // Sinchronizuojame žemėlapio sluoksnius, skaitiklius ir šalių modalą
+    updateCountriesLayerStyle(state.activeTraveler);
+    updateStats(getFilteredPlaces());
+    renderCountriesStatsModal();
 });
 
 // 3) Eksportavimo mygtukas „Atsisiųsti keliones.json“
@@ -3591,6 +4486,7 @@ function importPlacesFromLegacyHtml(htmlText) {
                 id: nextId,
                 title: matchedLoc.title,
                 country: matchedLoc.country,
+                countryCode: matchedLoc.iso2 || resolvePlaceCountryCode({ country: matchedLoc.country }),
                 lat: matchedLoc.lat,
                 lng: matchedLoc.lng,
                 date: '2025-06-01',
@@ -3698,20 +4594,36 @@ async function initApp() {
         }
         const data = await response.json();
         state.visitedCountries = Array.isArray(data.visitedCountries) ? data.visitedCountries : [];
+        state.countryTravelers = (data && typeof data.countryTravelers === 'object' && data.countryTravelers !== null)
+            ? data.countryTravelers
+            : {};
         state.places = Array.isArray(data.places)
-            ? data.places.map((place) => ({
-                  ...place,
-                  travelers: Array.isArray(place.travelers)
-                      ? place.travelers
-                      : [...DEFAULT_TRAVELERS],
-                  videos: Array.isArray(place.videos) ? place.videos : []
-              }))
+            ? data.places.map((place) => {
+                  const countryCode =
+                      (place.countryCode && /^[A-Za-z]{2}$/.test(String(place.countryCode).trim()))
+                          ? String(place.countryCode).trim().toUpperCase()
+                          : resolvePlaceCountryCode(place);
+                  return {
+                      ...place,
+                      countryCode,
+                      travelers: Array.isArray(place.travelers)
+                          ? place.travelers
+                          : [...DEFAULT_TRAVELERS],
+                      videos: Array.isArray(place.videos) ? place.videos : []
+                  };
+              })
             : [];
     } catch (error) {
         console.warn('Nepavyko užkrauti keliones.json per fetch, naudojami atsarginiai duomenys:', error);
         state.visitedCountries = [...FALLBACK_DATA.visitedCountries];
+        state.countryTravelers = (FALLBACK_DATA && typeof FALLBACK_DATA.countryTravelers === 'object')
+            ? { ...FALLBACK_DATA.countryTravelers }
+            : {};
         state.places = FALLBACK_DATA.places.map((item) => ({
             ...item,
+            countryCode: (item.countryCode && /^[A-Za-z]{2}$/.test(String(item.countryCode).trim()))
+                ? String(item.countryCode).trim().toUpperCase()
+                : resolvePlaceCountryCode(item),
             travelers: Array.isArray(item.travelers) ? [...item.travelers] : [...DEFAULT_TRAVELERS],
             videos: Array.isArray(item.videos) ? [...item.videos] : []
         }));
@@ -3740,6 +4652,7 @@ categoryFiltersEl.addEventListener('click', (event) => {
     state.activeCategory = selectedCategory;
     setActiveCategoryButton(selectedCategory);
     renderMap({ fitBounds: true, isSearch: false });
+    updateCountriesLayerStyle(state.activeTraveler);
 });
 
 // Šeimos narių filtrų paspaudimai (Tomas / Sandra / Lukas / Linas)
@@ -3755,7 +4668,14 @@ travelerFiltersEl.addEventListener('click', (event) => {
 
     state.activeTraveler = nextTraveler;
     setActiveTravelerButton(nextTraveler);
+
+    // 1) Išfiltruojame smeigtukus (markers) žemėlapyje ir atnaujiname skaitiklius
     renderMap({ fitBounds: true, isSearch: false });
+
+    // 2) Iškviečiame GeoJSON sluoksnio stiliaus atnaujinimą (geoJsonLayer.setStyle(...))
+    // Žemėlapyje (tiek „Detaliame“, tiek „Tik šalys“ režime) užspalviname TIK tas šalis,
+    // kurias grąžina getVisitedCountriesByTraveler(selectedTraveler). Kitas paliekame neutralias.
+    updateCountriesLayerStyle(nextTraveler);
 });
 
 // Žemėlapio režimo perjungiklio paspaudimai („Detalus žemėlapis“ / „Tik šalys“)
@@ -3819,6 +4739,7 @@ resetFiltersBtnEl.addEventListener('click', () => {
     setActiveCategoryButton('Visos');
     setActiveTravelerButton('Visi');
     renderMap({ fitBounds: true, isSearch: false });
+    updateCountriesLayerStyle('Visi');
 });
 
 // Paspaudus logotipą – atstatome bendrą vaizdą
@@ -3832,11 +4753,55 @@ resetMapBtnEl.addEventListener('click', (event) => {
     setActiveCategoryButton('Visos');
     setActiveTravelerButton('Visi');
     renderMap({ fitBounds: true, isSearch: false });
+    updateCountriesLayerStyle('Visi');
 });
 
 // Užtikriname korektišką žemėlapio dydį keičiant lango matmenis
 window.addEventListener('resize', () => {
     map.invalidateSize();
+});
+
+// Šalių statistikos ir Europos iššūkio modalinio lango valdymas
+if (openCountriesStatsBtnEl) {
+    openCountriesStatsBtnEl.addEventListener('click', openCountriesStatsModal);
+}
+if (closeCountriesStatsBtnEl) {
+    closeCountriesStatsBtnEl.addEventListener('click', closeCountriesStatsModal);
+}
+if (countriesStatsModalEl) {
+    countriesStatsModalEl.addEventListener('click', (event) => {
+        if (event.target === countriesStatsModalEl) {
+            closeCountriesStatsModal();
+        }
+    });
+}
+
+// Skirtukų perjungimas (Tabs)
+if (tabVisitedCountriesEl && tabMissingCountriesEl) {
+    tabVisitedCountriesEl.addEventListener('click', () => {
+        tabVisitedCountriesEl.classList.add('is-active');
+        tabVisitedCountriesEl.setAttribute('aria-selected', 'true');
+        tabMissingCountriesEl.classList.remove('is-active');
+        tabMissingCountriesEl.setAttribute('aria-selected', 'false');
+        if (visitedTabContentEl) visitedTabContentEl.hidden = false;
+        if (missingTabContentEl) missingTabContentEl.hidden = true;
+    });
+
+    tabMissingCountriesEl.addEventListener('click', () => {
+        tabMissingCountriesEl.classList.add('is-active');
+        tabMissingCountriesEl.setAttribute('aria-selected', 'true');
+        tabVisitedCountriesEl.classList.remove('is-active');
+        tabVisitedCountriesEl.setAttribute('aria-selected', 'false');
+        if (missingTabContentEl) missingTabContentEl.hidden = false;
+        if (visitedTabContentEl) visitedTabContentEl.hidden = true;
+    });
+}
+
+// Escape klavišo paspaudimas uždaro Šalių statistikos modalą
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && countriesStatsModalEl && !countriesStatsModalEl.hidden) {
+        closeCountriesStatsModal();
+    }
 });
 
 // Paleidžiame aplikaciją

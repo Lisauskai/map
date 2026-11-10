@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Pagalbinis skriptas, kuris išanalizuoja seno HTML failo „lisausk_kelion_s (8).html“ struktūrą
     (miestus, pavadinimus, aprašymus, YouTube nuorodas ir laiko žymas) bei atnaujina „keliones.json“.
@@ -80,6 +80,7 @@ foreach ($m in $matchesList) {
             id          = $nextId
             title       = ($rawTitle -split '\|')[0].Trim()
             country     = "Lietuva"
+            countryCode = "LT"
             lat         = 55.9349
             lng         = 23.3137
             date        = (Get-Date -Format "yyyy-MM-dd")
@@ -100,8 +101,15 @@ foreach ($m in $matchesList) {
     }
 }
 
+$countryTravelersObj = if ($existingData.countryTravelers) {
+    $existingData.countryTravelers
+} else {
+    [ordered]@{ VA = @("Tomas", "Sandra", "Lukas", "Linas") }
+}
+
 $outputObject = [ordered]@{
     visitedCountries = @($visitedSet)
+    countryTravelers = $countryTravelersObj
     places           = @($placesList)
 }
 
