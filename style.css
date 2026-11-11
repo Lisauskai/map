@@ -470,6 +470,24 @@ body {
     box-shadow: 0 2px 8px rgba(56, 189, 248, 0.18);
 }
 
+.traveler-chip--guest {
+    border-color: rgba(168, 85, 247, 0.45);
+    color: #e2e8f0;
+}
+
+.traveler-chip--guest:hover {
+    background-color: rgba(168, 85, 247, 0.2);
+    color: #f8fafc;
+    border-color: #c084fc;
+}
+
+.traveler-chip--guest.is-active {
+    background-color: rgba(168, 85, 247, 0.28);
+    color: #e9d5ff;
+    border-color: #c084fc;
+    box-shadow: 0 2px 10px rgba(168, 85, 247, 0.3);
+}
+
 /* Žemėlapio režimo perjungiklis (Detalus žemėlapis / Tik šalys) */
 .map-mode-switcher {
     display: inline-flex;
@@ -533,6 +551,11 @@ body {
 #map.map--countries-only .leaflet-shadow-pane,
 #map.map--countries-only .leaflet-popup-pane {
     display: none !important;
+}
+
+/* Svečio režimas – šalys tampa interaktyvios ir paspaudžiamos */
+#map.map--guest-mode .leaflet-overlay-pane path {
+    cursor: pointer !important;
 }
 
 /* Švelnus kolorito subalansavimas Esri World Street Map plytelėms */
@@ -1420,6 +1443,25 @@ body {
     box-shadow: 0 0 10px rgba(56, 189, 248, 0.25);
 }
 
+.modal-traveler-chip--guest {
+    border-color: rgba(168, 85, 247, 0.45);
+    color: #e2e8f0;
+}
+
+.modal-traveler-chip--guest:hover {
+    color: #f8fafc;
+    background: rgba(168, 85, 247, 0.2);
+    border-color: #c084fc;
+}
+
+.modal-traveler-chip--guest.is-active {
+    background: rgba(168, 85, 247, 0.28);
+    border-color: #c084fc;
+    color: #e9d5ff;
+    font-weight: 700;
+    box-shadow: 0 0 10px rgba(168, 85, 247, 0.35);
+}
+
 .countries-tab-note {
     font-size: 0.82rem;
     font-weight: 600;
@@ -1899,6 +1941,20 @@ body {
     padding: 0.15rem 0.5rem;
     border-radius: var(--radius-pill);
     font-size: 0.72rem;
+    font-weight: 600;
+}
+
+/* Aplankytos šalies būsenos žyma (Svečio lentelėje) */
+.visited-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: rgba(16, 185, 129, 0.16);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.35);
+    padding: 0.18rem 0.6rem;
+    border-radius: var(--radius-pill);
+    font-size: 0.74rem;
     font-weight: 600;
 }
 

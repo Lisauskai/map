@@ -1548,6 +1548,8 @@ const visitedTabNoteEl = document.getElementById('visitedTabNote');
 const missingTabNoteEl = document.getElementById('missingTabNote');
 const visitedCountriesCountBadgeEl = document.getElementById('visitedCountriesCountBadge');
 const missingCountriesCountBadgeEl = document.getElementById('missingCountriesCountBadge');
+const tabVisitedCountriesLabelEl = document.getElementById('tabVisitedCountriesLabel');
+const visitedCountriesTableHeadEl = document.getElementById('visitedCountriesTableHead');
 const visitedCountriesTableBodyEl = document.getElementById('visitedCountriesTableBody');
 const missingCountriesTableBodyEl = document.getElementById('missingCountriesTableBody');
 const searchInputEl = document.getElementById('searchInput');
@@ -2388,6 +2390,13 @@ function renderCountriesLayer() {
                     );
                     const currentIsVisited = currentVisitedSet.has(iso2);
 
+                    // 5) Užvedus pelę ant šalies (hover), jei įjungtas „Mano šalys (Svečias)“ režimas, pakeisk pelės žymeklį į cursor: pointer
+                    if (state.activeTraveler === 'Mano šalys (Svečias)') {
+                        if (targetLayer._path) {
+                            targetLayer._path.style.cursor = 'pointer';
+                        }
+                    }
+
                     if (currentIsVisited) {
                         targetLayer.setStyle({
                             color: '#0284c7',
@@ -2412,11 +2421,59 @@ function renderCountriesLayer() {
                 },
                 mouseout: (event) => {
                     const targetLayer = event.target;
+                    if (targetLayer._path && state.activeTraveler !== 'Mano šalys (Svečias)') {
+                        targetLayer._path.style.cursor = '';
+                    }
                     const currentVisitedSet = new Set(
                         getVisitedCountriesByTraveler(state.activeTraveler).map((c) => String(c).trim().toUpperCase())
                     );
                     const currentIsVisited = currentVisitedSet.has(iso2);
                     targetLayer.setStyle(getCountryBaseStyle(currentIsVisited));
+                },
+                click: (event) => {
+                    // 1) & 2) Jei šiuo metu aktyvus keliautojas yra „Mano šalys (Svečias)“,
+                    // paspaudus ant šalies, jos ISO-2 kodas turi būti pridedamas į guestCountries masyvą
+                    // (jei jo ten dar nėra) arba pašalinamas iš jo (jei jau yra).
+                    if (state.activeTraveler === 'Mano šalys (Svečias)') {
+                        if (window.L && L.DomEvent) {
+                            L.DomEvent.stopPropagation(event);
+                        }
+                        const countryIso2 = (iso2 || getCountryIso2(feature) || '').trim().toUpperCase();
+                        if (!countryIso2) return;
+
+                        let guestCountries = JSON.parse(localStorage.getItem('guestCountries')) || [];
+                        if (!Array.isArray(guestCountries)) {
+                            guestCountries = [];
+                        }
+
+                        const countryIndex = guestCountries.indexOf(countryIso2);
+                        if (countryIndex > -1) {
+                            guestCountries.splice(countryIndex, 1);
+                        } else {
+                            guestCountries.push(countryIso2);
+                        }
+
+                        // 3) Po paspaudimo iš karto išsaugok naują masyvą į naršyklės atmintį:
+                        localStorage.setItem('guestCountries', JSON.stringify(guestCountries));
+
+                        // 4) Iš karto po išsaugojimo automatiškai atnaujink GeoJSON sluoksnio stilių (geoJsonLayer.setStyle(...))
+                        // ir atnaujink viršutinius statistikos skaitiklius, kad lankytojas vizualiai pamatytų nuspalvintą (arba atspalvintą) šalį.
+                        updateCountriesLayerStyle(state.activeTraveler);
+                        updateStats();
+                        if (countriesStatsModalEl && !countriesStatsModalEl.hidden) {
+                            renderCountriesStatsModal();
+                        }
+
+                        // Atnaujiname tooltip tekstą (su varnele arba be)
+                        if (layer.getTooltip()) {
+                            const isNowVisited = guestCountries.includes(countryIso2);
+                            layer.setTooltipContent(
+                                isNowVisited
+                                    ? `✓ ${escapeHtml(countryName)}`
+                                    : escapeHtml(countryName)
+                            );
+                        }
+                    }
                 }
             });
         }
@@ -2769,6 +2826,14 @@ function getVideoTravelers(video, place) {
  * @param {Array} filteredPlaces - išfiltruotas vietų masyvas (jei nenurodytas, nuskaitomas iš getFilteredPlaces())
  */
 function updateStats(filteredPlaces = getFilteredPlaces()) {
+    if (state.activeTraveler === 'Mano šalys (Svečias)') {
+        const guestCountries = getVisitedCountriesByTraveler(state.activeTraveler);
+        statCountriesEl.textContent = guestCountries.length;
+        statPlacesEl.textContent = 0;
+        statVlogsEl.textContent = 0;
+        return;
+    }
+
     const isUnfiltered =
         state.activeCategory === 'Visos' &&
         state.activeTraveler === 'Visi' &&
@@ -2821,6 +2886,11 @@ function updateStats(filteredPlaces = getFilteredPlaces()) {
  * Filtruoja vietas pagal pasirinktą kategoriją, šeimos narį ir paieškos tekstą
  */
 function getFilteredPlaces() {
+    // 4) Užtikriname, kad pasirinkus „Mano šalys (Svečias)“, visi šeimos vietų taškai būtų paslėpti
+    if (state.activeTraveler === 'Mano šalys (Svečias)') {
+        return [];
+    }
+
     const normalizedQuery = normalizeText(state.searchQuery);
     const isSpecificTraveler = state.activeTraveler && state.activeTraveler !== 'Visi';
 
@@ -2885,6 +2955,17 @@ function renderMap({ fitBounds = true, isSearch = false } = {}) {
 
     const filtered = getFilteredPlaces();
     updateStats(filtered);
+
+    // 4) Užtikriname, kad pasirinkus „Mano šalys (Svečias)“, žemėlapyje būtų paslepiami visi jūsų šeimos vietų smeigtukai (markers),
+    // kad svečias matytų tik švarų šalių žemėlapį be jūsų kelionių detalių.
+    if (state.activeTraveler === 'Mano šalys (Svečias)') {
+        if (map.hasLayer(markersLayer)) {
+            map.removeLayer(markersLayer);
+        }
+        map.closePopup();
+        emptyStateEl.hidden = true;
+        return;
+    }
 
     // 1) Kai įjungtas režimas „Tik šalys“, visiškai paslepiame visus smeigtukus
     // (nuimame sluoksnį nuo žemėlapio ir nepiešiame jokių taškų), kad matytųsi TIK švarūs šalių kontūrai ir pavadinimai
@@ -3586,13 +3667,41 @@ function getCountryTravelers(iso2) {
 }
 
 /**
+ * 2) Užkrauna svečio asmenines šalis iš naršyklės atminties (localStorage):
+ * let guestCountries = JSON.parse(localStorage.getItem('guestCountries')) || [];
+ * @returns {string[]}
+ */
+function getGuestCountries() {
+    try {
+        let guestCountries = JSON.parse(localStorage.getItem('guestCountries')) || [];
+        if (!Array.isArray(guestCountries)) return [];
+        return Array.from(
+            new Set(
+                guestCountries
+                    .map((c) => (typeof c === 'string' ? c.trim().toUpperCase() : ''))
+                    .filter((c) => /^[A-Z]{2}$/.test(c))
+            )
+        );
+    } catch {
+        return [];
+    }
+}
+window.getGuestCountries = getGuestCountries;
+
+/**
  * 2) Pagalbinė funkcija getVisitedCountriesByTraveler(traveler):
  * - Jei pasirinkta „Visi“, grąžina visą visitedCountries sąrašą.
+ * - Jei pasirinktas keliautojas „Mano šalys (Svečias)“, grąžina guestCountries masyvą.
  * - Jei pasirinktas konkretus narys (pvz. „Lukas“ arba „Linas“), grąžina tik tas šalis (ISO-2 kodus),
  *   kuriose pagal getCountryTravelers(iso2) lankėsi tas narys.
  */
 function getVisitedCountriesByTraveler(traveler) {
     const selected = String(traveler || 'Visi').trim();
+
+    // 3) Jei pasirenkamas keliautojas „Mano šalys (Svečias)“, funkcija turi grąžinti guestCountries masyvą
+    if (selected === 'Mano šalys (Svečias)') {
+        return getGuestCountries();
+    }
 
     // Jei pasirinkta „Visi“, grąžina visą visitedCountries sąrašą
     if (!selected || selected === 'Visi') {
@@ -3709,16 +3818,19 @@ function getCountryFlagEmoji(iso2) {
 function renderCountriesStatsModal() {
     if (!countriesStatsModalEl) return;
 
-    const currentTraveler = (state.selectedModalTraveler && (state.selectedModalTraveler === 'Visi' || DEFAULT_TRAVELERS.includes(state.selectedModalTraveler)))
+    const currentTraveler = (state.selectedModalTraveler && (state.selectedModalTraveler === 'Visi' || state.selectedModalTraveler === 'Mano šalys (Svečias)' || DEFAULT_TRAVELERS.includes(state.selectedModalTraveler)))
         ? state.selectedModalTraveler
         : 'Visi';
     const isAll = currentTraveler === 'Visi';
+    const isGuest = currentTraveler === 'Mano šalys (Svečias)';
 
     // 1) Apskaičiuojame Europos iššūkio statistiką pasirinktam keliautojui arba visai šeimai
     const europeStats = getEuropeStats(currentTraveler);
 
     if (europeChallengeTextEl) {
-        if (isAll) {
+        if (isGuest) {
+            europeChallengeTextEl.innerHTML = `Svečias aplankė <strong>${europeStats.visited}</strong> iš <strong>${europeStats.total}</strong> Europos šalių (<strong>${europeStats.percentageFormatted}</strong>) – dar liko aplankyti <strong>${europeStats.missing}</strong> šalių!`;
+        } else if (isAll) {
             europeChallengeTextEl.innerHTML = `Aplankyta <strong>${europeStats.visited}</strong> iš <strong>${europeStats.total}</strong> Europos šalių (<strong>${europeStats.percentageFormatted}</strong>) – šeimai dar liko aplankyti <strong>${europeStats.missing}</strong> šalių!`;
         } else {
             europeChallengeTextEl.innerHTML = `<strong>${escapeHtml(currentTraveler)}</strong> aplankė <strong>${europeStats.visited}</strong> iš <strong>${europeStats.total}</strong> Europos šalių (<strong>${europeStats.percentageFormatted}</strong>) – dar liko aplankyti <strong>${europeStats.missing}</strong> šalių!`;
@@ -3748,8 +3860,16 @@ function renderCountriesStatsModal() {
         missingCountriesCountBadgeEl.textContent = europeStats.missing;
     }
 
+    if (tabVisitedCountriesLabelEl) {
+        tabVisitedCountriesLabelEl.textContent = isGuest
+            ? 'Aplankytos šalys (svečio)'
+            : (isAll ? 'Aplankytos šalys (narių lentelė)' : `Aplankytos šalys (${currentTraveler})`);
+    }
+
     if (visitedTabNoteEl) {
-        if (isAll) {
+        if (isGuest) {
+            visitedTabNoteEl.innerHTML = `Jūs (svečias) iš viso pažymėjote <strong>${travelerVisited.length}</strong> šalių (iš jų <strong>${europeStats.visited}</strong> Europoje).`;
+        } else if (isAll) {
             visitedTabNoteEl.innerHTML = `Lisauskų šeima iš viso aplankė <strong>${allVisited.length}</strong> šalių (iš jų <strong>${europeStats.visited}</strong> Europoje).`;
         } else {
             visitedTabNoteEl.innerHTML = `<strong>${escapeHtml(currentTraveler)}</strong> iš viso aplankė <strong>${travelerVisited.length}</strong> šalių (iš jų <strong>${europeStats.visited}</strong> Europoje). Stulpelis lentelėje paryškintas žaliai.`;
@@ -3757,105 +3877,203 @@ function renderCountriesStatsModal() {
     }
 
     if (missingTabNoteEl) {
-        if (isAll) {
+        if (isGuest) {
+            missingTabNoteEl.innerHTML = `Europos šalys, kuriose dar nebuvote (liko <strong>${europeStats.missing}</strong>):`;
+        } else if (isAll) {
             missingTabNoteEl.innerHTML = `Europos šalys, kuriose dar nebuvo visa šeima (liko <strong>${europeStats.missing}</strong>):`;
         } else {
             missingTabNoteEl.innerHTML = `Europos šalys, kuriose dar nebuvo <strong>${escapeHtml(currentTraveler)}</strong> (liko <strong>${europeStats.missing}</strong>):`;
         }
     }
 
-    // Atnaujiname stulpelių antraščių paryškinimą
+    // Atnaujiname stulpelių antraščių paryškinimą šeimos narių režime
     const tableHeaderEls = countriesStatsModalEl.querySelectorAll('th.countries-table__col-member');
     tableHeaderEls.forEach((th) => {
-        const isHighlighted = !isAll && th.dataset.colMember === currentTraveler;
+        const isHighlighted = !isAll && !isGuest && th.dataset.colMember === currentTraveler;
         th.classList.toggle('is-highlighted', isHighlighted);
     });
 
-    // 3) Užpildome aplankytų šalių narių lentelę (Tab 1)
-    if (visitedCountriesTableBodyEl) {
-        // Apskaičiuojame kiekvieno nario statistiką: kiek iš viso šalių ir kiek iš jų Europoje
-        const memberStats = DEFAULT_TRAVELERS.map((traveler) => {
-            const visitedList = getVisitedCountriesByTraveler(traveler);
-            const total = visitedList.length;
-            const europe = visitedList.filter((code) => EUROPEAN_COUNTRIES.includes(code)).length;
-            return {
-                traveler,
-                total,
-                europe,
-                visitedList
-            };
-        });
+    // 3) Užpildome aplankytų šalių lentelę (Tab 1)
+    const tableHeadEl = visitedCountriesTableHeadEl || countriesStatsModalEl.querySelector('#visitedTabContent thead');
 
-        // Pirma (viršutinė) suvestinės eilutė
-        const summaryRowHtml = `
-            <tr class="countries-table__summary-row">
-                <td class="countries-table__col-country">
-                    <div class="summary-cell">
-                        <span class="summary-cell__icon" aria-hidden="true">📊</span>
-                        <div class="summary-cell__text">
-                            <strong class="summary-cell__title">Iš viso aplankyta:</strong>
-                            <span class="summary-cell__subtitle">Viso šalių (iš jų Europoje)</span>
-                        </div>
-                    </div>
-                </td>
-                ${memberStats
-                    .map((m) => {
-                        const isColActive = !isAll && m.traveler === currentTraveler;
-                        return `
-                    <td class="countries-table__col-member ${isColActive ? 'is-highlighted' : ''}">
-                        <div class="member-summary" title="${m.traveler}: iš viso ${m.total} šalių (iš jų ${m.europe} Europoje)">
-                            <strong class="member-summary__total">${m.total}</strong>
-                            <span class="member-summary__sub">(${m.europe} Eur.)</span>
-                        </div>
-                    </td>
+    if (isGuest) {
+        // Svečio režimas: paslepiame šeimos narių stulpelius ir rodome paprastą svečio šalių sąrašą
+        if (tableHeadEl) {
+            tableHeadEl.innerHTML = `
+                <tr>
+                    <th class="countries-table__col-country">Šalis</th>
+                    <th class="countries-table__col-status" style="text-align: right;">Būsena</th>
+                </tr>
+            `;
+        }
+
+        if (visitedCountriesTableBodyEl) {
+            const guestVisited = getGuestCountries();
+            const sortedGuestVisited = [...guestVisited].sort((a, b) => {
+                const nameA = getCountryDisplayName(null, a);
+                const nameB = getCountryDisplayName(null, b);
+                return nameA.localeCompare(nameB, 'lt');
+            });
+
+            if (sortedGuestVisited.length === 0) {
+                visitedCountriesTableBodyEl.innerHTML = `
+                    <tr>
+                        <td colspan="2" style="text-align: center; color: #94a3b8; padding: 2.5rem 1rem;">
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;" aria-hidden="true">🌍</div>
+                            <strong style="color: #f1f5f9; font-size: 1rem;">Dar nepažymėjote jokių šalių</strong>
+                            <p style="font-size: 0.82rem; color: #64748b; margin-top: 0.4rem; max-width: 380px; margin-left: auto; margin-right: auto;">
+                                Žemėlapyje spustelėkite ant bet kurios šalies, kad pažymėtumėte savo aplankytas vietas – jos iš karto atsiras šiame sąraše!
+                            </p>
+                        </td>
+                    </tr>
                 `;
-                    })
-                    .join('')}
-            </tr>
-        `;
+            } else {
+                const summaryRowHtml = `
+                    <tr class="countries-table__summary-row">
+                        <td class="countries-table__col-country">
+                            <div class="summary-cell">
+                                <span class="summary-cell__icon" aria-hidden="true">📊</span>
+                                <div class="summary-cell__text">
+                                    <strong class="summary-cell__title">Iš viso aplankyta:</strong>
+                                    <span class="summary-cell__subtitle">Svečio šalys (iš jų Europoje)</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="countries-table__col-status" style="text-align: right;">
+                            <div class="member-summary" style="display: inline-block; text-align: right;">
+                                <strong class="member-summary__total">${sortedGuestVisited.length}</strong>
+                                <span class="member-summary__sub">(${europeStats.visited} Eur.)</span>
+                            </div>
+                        </td>
+                    </tr>
+                `;
 
-        // Rūšiuojame aplankytas šalis lietuviškai pagal pavadinimą
-        const sortedVisited = [...allVisited].sort((a, b) => {
-            const nameA = getCountryDisplayName(null, a);
-            const nameB = getCountryDisplayName(null, b);
-            return nameA.localeCompare(nameB, 'lt');
-        });
+                const countryRowsHtml = sortedGuestVisited.map((iso2) => {
+                    const countryName = getCountryDisplayName(null, iso2);
+                    const flag = getCountryFlagEmoji(iso2);
+                    const continent = getContinentName(iso2);
+                    const badgeModifier = getContinentBadgeClass(continent);
+                    const regionBadgeHtml = `<span class="country-cell__badge-tag ${badgeModifier}" title="${escapeHtml(continent)}">${escapeHtml(continent)}</span>`;
 
-        const countryRowsHtml = sortedVisited.map((iso2) => {
-            const countryName = getCountryDisplayName(null, iso2);
-            const flag = getCountryFlagEmoji(iso2);
-            const continent = getContinentName(iso2);
-            const badgeModifier = getContinentBadgeClass(continent);
-            const regionBadgeHtml = `<span class="country-cell__badge-tag ${badgeModifier}" title="${escapeHtml(continent)}">${escapeHtml(continent)}</span>`;
+                    return `
+                        <tr>
+                            <td class="countries-table__col-country">
+                                <div class="country-cell">
+                                    <span class="country-cell__flag" aria-hidden="true">${flag}</span>
+                                    <span class="country-cell__code">${escapeHtml(iso2)}</span>
+                                    <span class="country-cell__name">${escapeHtml(countryName)}</span>
+                                    ${regionBadgeHtml}
+                                </div>
+                            </td>
+                            <td class="countries-table__col-status" style="text-align: right;">
+                                <span class="visited-badge" title="Šalis pažymėta kaip aplankyta">✓ Aplankyta</span>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
 
-            const memberCellsHtml = memberStats.map((m) => {
-                const hasVisited = m.visitedList.includes(iso2);
-                const isColActive = !isAll && m.traveler === currentTraveler;
-                return `
-                    <td class="countries-table__col-member ${isColActive ? 'is-highlighted' : ''}">
-                        <span class="member-check ${hasVisited ? 'member-check--yes' : 'member-check--no'}" title="${m.traveler}: ${hasVisited ? 'Lankėsi' : 'Nesilankė'}">
-                            ${hasVisited ? '✓' : '–'}
-                        </span>
+                visitedCountriesTableBodyEl.innerHTML = summaryRowHtml + countryRowsHtml;
+            }
+        }
+    } else {
+        // Šeimos režimas (!isGuest): atstatome 4 narių stulpelius (Tomas, Sandra, Lukas, Linas)
+        if (tableHeadEl) {
+            tableHeadEl.innerHTML = `
+                <tr>
+                    <th class="countries-table__col-country">Šalis</th>
+                    <th class="countries-table__col-member ${!isAll && currentTraveler === 'Tomas' ? 'is-highlighted' : ''}" data-col-member="Tomas">Tomas</th>
+                    <th class="countries-table__col-member ${!isAll && currentTraveler === 'Sandra' ? 'is-highlighted' : ''}" data-col-member="Sandra">Sandra</th>
+                    <th class="countries-table__col-member ${!isAll && currentTraveler === 'Lukas' ? 'is-highlighted' : ''}" data-col-member="Lukas">Lukas</th>
+                    <th class="countries-table__col-member ${!isAll && currentTraveler === 'Linas' ? 'is-highlighted' : ''}" data-col-member="Linas">Linas</th>
+                </tr>
+            `;
+        }
+
+        if (visitedCountriesTableBodyEl) {
+            // Apskaičiuojame kiekvieno nario statistiką: kiek iš viso šalių ir kiek iš jų Europoje
+            const memberStats = DEFAULT_TRAVELERS.map((traveler) => {
+                const visitedList = getVisitedCountriesByTraveler(traveler);
+                const total = visitedList.length;
+                const europe = visitedList.filter((code) => EUROPEAN_COUNTRIES.includes(code)).length;
+                return {
+                    traveler,
+                    total,
+                    europe,
+                    visitedList
+                };
+            });
+
+            // Pirma (viršutinė) suvestinės eilutė
+            const summaryRowHtml = `
+                <tr class="countries-table__summary-row">
+                    <td class="countries-table__col-country">
+                        <div class="summary-cell">
+                            <span class="summary-cell__icon" aria-hidden="true">📊</span>
+                            <div class="summary-cell__text">
+                                <strong class="summary-cell__title">Iš viso aplankyta:</strong>
+                                <span class="summary-cell__subtitle">Viso šalių (iš jų Europoje)</span>
+                            </div>
+                        </div>
                     </td>
+                    ${memberStats
+                        .map((m) => {
+                            const isColActive = !isAll && m.traveler === currentTraveler;
+                            return `
+                        <td class="countries-table__col-member ${isColActive ? 'is-highlighted' : ''}">
+                            <div class="member-summary" title="${m.traveler}: iš viso ${m.total} šalių (iš jų ${m.europe} Europoje)">
+                                <strong class="member-summary__total">${m.total}</strong>
+                                <span class="member-summary__sub">(${m.europe} Eur.)</span>
+                            </div>
+                        </td>
+                    `;
+                        })
+                        .join('')}
+                </tr>
+            `;
+
+            // Rūšiuojame aplankytas šalis lietuviškai pagal pavadinimą
+            const sortedVisited = [...allVisited].sort((a, b) => {
+                const nameA = getCountryDisplayName(null, a);
+                const nameB = getCountryDisplayName(null, b);
+                return nameA.localeCompare(nameB, 'lt');
+            });
+
+            const countryRowsHtml = sortedVisited.map((iso2) => {
+                const countryName = getCountryDisplayName(null, iso2);
+                const flag = getCountryFlagEmoji(iso2);
+                const continent = getContinentName(iso2);
+                const badgeModifier = getContinentBadgeClass(continent);
+                const regionBadgeHtml = `<span class="country-cell__badge-tag ${badgeModifier}" title="${escapeHtml(continent)}">${escapeHtml(continent)}</span>`;
+
+                const memberCellsHtml = memberStats.map((m) => {
+                    const hasVisited = m.visitedList.includes(iso2);
+                    const isColActive = !isAll && m.traveler === currentTraveler;
+                    return `
+                        <td class="countries-table__col-member ${isColActive ? 'is-highlighted' : ''}">
+                            <span class="member-check ${hasVisited ? 'member-check--yes' : 'member-check--no'}" title="${m.traveler}: ${hasVisited ? 'Lankėsi' : 'Nesilankė'}">
+                                ${hasVisited ? '✓' : '–'}
+                            </span>
+                        </td>
+                    `;
+                }).join('');
+
+                return `
+                    <tr>
+                        <td class="countries-table__col-country">
+                            <div class="country-cell">
+                                <span class="country-cell__flag" aria-hidden="true">${flag}</span>
+                                <span class="country-cell__code">${escapeHtml(iso2)}</span>
+                                <span class="country-cell__name">${escapeHtml(countryName)}</span>
+                                ${regionBadgeHtml}
+                            </div>
+                        </td>
+                        ${memberCellsHtml}
+                    </tr>
                 `;
             }).join('');
 
-            return `
-                <tr>
-                    <td class="countries-table__col-country">
-                        <div class="country-cell">
-                            <span class="country-cell__flag" aria-hidden="true">${flag}</span>
-                            <span class="country-cell__code">${escapeHtml(iso2)}</span>
-                            <span class="country-cell__name">${escapeHtml(countryName)}</span>
-                            ${regionBadgeHtml}
-                        </div>
-                    </td>
-                    ${memberCellsHtml}
-                </tr>
-            `;
-        }).join('');
-
-        visitedCountriesTableBodyEl.innerHTML = summaryRowHtml + countryRowsHtml;
+            visitedCountriesTableBodyEl.innerHTML = summaryRowHtml + countryRowsHtml;
+        }
     }
 
     // 4) Užpildome neaplankytų Europos šalių lentelę (Tab 2)
@@ -3892,7 +4110,7 @@ function renderCountriesStatsModal() {
         missingCountriesTableBodyEl.innerHTML = missingRowsHtml || `
             <tr>
                 <td colspan="3" style="text-align: center; color: #34d399; padding: 1.5rem;">
-                    🎉 Sveikiname! ${isAll ? 'Visos 47 Europos šalys jau aplankytos!' : `${escapeHtml(currentTraveler)} jau aplankė visas 47 Europos šalis!`}
+                    🎉 Sveikiname! ${isGuest ? 'Jūs jau aplankėte visas 47 Europos šalis!' : (isAll ? 'Visos 47 Europos šalys jau aplankytos!' : `${escapeHtml(currentTraveler)} jau aplankė visas 47 Europos šalis!`)}
                 </td>
             </tr>
         `;
@@ -3903,7 +4121,7 @@ function renderCountriesStatsModal() {
  * Nustato aktyvų keliautoją Šalių statistikos modaliniame lange ir atnaujina rodymą
  */
 function setActiveModalTraveler(traveler) {
-    const validTraveler = (traveler && (traveler === 'Visi' || DEFAULT_TRAVELERS.includes(traveler)))
+    const validTraveler = (traveler && (traveler === 'Visi' || traveler === 'Mano šalys (Svečias)' || DEFAULT_TRAVELERS.includes(traveler)))
         ? traveler
         : 'Visi';
 
@@ -3927,7 +4145,7 @@ function setActiveModalTraveler(traveler) {
  */
 function openCountriesStatsModal() {
     if (!countriesStatsModalEl) return;
-    const initialTraveler = (state.activeTraveler && (state.activeTraveler === 'Visi' || DEFAULT_TRAVELERS.includes(state.activeTraveler)))
+    const initialTraveler = (state.activeTraveler && (state.activeTraveler === 'Visi' || state.activeTraveler === 'Mano šalys (Svečias)' || DEFAULT_TRAVELERS.includes(state.activeTraveler)))
         ? state.activeTraveler
         : 'Visi';
     setActiveModalTraveler(initialTraveler);
@@ -5267,6 +5485,7 @@ travelerFiltersEl.addEventListener('click', (event) => {
 
     state.activeTraveler = nextTraveler;
     setActiveTravelerButton(nextTraveler);
+    mapContainerEl.classList.toggle('map--guest-mode', nextTraveler === 'Mano šalys (Svečias)');
 
     // 1) Išfiltruojame smeigtukus (markers) žemėlapyje ir atnaujiname skaitiklius.
     // 3) Jei vartotojas būdamas „Tik šalys“ režime keičia keliautoją, renderMap išvalo smeigtukus ir jų nerodo,
@@ -5357,6 +5576,7 @@ resetFiltersBtnEl.addEventListener('click', () => {
     }
     setActiveCategoryButton('Visos');
     setActiveTravelerButton('Visi');
+    mapContainerEl.classList.remove('map--guest-mode');
     renderMap({ fitBounds: true, isSearch: false });
     updateCountriesLayerStyle('Visi');
 });
@@ -5375,6 +5595,7 @@ resetMapBtnEl.addEventListener('click', (event) => {
     }
     setActiveCategoryButton('Visos');
     setActiveTravelerButton('Visi');
+    mapContainerEl.classList.remove('map--guest-mode');
     renderMap({ fitBounds: true, isSearch: false });
     updateCountriesLayerStyle('Visi');
 });

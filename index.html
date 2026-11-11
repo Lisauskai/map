@@ -145,6 +145,7 @@
                             <button type="button" class="traveler-chip" data-traveler="Sandra">Sandra</button>
                             <button type="button" class="traveler-chip" data-traveler="Lukas">Lukas</button>
                             <button type="button" class="traveler-chip" data-traveler="Linas">Linas</button>
+                            <button type="button" class="traveler-chip traveler-chip--guest" data-traveler="Mano šalys (Svečias)">Mano šalys (Svečias)</button>
                         </nav>
 
                         <div class="controls-divider controls-divider--travelers" aria-hidden="true"></div>
@@ -250,6 +251,9 @@
                             <button type="button" class="modal-traveler-chip" data-modal-traveler="Linas">
                                 👶 Linas
                             </button>
+                            <button type="button" class="modal-traveler-chip modal-traveler-chip--guest" data-modal-traveler="Mano šalys (Svečias)">
+                                🌍 Mano šalys (Svečias)
+                            </button>
                         </div>
                     </div>
 
@@ -274,7 +278,7 @@
                     <div class="countries-tabs" role="tablist" aria-label="Šalių sąrašo skirtukai">
                         <button type="button" class="countries-tab is-active" id="tabVisitedCountries" role="tab" aria-selected="true" data-tab="visited">
                             <span class="countries-tab__icon">🌍</span>
-                            <span>Aplankytos šalys (narių lentelė)</span>
+                            <span id="tabVisitedCountriesLabel">Aplankytos šalys (narių lentelė)</span>
                             <span class="countries-tab__badge" id="visitedCountriesCountBadge">0</span>
                         </button>
                         <button type="button" class="countries-tab" id="tabMissingCountries" role="tab" aria-selected="false" data-tab="missing">
@@ -290,8 +294,8 @@
                             Lisauskų šeima iš viso aplankė <strong>30</strong> šalių (iš jų <strong>27</strong> Europoje).
                         </div>
                         <div class="countries-table-wrap">
-                            <table class="countries-table">
-                                <thead>
+                            <table class="countries-table" id="visitedCountriesTable">
+                                <thead id="visitedCountriesTableHead">
                                     <tr>
                                         <th class="countries-table__col-country">Šalis</th>
                                         <th class="countries-table__col-member" data-col-member="Tomas">Tomas</th>
